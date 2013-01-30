@@ -11,7 +11,7 @@ class CategoryModelTest(TestCase):
     def test_can_create_a_category_and_save_it(self):
         #check we can create a category
         category = Category()
-        category.name = 'UI Design (Visual Design, user experience, ...'
+        category.title = 'UI Design (Visual Design, user experience, ...'
         category.pub_date = timezone.now()
         category.custom = True
         #check that it can be saved
@@ -24,6 +24,6 @@ class CategoryModelTest(TestCase):
         self.assertEquals(category_in_db, category)
 
         #check it saved with attributes
-        self.assertEquals(category_in_db.name, category.name)
+        self.assertEquals(category_in_db.title, category.title)
         self.assertEquals(category_in_db.pub_date, category.pub_date)
     
