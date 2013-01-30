@@ -1,12 +1,19 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
-class Category(models.Model):
+from mezzanine.core.models import Slugged
+
+class Category(Slugged):
     """
     Job Category
     """
-    name = models.CharField(max_length = 200)
     pub_date = models.DateTimeField(auto_now_add = True)
     is_custom = models.BooleanField(default = False)
 
-    def __unicode__(self):
-        return self.name, self.pub_date
+    class Meta:
+        verbose_name = _("Job Category")
+        verbose_name_plural = _("Categories")
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('gigs_list_category',(),{'slug':self.slug})
