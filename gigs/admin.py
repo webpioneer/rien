@@ -1,10 +1,8 @@
 from django.contrib import admin
 
-from mezzanine.core.admin import DisplayableAdmin, OwnableAdmin
-
 from gigs.models import Category
 
-class CategoryAdmin(DisplayableAdmin, OwnableAdmin):
-    list_display = ('name', 'pub_date')
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'pub_date')
     
 admin.site.register(Category, CategoryAdmin)
