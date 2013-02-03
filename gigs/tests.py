@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.utils import timezone
 
+from mezzanine.core.fields import FileField
+
 from gigs.models import Category
 from gigs.models import Company
 from gigs.models import Gig
@@ -72,29 +74,60 @@ class GigModelTest(TestCase):
     """
     Test for Gig model
     """
+    def setUp(self):
+        self.category = self._create_category()
+        self.company = self._create_company()
+
     def _create_category(self):
         category = Category()
         category.title = 'UI Design (Visual Design, user experience, ...'
         category.pub_date = timezone.now()
         category.custom = True
         category.save()
+        return category
+
+    def _create_company(self):
+        company = Company()
+        company.type = 'Startup'
+        company.url = 'http://www.alpha.com'
+        company.elevator_pitch = 'Elevator pitch content'
+        company_profile_picture_field = FileField()
+        company_profile_picture = company_profile_picture_field.path = 'company_logo.png'
+        company.profile_picture = company_profile_picture
+        company.ip_address = '127.0.0.1'
+        company.save()
+        return company
 
     def test_can_create_a_gig_and_save_it(self):
-        #create a category
-        self._create_category()
         #create a gig
         gig = Gig()
+        gig.type = 'Full-time $249'
         gig.title = ' Python / Django developer'
         gig.content = ' This is the content'
         gig.location = ' Chicago, California, usa'
-        gig.latitude = 41.87811360
-        gig.longitude = -87.62979820
+        gig.latitude = '41.87811360'
+        gig.longitude = '-87.62979820'
         gig.relocation = True
         gig.is_onsite = True
         gig.perks = 'We provide these perks'
-        gig.category = category
-        gig.company = company
+        gig.is_filled = False
+        gig.category = self.category
+        gig.company = self.company
         # check you can save it
         gig.save()
 
-        # check it saved with its attributes
+        #check that gig is saved with the right attributes
+        gigs_in_db = Gig.objects.all()
+        gig_in_db = gigs_in_db[0]
+        self.assertEquals(len(gigs_in_db), 1)
+        self.assertEquals(gig_in_db.type, 'Full-time $249')
+        self.assertEquals(gig_in_db.title, ' Python / Django developer')
+        self.assertEqual(gig_in_db.content, ' This is the content')
+        self.assertEqual(gig_in_db.location, ' Chicago, California, usa')
+        self.assertEqual(gig_in_db.latitude, '41.87811360')
+        self.assertEqual(gig_in_db.longitude, '-87.62979820')
+        self.assertEqual(gig_in_db.relocation, True)
+        self.assertEqual(gig_in_db.is_onsite, True)
+        self.assertEqual(gig_in_db.perks, 'We provide these perks')
+        self.assertEqual(gig_in_db.category, self.category)
+        self.assertEqual(gig_in_db.company, self.company)

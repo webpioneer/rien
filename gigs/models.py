@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from mezzanine.core.models import Slugged, Displayable
+from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField
 from mezzanine.utils.models import upload_to
 
@@ -47,5 +47,37 @@ class Company(Displayable):
     class Meta:
         verbose_name_plural = _("Companies")
 
-class Gig(models.Model):
-    pass
+class Gig(Displayable, RichText):
+    """
+    Gig Model
+    """
+    JOB_TYPES = (
+        ('FULLTIME', "Full-time $249"),
+        ('CONTRACT', "Contract $249"),
+        ('FREETIME', "Freelance $99"),
+        ("INTERNSHIP", "Internship $99"),
+    )
+    type = models.CharField(max_length = 15, verbose_name = _("Job type"),
+            choices = JOB_TYPES)
+    location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
+        help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
+    latitude = models.CharField(max_length = 15)
+    longitude = models.CharField(max_length = 15)
+    relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
+                for this opposition"),default = False)
+    is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
+        (i.e. telecommuting)"), default = False)
+    perks = models.TextField(verbose_name = _("Job Perks"), 
+    help_text = _("Sell your position! If you're willing to relocate, mention \
+    it here. If you've got great benefits, bonuses, paid trips to conferences, \
+    free food, discounts, etc., talk it up."))
+    is_filled = models.BooleanField(verbose_name = _("Filled"), default = False)
+    category = models.ForeignKey('Category')
+    company = models.ForeignKey('Company')
+
+    class Meta:
+        verbose_name = "Gig"
+        verbose_name_plural = "Jobs"
+
+
+
