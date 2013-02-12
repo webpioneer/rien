@@ -6,6 +6,7 @@ from mezzanine.core.fields import FileField
 from gigs.models import Category
 from gigs.models import Company
 from gigs.models import Gig
+from gigs.models import GigStat
 
 class CategoryModelTest(TestCase):
     """
@@ -75,8 +76,9 @@ class GigModelTest(TestCase):
     Test for Gig model
     """
     def setUp(self):
-        self.category = self._create_category()
-        self.company = self._create_company()
+        self._category1 = self._create_category()
+        self._category2 = self._create_category()
+        self._company = self._create_company()
 
     def _create_category(self):
         category = Category()
@@ -107,14 +109,17 @@ class GigModelTest(TestCase):
         gig.location = ' Chicago, California, usa'
         gig.latitude = '41.87811360'
         gig.longitude = '-87.62979820'
-        gig.relocation = True
+        gig.is_relocation = True
         gig.is_onsite = True
         gig.perks = 'We provide these perks'
         gig.is_filled = False
-        gig.category = self.category
-        gig.company = self.company
+        #gig.category = self.category
+        gig.company = self._company
         # check you can save it
         gig.save()
+        # Associate the gig with the Categories
+        gig.categories.add(self._category1)
+        gig.categories.add(self._category2)
 
         #check that gig is saved with the right attributes
         gigs_in_db = Gig.objects.all()
@@ -126,8 +131,28 @@ class GigModelTest(TestCase):
         self.assertEqual(gig_in_db.location, ' Chicago, California, usa')
         self.assertEqual(gig_in_db.latitude, '41.87811360')
         self.assertEqual(gig_in_db.longitude, '-87.62979820')
-        self.assertEqual(gig_in_db.relocation, True)
+        self.assertEqual(gig_in_db.is_relocation, True)
         self.assertEqual(gig_in_db.is_onsite, True)
         self.assertEqual(gig_in_db.perks, 'We provide these perks')
-        self.assertEqual(gig_in_db.category, self.category)
-        self.assertEqual(gig_in_db.company, self.company)
+        self.assertEqual(len(gig_in_db.categories.all()), 2)
+        self.assertEqual(gig_in_db.company, self._company)
+
+
+class GigStatTest(TestCase):
+    """
+    GigStat TestCase
+    """
+    def test_can_create_gig_stat_and_save_it(self):
+        gig_stat = GigStat()
+        gig_stat.views = 100
+        gig_stat.clicked_apply = 80
+        gig_stat.notified_users = 300
+        gig_stat.save()
+
+        # check it's saved with its attributes
+        gig_stats = GigStat.objects.all()
+        gig_stat_in_db = gig_stats[0]
+        self.assertEqual(len(gig_stats), 1)
+        self.assertEqual(gig_stat_in_db.views, 100)
+        self.assertEqual(gig_stat_in_db.clicked_apply, 80)
+        self.assertEqual(gig_stat_in_db.notified_users, 300)
