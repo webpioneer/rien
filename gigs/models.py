@@ -63,7 +63,7 @@ class Gig(Displayable, RichText):
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 15)
     longitude = models.CharField(max_length = 15)
-    relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
+    is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
                 for this opposition"),default = False)
     is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
         (i.e. telecommuting)"), default = False)
@@ -72,7 +72,7 @@ class Gig(Displayable, RichText):
     it here. If you've got great benefits, bonuses, paid trips to conferences, \
     free food, discounts, etc., talk it up."))
     is_filled = models.BooleanField(verbose_name = _("Filled"), default = False)
-    category = models.ForeignKey('Category')
+    categories = models.ManyToManyField('Category')
     company = models.ForeignKey('Company')
 
     class Meta:
@@ -80,4 +80,13 @@ class Gig(Displayable, RichText):
         verbose_name_plural = "Jobs"
 
 
+class GigStat(models.Model):
+    """ 
+    Stats about a given Gig
+    """
+    views = models.IntegerField(verbose_name = _("Number of Views"))
+    clicked_apply = models.IntegerField(verbose_name = _("Clicked Apply"))
+    notified_users = models.IntegerField(verbose_name = _("Notified Users"))
 
+    class Meta:
+        verbose_name = 'Job Stats'
