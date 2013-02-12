@@ -144,8 +144,14 @@ class GigModelTest(TestCase):
         gig.latitude = '41.87811360'
         gig.longitude = '-87.62979820'
         gig.is_relocation = True
+        gig.perks = 'Free food'
+        gig.how_to_apply = Gig.HOW_TO_APPLY_CHOICES[0][0]
+        if gig.how_to_apply == Gig.HOW_TO_APPLY_CHOICES[0][0]:
+            gig.via_email = 'contact@myemail.com'
+        elif gig.how_to_apply == Gig.HOW_TO_APPLY_CHOICES[0][1]:
+            gig.via_url = 'http://www.google.com'
+        gig.apply_instructions = 'Apply by email'
         gig.is_onsite = True
-        gig.perks = 'We provide these perks'
         gig.is_filled = False
         #gig.category = self.category
         gig.company = self._company
@@ -166,8 +172,11 @@ class GigModelTest(TestCase):
         self.assertEqual(gig_in_db.latitude, '41.87811360')
         self.assertEqual(gig_in_db.longitude, '-87.62979820')
         self.assertEqual(gig_in_db.is_relocation, True)
+        self.assertEqual(gig_in_db.perks, 'Free food')
+        self.assertEqual(gig_in_db.how_to_apply, Gig.HOW_TO_APPLY_CHOICES[0][0])
+        self.assertEqual(gig_in_db.via_email, 'contact@myemail.com')
+        self.assertEqual(gig_in_db.apply_instructions, 'Apply by email')
         self.assertEqual(gig_in_db.is_onsite, True)
-        self.assertEqual(gig_in_db.perks, 'We provide these perks')
         self.assertEqual(len(gig_in_db.categories.all()), 2)
         self.assertEqual(gig_in_db.company, self._company)
 
