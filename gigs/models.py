@@ -66,6 +66,10 @@ class Gig(Displayable, RichText):
     """
     Gig Model
     """
+    HOW_TO_APPLY_CHOICES = (
+        ('VIA_EMAIL','by Email'),
+        ('VIA_URL', 'via URL'),
+    )
     type = models.ForeignKey('GigType')
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
@@ -75,10 +79,16 @@ class Gig(Displayable, RichText):
                 for this opposition"),default = False)
     is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
         (i.e. telecommuting)"), default = False)
-    perks = models.TextField(verbose_name = _("Job Perks"), 
-    help_text = _("Sell your position! If you're willing to relocate, mention \
-    it here. If you've got great benefits, bonuses, paid trips to conferences, \
-    free food, discounts, etc., talk it up."))
+    perks = models.TextField(verbose_name = _("Job Perks"), blank = True, 
+        null = True, help_text = _("Sell your position! If you're willing \
+        to relocate, mention it here. If you've got great benefits, bonuses\
+        , paid trips to conferences, free food, discounts, etc., talk it up."))
+    how_to_apply = models.CharField(max_length = 15, choices = HOW_TO_APPLY_CHOICES,
+                    default = HOW_TO_APPLY_CHOICES[0][0], verbose_name = _('How to apply'))
+    via_email = models.EmailField(blank = True, null = True)
+    via_url = models.URLField(blank = True, null = True)
+    apply_instructions = models.TextField(null = True, blank = True,
+            verbose_name = _('Add instructions(optional)'))
     is_filled = models.BooleanField(verbose_name = _("Filled"), default = False)
     categories = models.ManyToManyField('Category')
     company = models.ForeignKey('Company')
