@@ -1,9 +1,13 @@
+import moneyed
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField
 from mezzanine.utils.models import upload_to
+
+from djmoney.models.fields import MoneyField
 
 class Category(Slugged):
     """
@@ -47,18 +51,22 @@ class Company(Displayable):
     class Meta:
         verbose_name_plural = _("Companies")
 
+class GigType(models.Model):
+    """
+    Gig Type 
+    """
+    type = models.CharField(max_length = 20)
+    description = models.CharField(max_length = 200)
+    price = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
+   
+    def __unicode__(self):
+        return self.type, self.price
+
 class Gig(Displayable, RichText):
     """
     Gig Model
     """
-    JOB_TYPES = (
-        ('FULLTIME', "Full-time $249"),
-        ('CONTRACT', "Contract $249"),
-        ('FREETIME', "Freelance $99"),
-        ("INTERNSHIP", "Internship $99"),
-    )
-    type = models.CharField(max_length = 15, verbose_name = _("Job type"),
-            choices = JOB_TYPES)
+    type = models.ForeignKey('GigType')
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 15)

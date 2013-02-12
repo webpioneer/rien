@@ -1,3 +1,5 @@
+from moneyed import Money, USD
+
 from django.test import TestCase
 from django.utils import timezone
 
@@ -6,6 +8,7 @@ from mezzanine.core.fields import FileField
 from gigs.models import Category
 from gigs.models import Company
 from gigs.models import Gig
+from gigs.models import GigType
 from gigs.models import GigStat
 
 class CategoryModelTest(TestCase):
@@ -71,6 +74,28 @@ class CompanyModelTest(TestCase):
         self.assertEquals(company_in_db.ip_address, '127.0.0.1')
 
 
+class GigTypeTest(TestCase):
+    """
+    Test for the Type of Gig
+    """
+    def test_create_gigtype_and_save_it(self):
+        # check you can create a type and save it
+        gig_type = GigType()
+        gig_type.type = 'Full-time'
+        gig_type.description = 'Salaried position, ...'
+        gig_type.price = Money(249, USD)
+    
+        # check it can be saved
+        gig_type.save()
+
+        # check it's saved with attributes
+        gig_types = GigType.objects.all()
+        gig_type_in_db = gig_types[0]
+        self.assertEquals(len(gig_types), 1)
+        self.assertEquals(gig_type_in_db.type, 'Full-time')
+        self.assertEquals(gig_type_in_db.description, 'Salaried position, ...')
+        self.assertEquals(gig_type_in_db.price, Money(249, USD))
+
 class GigModelTest(TestCase):
     """
     Test for Gig model
@@ -79,6 +104,7 @@ class GigModelTest(TestCase):
         self._category1 = self._create_category()
         self._category2 = self._create_category()
         self._company = self._create_company()
+        self._gig_type = self._create_gig_type()
 
     def _create_category(self):
         category = Category()
@@ -99,11 +125,19 @@ class GigModelTest(TestCase):
         company.ip_address = '127.0.0.1'
         company.save()
         return company
+    
+    def _create_gig_type(self):
+        gig_type = GigType()
+        gig_type.type = 'Full-time'
+        gig_type.description = 'Salaried position, ...'
+        gig_type.price = Money(249, USD)
+        gig_type.save()
+        return gig_type
 
     def test_can_create_a_gig_and_save_it(self):
         #create a gig
         gig = Gig()
-        gig.type = 'Full-time $249'
+        gig.type = self._gig_type
         gig.title = ' Python / Django developer'
         gig.content = ' This is the content'
         gig.location = ' Chicago, California, usa'
@@ -125,7 +159,7 @@ class GigModelTest(TestCase):
         gigs_in_db = Gig.objects.all()
         gig_in_db = gigs_in_db[0]
         self.assertEquals(len(gigs_in_db), 1)
-        self.assertEquals(gig_in_db.type, 'Full-time $249')
+        self.assertEquals(gig_in_db.type, self._gig_type)
         self.assertEquals(gig_in_db.title, ' Python / Django developer')
         self.assertEqual(gig_in_db.content, ' This is the content')
         self.assertEqual(gig_in_db.location, ' Chicago, California, usa')
