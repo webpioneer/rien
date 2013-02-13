@@ -1,5 +1,6 @@
 import moneyed
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -41,15 +42,22 @@ class Company(Displayable):
     title_is_confidential = models.BooleanField(default = False,
                     verbose_name = _("Confidential"))
     url = models.URLField(verbose_name = _("Company URL"))
+    email = models.EmailField()
     elevator_pitch = models.TextField(verbose_name = _("Elevator pitch"))
     # figure out upload_to function and its 2 arguments
     profile_picture = FileField(verbose_name = _('Profile Picture'),
         upload_to = 'company_logos', format = 'Image',
         max_length=255, null=True, blank=True)                        
     ip_address = models.GenericIPAddressField()
+    user = models.OneToOneField(User) 
 
     class Meta:
         verbose_name_plural = _("Companies")
+
+    def save(self, *args, **kwargs):
+        company_password = User.objects.make_random_password()
+        self.user = User.objects.create_user(username = self.title, email = self.email, password = company_password)
+        super(Company, self).save(*args, **kwargs)
 
 class GigType(models.Model):
     """

@@ -1,5 +1,6 @@
 from moneyed import Money, USD
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
@@ -38,12 +39,9 @@ class CompanyModelTest(TestCase):
     """
     Test for Company model (Displayable, Ownable)
     """
-    def _create_user(self):
-        pass
-
+    
     def test_can_create_company_and_save_it(self):
         #create user
-        self._create_user()
         #create company
         company = Company()
         company.type = 'Startup'
@@ -55,12 +53,9 @@ class CompanyModelTest(TestCase):
         company.profile_picture = 'company_logos/logo.png'
         # TO DO : enable for ip_v6 
         company.ip_address = '127.0.0.1'
-        # create user
-        #self._create_user()
-        #company.user = user
+        # a user is created along through the Company.save()
         #check save
         company.save()
-
         #check it's in db and has the right attributes
         companies = Company.objects.all()
         company_in_db = companies[0]
@@ -72,6 +67,8 @@ class CompanyModelTest(TestCase):
         self.assertEquals(company_in_db.elevator_pitch, 'elevator pitch')
         self.assertEquals(company_in_db.profile_picture.path, 'company_logos/logo.png')
         self.assertEquals(company_in_db.ip_address, '127.0.0.1')
+        self.assertEqual(company_in_db.user, company.user)
+        self.assertEqual(company_in_db.user.email, company.email)
 
 
 class GigTypeTest(TestCase):
@@ -116,6 +113,7 @@ class GigModelTest(TestCase):
 
     def _create_company(self):
         company = Company()
+        company.title = 'Alpha'
         company.type = 'Startup'
         company.url = 'http://www.alpha.com'
         company.elevator_pitch = 'Elevator pitch content'
