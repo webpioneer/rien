@@ -21,7 +21,7 @@ urlpatterns = patterns("",
     ("^shop/", include("cartridge.shop.urls")),
     url("^account/orders/$", "cartridge.shop.views.order_history",
         name="shop_order_history"),
-
+    ('^', include("gigs.urls")),
      # We don't want to presume how your homepage works, so here are a
     # few patterns you can use to set it up.
 
