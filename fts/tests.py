@@ -15,7 +15,7 @@ class NavigateTestCase(LiveServerTestCase):
         body = self.browser.find_element_by_tag_name('body')
         return body
     
-class PostJobTest(NavigateTestCase):
+class GigTest(NavigateTestCase):
    
     def test_post_a_job(self):
         #navigate to post_job
