@@ -20,6 +20,9 @@ class Category(Slugged):
     class Meta:
         verbose_name = _("Job Category")
         verbose_name_plural = _("Categories")
+
+    def __unicode__(self):
+        return ("%s %s") % (self.title, self.is_custom)
     
     @models.permalink
     def get_absolute_url(self):
