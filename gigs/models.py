@@ -68,7 +68,7 @@ class GigType(models.Model):
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
    
     def __unicode__(self):
-        return self.type, self.price
+        return ("%s %s") % (self.type, self.price)
 
 class Gig(Displayable, RichText):
     """
