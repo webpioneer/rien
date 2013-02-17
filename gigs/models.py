@@ -81,7 +81,7 @@ class Gig(Displayable, RichText):
         ('VIA_EMAIL','by Email'),
         ('VIA_URL', 'via URL'),
     )
-    type = models.ForeignKey('GigType')
+    type = models.ForeignKey('GigType', verbose_name = _('Job Type'))
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 15)
