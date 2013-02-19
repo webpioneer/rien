@@ -8,5 +8,6 @@ class CategoryAdmin(admin.ModelAdmin):
 class GigTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'description', 'price',)
 
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(GigType, GigTypeAdmin)
