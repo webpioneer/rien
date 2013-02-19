@@ -281,7 +281,6 @@ ROOT_URLCONF = "%s.urls" % PROJECT_DIRNAME
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
 
-
 ################
 # APPLICATIONS #
 ################
@@ -290,6 +289,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.formtools",
     "django.contrib.redirects",
     "django.contrib.sessions",
     "django.contrib.sites",
