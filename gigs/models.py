@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.core.models import Slugged, Displayable, RichText
-from mezzanine.core.fields import FileField
+from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
 
 from djmoney.models.fields import MoneyField
@@ -15,14 +15,14 @@ class Category(Slugged):
     Job Category
     """
     pub_date = models.DateTimeField(auto_now_add = True)
-    is_custom = models.BooleanField(default = False)
+    is_custom = models.BooleanField()
 
     class Meta:
         verbose_name = _("Job Category")
         verbose_name_plural = _("Categories")
 
     def __unicode__(self):
-        return ("%s %s") % (self.title, self.is_custom)
+        return ("%s") % (self.title)
     
     @models.permalink
     def get_absolute_url(self):
@@ -41,13 +41,22 @@ class Company(Displayable):
         ('EDUCATIONAL_INSTITUTION', "Educational Institution"),
         ('NON_PROFIT', "Non-profit"),
     )
-    type = models.CharField(max_length = 200, choices = COMPANY_TYPES)
-    title_is_confidential = models.BooleanField(default = False,
-                    verbose_name = _("Confidential"))
+    PROFILE_PICTURE_SOURCE = (
+        ('NO_PICTURE', _('No picture')),
+        ('TWITTER_PICTURE', _('Use Twitter profile picture (recommended)')),
+        ('OWN_PICTURE', _('Upload a picture')),
+    )
+    
+    type = models.CharField(max_length = 200, choices = COMPANY_TYPES,
+                    verbose_name = _('Company type'))
+    title_is_confidential = models.BooleanField(verbose_name = _("Confidential"))
     url = models.URLField(verbose_name = _("Company URL"))
     email = models.EmailField()
-    elevator_pitch = models.TextField(verbose_name = _("Elevator pitch"))
+    elevator_pitch = models.CharField(max_length = 200, verbose_name = _("Elevator pitch"),
+        help_text=_("What s your company about (i.e. tag line)"))
     # figure out upload_to function and its 2 arguments
+    profile_picture_choice = models.CharField(max_length = 60, 
+        choices = PROFILE_PICTURE_SOURCE, default = PROFILE_PICTURE_SOURCE[0][1])
     profile_picture = FileField(verbose_name = _('Profile Picture'),
         upload_to = 'company_logos', format = 'Image',
         max_length=255, null=True, blank=True)                        
@@ -59,7 +68,8 @@ class Company(Displayable):
 
     def save(self, *args, **kwargs):
         company_password = User.objects.make_random_password()
-        self.user = User.objects.create_user(username = self.title, email = self.email, password = company_password)
+        print company_password
+        self.user = User.objects.create_user(username = self.email, email = self.email, password = company_password)
         super(Company, self).save(*args, **kwargs)
 
 class GigType(models.Model):
@@ -69,27 +79,31 @@ class GigType(models.Model):
     type = models.CharField(max_length = 20)
     description = models.CharField(max_length = 200)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-   
+
     def __unicode__(self):
         return ("%s %s") % (self.type, self.price)
 
-class Gig(Displayable, RichText):
+class Gig(Displayable):
     """
     Gig Model
+    Gig(job_type, location, latitude, longitude, is_relocation, is_onsite, descr,
+        perks, how_to_apply, via_email, via_url. apply_instructions, is_filled,
+        categories, company)
     """
     HOW_TO_APPLY_CHOICES = (
         ('VIA_EMAIL','by Email'),
         ('VIA_URL', 'via URL'),
     )
-    type = models.ForeignKey('GigType', verbose_name = _('Job Type'))
+    job_type = models.ForeignKey('GigType', verbose_name = _('Job Type'))
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 15)
     longitude = models.CharField(max_length = 15)
     is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
-                for this opposition"),default = False)
+                for this opposition"))
     is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
-        (i.e. telecommuting)"), default = False)
+        (i.e. telecommuting)"))
+    descr = RichTextField(verbose_name = _('Description'))
     perks = models.TextField(verbose_name = _("Job Perks"), blank = True, 
         null = True, help_text = _("Sell your position! If you're willing \
         to relocate, mention it here. If you've got great benefits, bonuses\
@@ -100,10 +114,10 @@ class Gig(Displayable, RichText):
     via_url = models.URLField(blank = True, null = True)
     apply_instructions = models.TextField(null = True, blank = True,
             verbose_name = _('Add instructions(optional)'))
-    is_filled = models.BooleanField(verbose_name = _("Filled"), default = False)
+    is_filled = models.BooleanField(verbose_name = _("Filled"))
     categories = models.ManyToManyField('Category')
     company = models.ForeignKey('Company')
-
+    
     class Meta:
         verbose_name = "Gig"
         verbose_name_plural = "Jobs"
