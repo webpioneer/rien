@@ -20,7 +20,7 @@ form p label{
     width:30%;
     color:#666;
     font-size:12px;
-    margin-left:30%;
+    /* margin-left:30%; */
     text-shadow:0 1px 0 #FFFFFF;
     }
 form input, form textarea{
@@ -31,123 +31,85 @@ form input, form textarea{
     }
 </style>
 {% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+    show_optional();
+
+    $("#id_how_to_apply").change(function(){
+        var how_to_apply = $(this).val();
+        if(how_to_apply == 'VIA_EMAIL') {
+            $("#via_url").hide();
+            $("#via_email").show();
+        }
+        if(how_to_apply == 'VIA_URL') {
+            $("#via_email").hide();
+            $("#via_url").show();
+        }
+    }); 
+    function show_optional(){
+        function hide_optional(){
+            $('a[id^="add"] ~ textarea').hide();
+            $('a[id^="add"] ~ a').hide(); 
+            $('a[id^="add"] ~ span').hide();
+        }
+        hide_optional();
+        var remove_icon;        
+        $('a[id^="add"]').click(function(e){
+            e.preventDefault();
+            $(this).parent().children("textarea").show();
+            remove_icon = $(this).parent().children('a[id^="remove"]');
+            remove_icon.show("slow");
+            $(this).parent().children("span").show();
+            console.log(remove_icon);
+            remove_icon.click(function(e){
+                e.preventDefault();
+                hide_optional();
+            });
+        });
+    }// end show_optional
+
+}); // end document.ready
+</script>
+<script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript" src="/static/mezzanine/js/tinymce_setup.js"></script>
+{% endblock %}
 
 {% block main %}
-<fieldset>
-    <div class="page-header">
-    <h1>{{ title }}</h1>
+<fieldset class="well">
+    <div class="">
+    <h3>{{ title }}</h3>
     </div>
-        <form name="post_job_form" method="post" action="{% url 'post_job' %}">
-            {% comment %}
-            {% fields_for post_job_form %}
-            {% endcomment %}
-            <fieldset>
+        <form name="post_job_form" method="post" action="{% url 'post_job' %}">{% csrf_token %}
+            {{request.POST.submit}}
+            {% if not request.user.is_authenticated and not request.user.company%}
             <div class="page-header">
-                <p>
-                <label for="id_jobtype">Job Type</label>
-                    {% for gig_type in gig_types %}
-                    <p>
-                        <label class ="" for="type_{{gig_type.id}}">{{ gig_type.type}}</label>
-                        <input class="span5" type="radio" value="{{gig_type.id}}" id="type_{{gig_type.id}}" />
-                        <span class="help-block">{{ gig_type.description }}</span>
-                    </p>
-                    {% endfor %}
+                <p class="control-group">
+                    <label class="span2" for="">Have an account?</label>
+                    <a class="btn btn-success">Sign in</a> 
+                    Don't have one? No worries, you'll create one in a minute.
                 </p>
             </div>
-            <div class="page-header">
-                    <p class="control-group {% if post_job_form.categories.errors %}error{% endif %}">
-                        <label class="span2" for="id_categories">Categories</label>
-                        <select class="span4" multiple="multiple" name="categories" id="id_categories">
-                             <option value="1">UI Design (Visual design, user experience, ...)</option>
-                             <option value="2">Back-end developement</option>
-                        </select>
-                        {% if post_job_form.categories.errors %}
-                        <span class="help-inline">
-                        {% for e in post_job_form.categories.errors %}                                                                   
-                            {{e}}                                                                                                                                       {% endfor %}                                                                                                                                       </span>
-                                                                                                                                                                     {% endif %}
-                    <br /><span class="help_text"></span>                                                                                                                                        </p>
-            </div>
-            <div class="page-header">
-                    <p class="control-group {% if post_job_form.title.errors %}error{% endif %}">
-                        <label class="span2" for="id_title">{{ job_post_form.title.label }}</label>
-                        <input id="id_title" class="span5" type="text" name="title" maxlength="255" />   
-                        {% if post_job_form.title.errors %}
-                            <span class="help-inline">
-                            {% for e in post_job_form.title.errors %}
-                                {{e}}
-                            {% endfor %}
-                            </span>
-                        {% endif %}
-                        <br /><span class="help-block"></span>                                                                                                 </p>
-            </div>
-            <div class="page-header">
-                    <p class="control-group {% if post_job_form.location.errors %}error{% endif %}">
-                        <label class="span2" for="id_location">Job Location</label>
-                        <input class="span5" id="id_location" type="text" name="location" maxlength="200" />
-                        <br /><span class="help_text">Examples: San Francisco, CA; Seattle; Anywhere</span>
-                        {% if post_job_form.categories.errors %}
-                            <span class="help-inline">
-                            {% for e in post_job_form.categories.errors %}
-                                {{e}}
-                            {% endfor %}
-                            </span>
-                        {% endif %}
-                    </p>
-                    <p>
-                        <input type="checkbox" name="is_relocation" id="id_is_relocation" />
-                        <label for="id_is_relocation">Relocation assistance offered for this opposition</label>   
-                    </p>
-            </div>
-            <div class="page-header">
-                    <p class="control-group {% if post_job_form.descr.errors %}error{% endif %}">
-                        <label class="span2" for="id_descr">Description</label>
-                        <textarea class="" id="id_descr" rows="40" cols="40" name="descr" class="mceEditor"></textarea>                                        <br /><span class="help-block"></span>
-                    </p>                                                     
-            </div>
-            <div class="page-header">
-                    <p>
-                        <label class="span2" for="id_perks">Job Perks</label>
-                        <textarea id="id_perks" rows="10" cols="40" name="perks"></textarea>                                                                        <br /><span class="help-block">Sell your position! If you&#39;re willing         to relocate, mention it here. If you&#39;ve got great benefits, bonuses        , paid trips to conferences, free food, discounts, etc., talk it up.</span>
-                    </p>                                                                                                                                 </div>
-             <div class="page-header">
-                    <p>
-                    <label for="id_how_to_apply">How to apply</label>
-                    <select name="how_to_apply" id="id_how_to_apply">
-                        <option value="VIA_EMAIL" selected="selected">by Email</option>
-                        <option value="VIA_URL">via URL</option>
-                    </select>
-                    <br /><span class="help-block"></span>                                                                                                    </p>
-            
-            {% for field in post_job_form %}
-                <div class="page-header">
-                <p>
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <span class="help-inline">
-                        {% for e in field.errors %}
-                            {% if not forloop.first %} / {% endif %}{{ e }}
-                        {% endfor %}
-                        </span>
-                    {% else %}
-                        <br /><span class="help-block">{{ field.help_text }}</span>
-                    {% endif %}
-                </p>
-                </div>
-            {% endfor %}
-            </fieldset>
-            
-            <div class="page-header">
-                <h3>{{ company_information }}</h3>  
-            </div>
-            {% fields_for company_form %}
+            {% endif %}
+            {% include 'gigs/includes/post_job_form.html' %}
+            {% if not request.user.is_authenticated and not request.user.company%}
+                {% include 'gigs/includes/company_form.html' %}
+            {% endif %}
                 <div class="form-actions">
-                        <input class="btn btn-primary btn-large" type="submit" value="{{ title }}">
+                        <input class="btn btn-success btn-large pull-right" type="submit" name="submit" value="Preview your listing">
                 </div>
         </form>
 </fieldset>
 
 {% endblock %}
 
+{% block right_panel %}
+100% Satisfaction Guaranteed.
+If you're not 100% satisfied with the results from your listing, request a full refund within 30 days after your listing expires. No hassle. Easy peasy.
+
+See also our frequently asked questions.
+<div class="page-header">
+<img src="{{STATIC_URL}}img/test" />
+</div>
+{% endblock %}
 {% block title_bread %}{% endblock %}
