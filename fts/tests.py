@@ -23,4 +23,16 @@ class GigTest(NavigateTestCase):
         #user fill out the form and preview it
         body = self.browser.find_element_by_tag_name('body')
         self.assertIn('Create Your Job Listing', body.text)
+        # select a job type
+        #type_chosen = self.browser.find_element_by_css_selector(
+        #    "input[value='1']"
+        #)
+        #type_chosen.click()
+        # select a job category
+        category_chosen = self.browser.find_elements_by_css_selector(
+            "option[value='1']"
+        )
+        category_chosen.click()
+        # fill out the title
+        title = self.browser.find_element_by_id("id_title")
 
