@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from mezzanine.core.fields import FileField
 
+from gigs.forms import PostJobForm
 from gigs.models import Category
 from gigs.models import Company
 from gigs.models import Gig
@@ -50,6 +51,7 @@ class CompanyModelTest(TestCase):
         company.title_is_confidential = False
         company.url = 'http://www.google.com'
         company.elevator_pitch = 'elevator pitch'
+        company.profile_picture_choice = 'OWN_PICTURE'
         company.profile_picture = 'company_logos/logo.png'
         # TO DO : enable for ip_v6 
         company.ip_address = '127.0.0.1'
@@ -65,6 +67,7 @@ class CompanyModelTest(TestCase):
         self.assertEquals(company_in_db.title_is_confidential, False)
         self.assertEquals(company_in_db.url, 'http://www.google.com')
         self.assertEquals(company_in_db.elevator_pitch, 'elevator pitch')
+        self.assertEquals(company_in_db.profile_picture_choice, 'OWN_PICTURE')
         self.assertEquals(company_in_db.profile_picture.path, 'company_logos/logo.png')
         self.assertEquals(company_in_db.ip_address, '127.0.0.1')
         self.assertEqual(company_in_db.user, company.user)
@@ -132,12 +135,16 @@ class GigModelTest(TestCase):
         gig_type.save()
         return gig_type
 
+    def test_gig_type_in_db(self):
+        self.assertEqual(GigType.objects.count(), 1)
+        self.assertEqual(GigType.objects.all()[0].type, 'Full-time') 
+    
     def test_can_create_a_gig_and_save_it(self):
         #create a gig
         gig = Gig()
-        gig.type = self._gig_type
+        gig.job_type = GigType.objects.all()[0]
         gig.title = ' Python / Django developer'
-        gig.content = ' This is the content'
+        gig.descr = ' This is the content'
         gig.location = ' Chicago, California, usa'
         gig.latitude = '41.87811360'
         gig.longitude = '-87.62979820'
@@ -163,9 +170,9 @@ class GigModelTest(TestCase):
         gigs_in_db = Gig.objects.all()
         gig_in_db = gigs_in_db[0]
         self.assertEquals(len(gigs_in_db), 1)
-        self.assertEquals(gig_in_db.type, self._gig_type)
+        self.assertEquals(gig_in_db.job_type, self._gig_type)
         self.assertEquals(gig_in_db.title, ' Python / Django developer')
-        self.assertEqual(gig_in_db.content, ' This is the content')
+        self.assertEqual(gig_in_db.descr, ' This is the content')
         self.assertEqual(gig_in_db.location, ' Chicago, California, usa')
         self.assertEqual(gig_in_db.latitude, '41.87811360')
         self.assertEqual(gig_in_db.longitude, '-87.62979820')
@@ -197,3 +204,70 @@ class GigStatTest(TestCase):
         self.assertEqual(gig_stat_in_db.views, 100)
         self.assertEqual(gig_stat_in_db.clicked_apply, 80)
         self.assertEqual(gig_stat_in_db.notified_users, 300)
+
+class CompanyFormTest(TestCase):
+    pass
+
+
+class PostJobFormTest(TestCase):
+    """
+    PostJobForm TestCase
+    """
+    def setUp(self):
+        self._GIG_TYPES = (
+            ('Full Time $249', 'Salaried positions ...', Money(249, USD)),
+            ('Contract $249', 'Temporary ...', Money(249, USD)),
+        )
+        self._CATEGORIES = (
+            ('UI Design'),
+            ('Front-end ...'),
+            ('Information Architecture ...'),
+        )
+    
+    def _set_up_gig_types(self):
+        for gig_type in self._GIG_TYPES:
+            gig_type_object = GigType(type = gig_type[0], 
+                        description = gig_type[1], price = gig_type[2])
+            gig_type_object.save()
+    
+    def _set_up_categories(self):
+        for category in self._CATEGORIES:
+            category_object = Category(title = category.title)
+            category_object.save()
+
+    def test_post_job(self):
+        # setup Gig types 
+        self._set_up_gig_types()
+        self.assertEqual(GigType.objects.count(), 2)
+        # setup Categories
+        self._set_up_categories()
+        self.assertEqual(Category.objects.count(), 3)
+        post_job_form = PostJobForm()
+        post_job_form.job_type = GigType.objects.all()[0]
+        post_job_form.category = Category.objects.filter(
+                title__icontains = 'UI')[0]
+        post_job_form.title = 'Python / Django developer'
+        post_job_form.location = 'Chicago IL, USA'
+        # latitude and longitude
+        # is_relocation is False by default
+        # is_onsite is False by default 
+        post_job_form.descr = 'Python description'
+        # perks is optional
+        post_job_form.how_to_apply = 'VIA_EMAIL'
+        post_job_form.via_email = 'jobs@alpha.com'
+        # apply_instructions is optional
+        # print post_job_form
+        # self.assertTrue(post_job_form.is_valid())
+        post_job_form.save()
+    
+
+class PostJobViewTest(TestCase):
+    """
+    post_job view test case
+    """
+    def test_post_job_view(self):
+        #response = self.client.get('/post_job')
+        #print response
+        #self.assertTemplateUsed(response, 'gigs/post_job.html')
+        #self.assertIn('hi', response.content)
+        pass
