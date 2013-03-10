@@ -38,6 +38,7 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                     'categories' : categories,
                 }
                 print context
+                return render(request, template_name, context)
         elif 'Continue to cart' == request.POST['submit']:
             print 'hello'
             company = request.session['company']
