@@ -1,0 +1,97 @@
+<div id='company-information'> 
+            <div class="page-header">
+                <h3>{{ company_information }}</h3>  
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_type">{{ company_form.type.label}}</label>
+                    {{ company_form.type}}
+                    {% if company_form.type.errors %}
+                    <br /><label class="span2"></label>
+                    <span class="help-block error">
+                        {% for error in company_form.type.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_title">{{ company_form.title.label}}</label>
+                    {{ company_form.title }}
+                    {{ company_form.title_is_confidential }} {{ company_form.title_is_confidential.label }}
+                    <br />
+                    {% if company_form.title.errors %}
+                    <label class="span2"></label>
+                    <span class="help-block error">
+                        {% for error in company_form.title.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_url">{{ company_form.url.label}}</label>
+                    <div class="input-prepend">
+                        <span class="add-on">http://</span>
+                        <input id="id_url" type="text" name="url" maxlength="200" value="{% if company_form.url.value %}{{ company_form.url.value }}{% else %}{% endif %}" />
+                    </div>
+                    {% if company_form.url.errors %}
+                    <label class="span2"></label>
+                    <span class="help-block error">
+                    {% for error in company_form.title.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                <label class="span2" for="id_email">{{ company_form.email.label}}</label>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-envelope"></i></span>
+                    <input id="id_email" type="text" name="email" maxlength="75" placeholder="company@email.com" value="{% if company_form.email.value %}{{ company_form.email.value }}{% else %}{% endif %}" />
+                </div>
+                {% if company_form.email.errors %}
+                <label class="span2"></label>
+                <span class="help-block error">
+                {% for error in company_form.email.errors %}
+                    {{ error }}
+                {% endfor %}
+                </span>
+                {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_elevator_pitch">{{ company_form.elevator_pitch.label}}</label>
+                    <input id="id_elevator_pitch" type="text" name="elevator_pitch" maxlength="200" value="{% if company_form.elevator_pitch.value %}{{ company_form.elevator_pitch.value }}{% else %}{% endif%}" />
+                    <br /><label class="span2"></label>
+                    {% if company_form.elevator_pitch.errors %}
+                    <span class="help-block error">
+                    {% for error in company_form.elevator_pitch.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
+                    <span class="help_text">{{ company_form.elevator_pitch.help_text }}</span>
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_profile_picture">{{ company_form.profile_picture.label }}</label>
+                    {{company_form.profile_picture_choice }} 
+                    <span class="pull-right"><img src="{{STATIC_URL}}img/employer_default.png" width="50" height="50" /></span>
+                    <p class="well" style="display:none">
+                    <label class="span2" for="id_twitter_picture">Company Twitter</label>
+                    <span id="id_twitter_picture" class="input-prepend input-append">
+                        <span class="add-on">@</span>
+                        <input class="span2" id="id_twitter" type="text" name="twitter" maxlength="200" />
+                        <button class="btn btn-primary" type="button">Get <i class="">Twitter</i> picture</button>
+                    </span>
+                    </p>
+                    <br /><input id="id_profile_picture" type="file" name="profile_picture" />
+                </p>
+            </div>
+            </div> <!-- end of company information -->
