@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from cartridge.shop.models import Product
+
 from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
@@ -117,6 +119,7 @@ class Gig(Displayable):
     is_filled = models.BooleanField(verbose_name = _("Filled"))
     categories = models.ManyToManyField('Category')
     company = models.ForeignKey('Company')
+    product = models.OneToOneField(Product)
     
     class Meta:
         verbose_name = "Gig"
