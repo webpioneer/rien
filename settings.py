@@ -22,7 +22,7 @@
 
 # If True, the checkout process has a final confirmation step before
 # completion.
-# SHOP_CHECKOUT_STEPS_CONFIRMATION = True
+SHOP_CHECKOUT_STEPS_CONFIRMATION = False
 
 # Controls the formatting of monetary values accord to the locale
 # module in the python standard library. If an empty string is
@@ -52,7 +52,7 @@
 #     (1, "Unprocessed"),
 #     (2, "Processed"),
 # )
-
+SHOP_USE_VARIATIONS = False
 # Sequence of value/name pairs for types of product options,
 # eg Size, Colour.
 # SHOP_OPTION_TYPE_CHOICES = (
@@ -344,11 +344,10 @@ MIDDLEWARE_CLASSES = (
     "mezzanine.core.middleware.AdminLoginInterfaceSelectorMiddleware",
     "mezzanine.core.middleware.SitePermissionMiddleware",
     # Uncomment the following if using any of the SSL settings:
-    # "mezzanine.core.middleware.SSLRedirectMiddleware",
+    "mezzanine.core.middleware.SSLRedirectMiddleware",
     "mezzanine.pages.middleware.PageMiddleware",
     "mezzanine.core.middleware.FetchFromCacheMiddleware",
 )
-
 
 # Store these package names here as they may change in the future since
 # at the moment we are using custom forks of them.
