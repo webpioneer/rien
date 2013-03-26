@@ -310,6 +310,8 @@ INSTALLED_APPS = (
     'gigs',
     'fts',
 )
+# Company Settings
+COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
 
 # List of processors used by RequestContext to populate the context.
 # Each one should be a callable that takes the request object as its
@@ -348,6 +350,13 @@ MIDDLEWARE_CLASSES = (
     "mezzanine.pages.middleware.PageMiddleware",
     "mezzanine.core.middleware.FetchFromCacheMiddleware",
 )
+
+# Sequence of URL prefixes that will be forced to run over
+# SSL when ``SSL_ENABLED`` is ``True``. i.e.
+# ('/admin', '/example') would force all URLs beginning with
+# /admin or /example to run over SSL. Defaults to:
+#
+SSL_FORCE_URL_PREFIXES = ("/admin", "/account")
 
 # Store these package names here as they may change in the future since
 # at the moment we are using custom forks of them.
