@@ -3,6 +3,7 @@ import moneyed
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+import settings
 
 from cartridge.shop.models import Product
 
@@ -11,6 +12,8 @@ from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
 
 from djmoney.models.fields import MoneyField
+
+
 
 class Category(Slugged):
     """
@@ -30,6 +33,9 @@ class Category(Slugged):
     def get_absolute_url(self):
         return ('gigs_list_category',(),{'slug':self.slug})
 
+
+COMPANY_LOGO_DEFAULT = getattr(settings, 'COMPANY_LOGO_DEFAULT', 'static/media/company_logos/employer_default.png')
+
 class Company(Displayable):
     """
     Company Model
@@ -48,7 +54,7 @@ class Company(Displayable):
         ('TWITTER_PICTURE', _('Use Twitter profile picture (recommended)')),
         ('OWN_PICTURE', _('Upload a picture')),
     )
-    
+    company_name = models.CharField(_('Company name'), max_length = 500)
     type = models.CharField(max_length = 200, choices = COMPANY_TYPES,
                     verbose_name = _('Company type'))
     title_is_confidential = models.BooleanField(verbose_name = _("Confidential"))
@@ -59,9 +65,12 @@ class Company(Displayable):
     # figure out upload_to function and its 2 arguments
     profile_picture_choice = models.CharField(max_length = 60, 
         choices = PROFILE_PICTURE_SOURCE, default = PROFILE_PICTURE_SOURCE[0][1])
-    profile_picture = FileField(verbose_name = _('Profile Picture'),
-        upload_to = 'company_logos', format = 'Image',
-        max_length=255, null=True, blank=True)                        
+    #profile_picture = FileField(verbose_name = _('Profile Picture'),
+    #    upload_to = 'company_logos', format = 'Image',
+    #    max_length=255, null=True, blank=True)   
+    profile_picture = models.ImageField(verbose_name= _('Profile Picture'),
+        upload_to = 'company_logos', max_length=255,
+        null = True, blank = True, default = COMPANY_LOGO_DEFAULT)                     
     ip_address = models.GenericIPAddressField()
     user = models.OneToOneField(User) 
 
@@ -71,8 +80,12 @@ class Company(Displayable):
     def save(self, *args, **kwargs):
         company_password = User.objects.make_random_password()
         print company_password
-        self.user = User.objects.create_user(username = self.email, email = self.email, password = company_password)
+        self.user = User.objects.create_user(username = self.email, email = self.email,
+         password = company_password)
         super(Company, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return ("{0} {1} {2}").format(self.title, self.type, self.profile_picture)
 
 class GigType(models.Model):
     """
@@ -85,7 +98,7 @@ class GigType(models.Model):
     def __unicode__(self):
         return ("%s %s") % (self.type, self.price)
 
-class Gig(Displayable):
+class Gig(Product):
     """
     Gig Model
     Gig(job_type, location, latitude, longitude, is_relocation, is_onsite, descr,
@@ -99,13 +112,12 @@ class Gig(Displayable):
     job_type = models.ForeignKey('GigType', verbose_name = _('Job Type'))
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
-    latitude = models.CharField(max_length = 15)
-    longitude = models.CharField(max_length = 15)
+    latitude = models.CharField(max_length = 25)
+    longitude = models.CharField(max_length = 25)
     is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
                 for this opposition"))
     is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
         (i.e. telecommuting)"))
-    descr = RichTextField(verbose_name = _('Description'))
     perks = models.TextField(verbose_name = _("Job Perks"), blank = True, 
         null = True, help_text = _("Sell your position! If you're willing \
         to relocate, mention it here. If you've got great benefits, bonuses\
@@ -117,7 +129,7 @@ class Gig(Displayable):
     apply_instructions = models.TextField(null = True, blank = True,
             verbose_name = _('Add instructions(optional)'))
     is_filled = models.BooleanField(verbose_name = _("Filled"))
-    categories = models.ManyToManyField('Category')
+    gig_categories = models.ManyToManyField('Category')
     company = models.ForeignKey('Company')
     product = models.OneToOneField(Product)
     
