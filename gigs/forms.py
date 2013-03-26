@@ -17,18 +17,12 @@ class PostJobForm(forms.ModelForm):
         model = Gig
         
         fields = [
-            'job_type', 'categories', 'title', 'location', 'latitude', 
+            'job_type', 'gig_categories', 'title', 'location', 'latitude', 
             'longitude', 'is_relocation',
-            'is_onsite', 'descr', 'perks', 'how_to_apply', 'via_email',
+            'is_onsite', 'content', 'perks', 'how_to_apply', 'via_email',
             'via_url', 'apply_instructions',
         ]
  
-    #def __init__(self, post_data):
-    #    super(PostJobForm, self).__init__(self, post_data)
-    #    self.fields['type'].choices = [ (type.id, type.type) 
-    #                                            for type in GigType.objects.all() ]
-    #    self.fields['categories'].choices = [ (category.id, category.title) 
-    #                                           for category in Category.objects.all() ]
     def get_gig_object(self):
         """
         Return a new (unsaved) Gig object based on the info in this form.
@@ -50,7 +44,6 @@ class PostJobForm(forms.ModelForm):
         """
         Returns the dict of data to be used to create a Gig
         """
-        posted_job_type = self.cleaned_data['job_type']
          
         return dict(
             job_type = self.cleaned_data['job_type'],
@@ -60,7 +53,7 @@ class PostJobForm(forms.ModelForm):
             longitude = self.cleaned_data['longitude'],
             is_relocation = self.cleaned_data['is_relocation'],
             is_onsite = self.cleaned_data.get('is_onsite', True),
-            descr = self.cleaned_data['descr'],
+            content = self.cleaned_data['content'],
             perks = self.cleaned_data.get('perks',''),
             how_to_apply = self.cleaned_data['how_to_apply'],
             via_email = self.cleaned_data.get('via_email', ''),
@@ -77,12 +70,12 @@ class CompanyForm(forms.ModelForm):
     """
     Model form for Company model
     """
-    title = forms.CharField(max_length = 200, label = _('Company name'))
+    profile_picture = forms.ImageField(required = False, label = _('Profile Picture'))
     
     class Meta:
         model = Company
         fields = (
-            'type', 'title', 'title_is_confidential', 'url', 'email',
+            'type', 'company_name', 'title_is_confidential', 'url', 'email',
             'elevator_pitch', 'profile_picture_choice', 'profile_picture',
             )
     
@@ -96,12 +89,11 @@ class CompanyForm(forms.ModelForm):
 
         return dict(
             type = self.cleaned_data['type'],
-            title = self.cleaned_data['title'],
+            company_name = self.cleaned_data['company_name'],
             url = self.cleaned_data['url'],
             email = self.cleaned_data['email'],
             elevator_pitch = self.cleaned_data['elevator_pitch'],
             profile_picture_choice = self.cleaned_data['profile_picture_choice'],
-            profile_picture = self.cleaned_data['profile_picture'],
         )
 
     def get_company_object(self):
