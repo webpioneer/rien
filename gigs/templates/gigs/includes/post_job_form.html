@@ -26,17 +26,17 @@
             </div>
             <div class="page-header">
                     <p class="control-group">
-                        <label class="span2" for="id_categories">Categories</label>
+                        <label class="span2" for="id_gig_categories">Categories</label>
                         {% comment %}{{ post_job_form.categories }} {% endcomment %}
-                        <select class="span4" multiple="multiple" name="categories" id="id_categories">
-                             {% for category in categories %}
+                        <select class="span4" multiple="multiple" name="gig_categories" id="id_gig_categories">
+                             {% for category in gig_categories %}
                                 <option value="{{ category.id }}">{{ category.title }}</option>
                              {% endfor %}
                         </select>
-                        {% if post_job_form.categories.errors %}
+                        {% if post_job_form.gig_categories.errors %}
                         <label class="span2"></label>
                         <span class="help-block error">
-                        {% for e in post_job_form.categories.errors %}
+                        {% for e in post_job_form.gig_categories.errors %}
                             {{e}}
                         {% endfor %}
                         </span>
@@ -45,7 +45,7 @@
             </div>
             <div class="page-header">
                     <p class="control-group">
-                        <label class="span2" for="id_title">Job title</label>
+                        <label class="span2" for="id_title">Job Title</label>
                         <input id="id_title" class="span5" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}" />
                         {% if post_job_form.title.errors %}
                         <label class="span2"></label>
@@ -76,24 +76,24 @@
                         Relocation assistance offered for this opposition</label>
                         <label class="offset2" for="id_is_onsite">{{ post_job_form.is_onsite }}
                         Work can be done from anywhere (i.e. telecommuting)</label>
-                        <input type="hidden" name="latitude" id="id_latitude" value="2345432" />
-                        <input type="hidden" name="longitude" id="id_longitude" value="2345432" />
+                        <input type="hidden" name="latitude" id="id_latitude" value="{{ post_job_form.latitude.value }}" />
+                        <input type="hidden" name="longitude" id="id_longitude" value="{{ post_job_form.longitude.value }}" />
                     </p>
             </div>
             <div class="page-header">
                     <p class="control-group">
-                        <label class="span2" for="id_descr">Description</label>
-                        <textarea class="span5" id="id_descr" rows="40" cols="40" name="descr" class="mceEditor">{% if post_job_form.descr.value %}{{ post_job_form.descr.value }}{% else %}{% endif %}</textarea> 
+                        <label class="span2" for="id_content">Description</label>
+                        <textarea id="id_content" rows="40" cols="40" name="content" class="mceEditor">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
                         <br /><span class="help-block"></span>
-                        {% if post_job_form.descr.errors %}
+                        {% if post_job_form.content.errors %}
                         <label class="span2"></label>
                         <span class="help-inline">
-                            {% for e in post_job_form.descr.errors %}
+                            {% for e in post_job_form.content.errors %}
                                 {{e}}
                             {% endfor %}
                         </span>
                         {% endif %}
-                    </p>                                                     
+                    </p>                                                   
             </div>
             <div class="page-header">
                     <p>

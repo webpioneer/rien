@@ -1,6 +1,7 @@
 {% extends "base2.html" %}
 {% load pages_tags mezzanine_tags i18n future %}
 {% block extra_css %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 <style type="text/css">
 form fieldset{}
 form legend{
@@ -32,9 +33,14 @@ form input, form textarea{
 </style>
 {% endblock %}
 {% block extra_js %}
+<script type="text/javascript"  
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=fr"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     show_optional();
+    get_twitter_picture();
 
     $("#id_how_to_apply").change(function(){
         var how_to_apply = $(this).val();
@@ -46,7 +52,33 @@ $(document).ready(function(){
             $("#via_email").hide();
             $("#via_url").show();
         }
-    }); 
+    });
+    function get_twitter_picture(){
+        $("#get_twitter_picture").click(function(e){
+            e.preventDefault();
+            var twitter_username = $("#id_twitter").val();
+            var URL = 'https://api.twitter.com/1/users/profile_image?screen_name='+ twitter_username +'&size=bigger';
+            //alert(URL);
+            /*
+            $.get(URL, function(data) {
+                alert(data.location);
+                console.log(data);
+                $("#employer_picture").html("hello");
+                //alert(data);
+                alert('Load was performed.');
+            }); // end get
+        */
+            $.ajax({ 
+                'type' : 'GET',
+                data: '',
+                url: URL,
+                async: false,
+                complete: function (xhr, status) { 
+                    $('#employer_picture').html(xhr.responseText); 
+                }
+            });
+        });
+    } // end get_twitter_picture
     function show_optional(){
         function hide_optional(){
             $('a[id^="add"] ~ textarea').hide();
@@ -68,11 +100,62 @@ $(document).ready(function(){
             });
         });
     }// end show_optional
-
+    var geocoder;
+    geocoder=new google.maps.Geocoder();
+    var suggestions=[];
+    $("#id_location").autocomplete({
+        source: function(request,add){
+        geocoder.geocode( { 'address': request.term}, function(results, status) {                                                             
+            if (status == google.maps.GeocoderStatus.OK){
+                //console.log(results[0]['address_components'],results[0].geometry)
+                for(var i=0;i<results.length;i++){
+                    if(results[i]['types'][1]=='political'){
+                        suggestions.push(results[i]['formatted_address']);
+                        }//end if
+                }//end for
+                add(suggestions);
+                }                                                                                                                   
+            });
+            },//end source function
+        minLength: 1,
+        select : function(e, ui){
+            var loc=ui.item.value;
+            console.log(loc);
+            geocoder.geocode({'address':loc},function(results,status){                                                      
+                if(status==google.maps.GeocoderStatus.OK){
+                    //console.log('oK');
+                    //console.log(results[0].geometry.location.lat());
+                    //var longitude=results[0].geometry.location['Za'];
+                    //var latitude=results[0].geometry.location["Ya"];
+                    /*
+                    $("#result").append("<input type='hidden' name='loc' id='loc' value='"+loc+"'> \
+                        <input type='hidden' name='longitude' id='longitude' value='"+longitude+"'> \
+                        <input type='hidden' name='latitude' id='latitude' value='"+latitude+"'>");
+                    */
+                    var longitude=results[0].geometry.location.lng();
+                    var latitude=results[0].geometry.location.lat();
+                    console.log(longitude);
+                    $("#id_latitude").val(latitude);
+                    console.log($("#id_latitude").val());
+                    $("#id_longitude").val(longitude);
+                }//end if                                                                                                       
+        });//end geocode
+        ui      
+            },//end select
+    }); // end autocomplete
 }); // end document.ready
+
+tinyMCE.init({
+        mode : "textareas",
+        theme : "simple"   //(n.b. no trailing comma, this will be critical as you experiment later)
+});
 </script>
-<script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+
+
+<!--
 <script type="text/javascript" src="/static/mezzanine/js/tinymce_setup.js"></script>
+-->
+
 {% endblock %}
 
 {% block main %}
@@ -80,8 +163,7 @@ $(document).ready(function(){
     <div class="">
     <h3>{{ title }}</h3>
     </div>
-        <form name="post_job_form" method="post" action="{% url 'post_job' %}">{% csrf_token %}
-            {{request.POST.submit}}
+        <form name="post_job_form" method="post" enctype="multipart/form-data" action="{% url 'post_job' %}">{% csrf_token %}
             {% if not request.user.is_authenticated and not request.user.company%}
             <div class="page-header">
                 <p class="control-group">
