@@ -8,125 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Category'
-        db.create_table('gigs_category', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sites.Site'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('slug', self.gf('django.db.models.fields.CharField')(max_length=2000, null=True, blank=True)),
-            ('pub_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('is_custom', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('gigs', ['Category'])
-
-        # Adding model 'Company'
-        db.create_table('gigs_company', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('keywords_string', self.gf('django.db.models.fields.CharField')(max_length=500, blank=True)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sites.Site'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('slug', self.gf('django.db.models.fields.CharField')(max_length=2000, null=True, blank=True)),
-            ('_meta_title', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('gen_description', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('status', self.gf('django.db.models.fields.IntegerField')(default=2)),
-            ('publish_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('expiry_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('short_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('in_sitemap', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('title_is_confidential', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('elevator_pitch', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('profile_picture_choice', self.gf('django.db.models.fields.CharField')(default=u'No picture', max_length=60)),
-            ('profile_picture', self.gf('mezzanine.core.fields.FileField')(max_length=255, null=True, blank=True)),
-            ('ip_address', self.gf('django.db.models.fields.GenericIPAddressField')(max_length=39)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('keywords', self.gf('mezzanine.generic.fields.KeywordsField')(object_id_field='object_pk', to=orm['generic.AssignedKeyword'], frozen_by_south=True)),
-        ))
-        db.send_create_signal('gigs', ['Company'])
-
-        # Adding model 'GigType'
-        db.create_table('gigs_gigtype', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('price_currency', self.gf('djmoney.models.fields.CurrencyField')(default='USD')),
-            ('price', self.gf('djmoney.models.fields.MoneyField')(frozen_by_south=True, max_digits=10, decimal_places=2, default_currency='USD')),
-        ))
-        db.send_create_signal('gigs', ['GigType'])
-
-        # Adding model 'Gig'
-        db.create_table('gigs_gig', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('keywords_string', self.gf('django.db.models.fields.CharField')(max_length=500, blank=True)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sites.Site'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('slug', self.gf('django.db.models.fields.CharField')(max_length=2000, null=True, blank=True)),
-            ('_meta_title', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('gen_description', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('status', self.gf('django.db.models.fields.IntegerField')(default=2)),
-            ('publish_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('expiry_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('short_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('in_sitemap', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('job_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gigs.GigType'])),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('latitude', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('longitude', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('is_relocation', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_onsite', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('descr', self.gf('mezzanine.core.fields.RichTextField')()),
-            ('perks', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('how_to_apply', self.gf('django.db.models.fields.CharField')(default='VIA_EMAIL', max_length=15)),
-            ('via_email', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True, blank=True)),
-            ('via_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('apply_instructions', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('is_filled', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gigs.Company'])),
-            ('keywords', self.gf('mezzanine.generic.fields.KeywordsField')(object_id_field='object_pk', to=orm['generic.AssignedKeyword'], frozen_by_south=True)),
-        ))
-        db.send_create_signal('gigs', ['Gig'])
-
-        # Adding M2M table for field categories on 'Gig'
-        db.create_table('gigs_gig_categories', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('gig', models.ForeignKey(orm['gigs.gig'], null=False)),
-            ('category', models.ForeignKey(orm['gigs.category'], null=False))
-        ))
-        db.create_unique('gigs_gig_categories', ['gig_id', 'category_id'])
-
-        # Adding model 'GigStat'
-        db.create_table('gigs_gigstat', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('views', self.gf('django.db.models.fields.IntegerField')()),
-            ('clicked_apply', self.gf('django.db.models.fields.IntegerField')()),
-            ('notified_users', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('gigs', ['GigStat'])
+        # Deleting field 'Gig.job_title'
+        db.delete_column('gigs_gig', 'job_title')
 
 
     def backwards(self, orm):
-        # Deleting model 'Category'
-        db.delete_table('gigs_category')
 
-        # Deleting model 'Company'
-        db.delete_table('gigs_company')
-
-        # Deleting model 'GigType'
-        db.delete_table('gigs_gigtype')
-
-        # Deleting model 'Gig'
-        db.delete_table('gigs_gig')
-
-        # Removing M2M table for field categories on 'Gig'
-        db.delete_table('gigs_gig_categories')
-
-        # Deleting model 'GigStat'
-        db.delete_table('gigs_gigstat')
-
+        # User chose to not deal with backwards NULL issues for 'Gig.job_title'
+        raise RuntimeError("Cannot reverse this migration. 'Gig.job_title' and its values cannot be restored.")
 
     models = {
         'auth.group': {
@@ -180,6 +69,13 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
         },
+        'generic.rating': {
+            'Meta': {'object_name': 'Rating'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'object_pk': ('django.db.models.fields.IntegerField', [], {}),
+            'value': ('django.db.models.fields.IntegerField', [], {})
+        },
         'gigs.category': {
             'Meta': {'object_name': 'Category'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -202,7 +98,7 @@ class Migration(SchemaMigration):
             'ip_address': ('django.db.models.fields.GenericIPAddressField', [], {'max_length': '39'}),
             'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': "orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
             'keywords_string': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
-            'profile_picture': ('mezzanine.core.fields.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'profile_picture': ('django.db.models.fields.files.ImageField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'profile_picture_choice': ('django.db.models.fields.CharField', [], {'default': "u'No picture'", 'max_length': '60'}),
             'publish_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'short_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
@@ -216,34 +112,21 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         },
         'gigs.gig': {
-            'Meta': {'object_name': 'Gig'},
-            '_meta_title': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'Meta': {'object_name': 'Gig', '_ormbases': ['shop.Product']},
             'apply_instructions': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['gigs.Category']", 'symmetrical': 'False'}),
             'company': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gigs.Company']"}),
             'descr': ('mezzanine.core.fields.RichTextField', [], {}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'expiry_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'gen_description': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'gig_categories': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['gigs.Category']", 'symmetrical': 'False'}),
             'how_to_apply': ('django.db.models.fields.CharField', [], {'default': "'VIA_EMAIL'", 'max_length': '15'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'in_sitemap': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_filled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_onsite': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_relocation': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'job_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['gigs.GigType']"}),
-            'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': "orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
-            'keywords_string': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
             'latitude': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'longitude': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'perks': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'publish_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'short_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"}),
-            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
-            'status': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
+            'product': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['shop.Product']", 'unique': 'True', 'primary_key': 'True'}),
             'via_email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
             'via_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
@@ -261,6 +144,94 @@ class Migration(SchemaMigration):
             'price': ('djmoney.models.fields.MoneyField', [], {'frozen_by_south': 'True', 'max_digits': '10', 'decimal_places': '2', 'default_currency': "'USD'"}),
             'price_currency': ('djmoney.models.fields.CurrencyField', [], {'default': "'USD'"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+        },
+        'pages.page': {
+            'Meta': {'ordering': "('titles',)", 'object_name': 'Page'},
+            '_meta_title': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            '_order': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'content_model': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'expiry_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'gen_description': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'in_menus': ('mezzanine.pages.fields.MenusField', [], {'default': '[1, 2, 3]', 'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'in_sitemap': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': "orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
+            'keywords_string': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
+            'login_required': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['pages.Page']"}),
+            'publish_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'short_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
+            'titles': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True'})
+        },
+        'shop.category': {
+            'Meta': {'ordering': "('_order',)", 'object_name': 'Category', '_ormbases': ['pages.Page']},
+            'combined': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'content': ('mezzanine.core.fields.RichTextField', [], {}),
+            'featured_image': ('mezzanine.core.fields.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'options': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'product_options'", 'blank': 'True', 'to': "orm['shop.ProductOption']"}),
+            'page_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['pages.Page']", 'unique': 'True', 'primary_key': 'True'}),
+            'price_max': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'price_min': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'products': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['shop.Product']", 'symmetrical': 'False', 'blank': 'True'}),
+            'sale': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['shop.Sale']", 'null': 'True', 'blank': 'True'})
+        },
+        'shop.product': {
+            'Meta': {'object_name': 'Product'},
+            '_meta_title': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'available': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['shop.Category']", 'symmetrical': 'False', 'blank': 'True'}),
+            'content': ('mezzanine.core.fields.RichTextField', [], {}),
+            'date_added': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'expiry_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'gen_description': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'image': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'in_sitemap': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': "orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
+            'keywords_string': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
+            'num_in_stock': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'publish_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'rating': ('mezzanine.generic.fields.RatingField', [], {'object_id_field': "'object_pk'", 'to': "orm['generic.Rating']", 'frozen_by_south': 'True'}),
+            'rating_average': ('django.db.models.fields.FloatField', [], {'default': '0'}),
+            'rating_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'related_products': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'related_products_rel_+'", 'blank': 'True', 'to': "orm['shop.Product']"}),
+            'sale_from': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'sale_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'sale_price': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'sale_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'short_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"}),
+            'sku': ('cartridge.shop.fields.SKUField', [], {'max_length': '20', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
+            'unit_price': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'upsell_products': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'upsell_products_rel_+'", 'blank': 'True', 'to': "orm['shop.Product']"})
+        },
+        'shop.productoption': {
+            'Meta': {'object_name': 'ProductOption'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('cartridge.shop.fields.OptionField', [], {'max_length': '50', 'null': 'True'}),
+            'type': ('django.db.models.fields.IntegerField', [], {})
+        },
+        'shop.sale': {
+            'Meta': {'object_name': 'Sale'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'sale_related'", 'blank': 'True', 'to': "orm['shop.Category']"}),
+            'discount_deduct': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'discount_exact': ('cartridge.shop.fields.MoneyField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '2', 'blank': 'True'}),
+            'discount_percent': ('cartridge.shop.fields.PercentageField', [], {'null': 'True', 'max_digits': '5', 'decimal_places': '2', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'products': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['shop.Product']", 'symmetrical': 'False', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'valid_from': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'valid_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
         },
         'sites.site': {
             'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
