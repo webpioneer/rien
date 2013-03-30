@@ -1,0 +1,39 @@
+{% extends 'shop/product.html' %}
+{% load mezzanine_tags shop_tags rating_tags i18n %}
+
+{% block main %}
+
+{{ gig }}
+
+<ul id="variations" class="unstyled">
+    {% for variation in variations %}
+    <li id="variation-{{ variation.sku }}"
+        {% if not variation.default %}style="display:none;"{% endif %}>
+        {% if variation.has_price %}
+            {% if variation.on_sale %}
+                <span class="old-price">{{ variation.unit_price|currency }}</span>
+                {% trans "On sale:" %}
+            {% endif %}
+            <span class="price">{{ variation.price|currency }}</span>
+        {% else %}
+            
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+
+
+<form method="post" id="add-cart" class="form-horizontal form-shop">
+    {% csrf_token %}
+    {% fields_for add_product_form %}
+    <div class="form-actions clearfix">
+        <div class="form-actions-wrap">
+        <input type="submit" class="btn btn-primary btn-large" name="add_cart" value="{% trans "Buy" %}">
+        </div>
+    </div>
+</form>
+
+
+
+{% endblock %}

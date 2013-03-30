@@ -22,7 +22,7 @@
 
 # If True, the checkout process has a final confirmation step before
 # completion.
-# SHOP_CHECKOUT_STEPS_CONFIRMATION = True
+SHOP_CHECKOUT_STEPS_CONFIRMATION = False
 
 # Controls the formatting of monetary values accord to the locale
 # module in the python standard library. If an empty string is
@@ -45,14 +45,19 @@
 # Dotted package path and class name of the function that
 # is called on submit of the payment checkout step. This is where
 # integration with a payment gateway should be implemented.
-# SHOP_HANDLER_PAYMENT = "cartridge.shop.checkout.default_payment_handler"
+SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
+
+#PAYPAL SETTINGS
+PAYPAL_USER = 'contact_api1.djangojobs.org'
+PAYPAL_PASSWORD = 'U4E2VWF3KWU9A2XX'
+PAYPAL_SIGNATURE = 'AR6gDcq86QpriE9SFyYUOIjn4mByANdDCi9Tmu.OemEkbdE6g-dDyWVO'
 
 # Sequence of value/name pairs for order statuses.
 # SHOP_ORDER_STATUS_CHOICES = (
 #     (1, "Unprocessed"),
 #     (2, "Processed"),
 # )
-
+SHOP_USE_VARIATIONS = False
 # Sequence of value/name pairs for types of product options,
 # eg Size, Colour.
 # SHOP_OPTION_TYPE_CHOICES = (
@@ -281,7 +286,6 @@ ROOT_URLCONF = "%s.urls" % PROJECT_DIRNAME
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
 
-
 ################
 # APPLICATIONS #
 ################
@@ -290,6 +294,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.formtools",
     "django.contrib.redirects",
     "django.contrib.sessions",
     "django.contrib.sites",
@@ -304,11 +309,14 @@ INSTALLED_APPS = (
     "mezzanine.forms",
     "mezzanine.pages",
     "mezzanine.galleries",
-    "mezzanine.twitter",
+    #"mezzanine.twitter",
     "mezzanine.accounts",
     #"mezzanine.mobile",
-    "gigs",
+    'gigs',
+    'fts',
 )
+# Company Settings
+COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
 
 # List of processors used by RequestContext to populate the context.
 # Each one should be a callable that takes the request object as its
@@ -343,11 +351,17 @@ MIDDLEWARE_CLASSES = (
     "mezzanine.core.middleware.AdminLoginInterfaceSelectorMiddleware",
     "mezzanine.core.middleware.SitePermissionMiddleware",
     # Uncomment the following if using any of the SSL settings:
-    # "mezzanine.core.middleware.SSLRedirectMiddleware",
+    "mezzanine.core.middleware.SSLRedirectMiddleware",
     "mezzanine.pages.middleware.PageMiddleware",
     "mezzanine.core.middleware.FetchFromCacheMiddleware",
 )
 
+# Sequence of URL prefixes that will be forced to run over
+# SSL when ``SSL_ENABLED`` is ``True``. i.e.
+# ('/admin', '/example') would force all URLs beginning with
+# /admin or /example to run over SSL. Defaults to:
+#
+SSL_FORCE_URL_PREFIXES = ("/admin", "/account")
 
 # Store these package names here as they may change in the future since
 # at the moment we are using custom forks of them.
