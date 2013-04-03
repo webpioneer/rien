@@ -34,7 +34,7 @@ class Category(Slugged):
         return ('gigs_list_category',(),{'slug':self.slug})
 
 
-COMPANY_LOGO_DEFAULT = getattr(settings, 'COMPANY_LOGO_DEFAULT', 'static/media/company_logos/employer_default.png')
+COMPANY_LOGO_DEFAULT = getattr(settings, 'COMPANY_LOGO_DEFAULT', 'static/media/company_logos/.thumbnails/employer_default.png')
 
 class Company(Displayable):
     """
@@ -114,6 +114,8 @@ class Gig(Product):
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 25)
     longitude = models.CharField(max_length = 25)
+    area_level1 = models.CharField(max_length = 20, blank = True, null = True)
+    area_level2 = models.CharField(max_length = 20, blank = True, null = True)
     is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
                 for this opposition"))
     is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
@@ -136,6 +138,12 @@ class Gig(Product):
     class Meta:
         verbose_name = "Gig"
         verbose_name_plural = "Jobs"
+
+    @models.permalink
+    def get_absolute_url(self):
+        url_name = 'get_gig'
+        kwargs = {"slug" : self.slug}
+        return (url_name, (), kwargs)
 
 
 class GigStat(models.Model):
