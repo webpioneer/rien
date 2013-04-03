@@ -18,7 +18,7 @@ class PostJobForm(forms.ModelForm):
         
         fields = [
             'job_type', 'gig_categories', 'title', 'location', 'latitude', 
-            'longitude', 'is_relocation',
+            'longitude', 'is_relocation', 'area_level1', 'area_level2',
             'is_onsite', 'content', 'perks', 'how_to_apply', 'via_email',
             'via_url', 'apply_instructions',
         ]
@@ -51,6 +51,8 @@ class PostJobForm(forms.ModelForm):
             location = self.cleaned_data['location'],
             latitude = self.cleaned_data['latitude'],
             longitude = self.cleaned_data['longitude'],
+            area_level1 = self.cleaned_data['area_level1'],
+            area_level2 = self.cleaned_data['area_level2'],
             is_relocation = self.cleaned_data['is_relocation'],
             is_onsite = self.cleaned_data.get('is_onsite', True),
             content = self.cleaned_data['content'],
@@ -94,6 +96,7 @@ class CompanyForm(forms.ModelForm):
             email = self.cleaned_data['email'],
             elevator_pitch = self.cleaned_data['elevator_pitch'],
             profile_picture_choice = self.cleaned_data['profile_picture_choice'],
+            profile_picture = self.cleaned_data['profile_picture'],
         )
 
     def get_company_object(self):
