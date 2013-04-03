@@ -24,7 +24,6 @@
                      {% endif %}
                 </p>
             </div>
-            <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_gig_categories">Categories</label>
                         {% comment %}{{ post_job_form.categories }} {% endcomment %}
@@ -42,8 +41,6 @@
                         </span>
                         {% endif %}
                     </p>
-            </div>
-            <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_title">Job Title</label>
                         <input id="id_title" class="span5" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}" />
@@ -56,7 +53,6 @@
                             </span>
                         {% endif %}
                     </p>
-            </div>
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_location">Job Location</label>
@@ -78,6 +74,8 @@
                         Work can be done from anywhere (i.e. telecommuting)</label>
                         <input type="hidden" name="latitude" id="id_latitude" value="{{ post_job_form.latitude.value }}" />
                         <input type="hidden" name="longitude" id="id_longitude" value="{{ post_job_form.longitude.value }}" />
+                        <input type="hidden" name="area_level1" id="id_area_level1" value="{{ post_job_form.area_level1.value }}">
+                        <input type="hidden" name="area_level2" id="id_area_level2" value="{{ post_job_form.area_level2.value }}">
                     </p>
             </div>
             <div class="page-header">
