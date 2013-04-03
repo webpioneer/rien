@@ -34,7 +34,7 @@ form input, form textarea{
 {% endblock %}
 {% block extra_js %}
 <script type="text/javascript"  
-                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=fr"></script>
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=en"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript">
@@ -105,6 +105,7 @@ $(document).ready(function(){
     var suggestions=[];
     $("#id_location").autocomplete({
         source: function(request,add){
+        var suggestions = [];
         geocoder.geocode( { 'address': request.term}, function(results, status) {                                                             
             if (status == google.maps.GeocoderStatus.OK){
                 //console.log(results[0]['address_components'],results[0].geometry)
@@ -114,8 +115,9 @@ $(document).ready(function(){
                         }//end if
                 }//end for
                 add(suggestions);
-                }                                                                                                                   
+                }
             });
+            delete suggestions;
             },//end source function
         minLength: 1,
         select : function(e, ui){
@@ -134,10 +136,21 @@ $(document).ready(function(){
                     */
                     var longitude=results[0].geometry.location.lng();
                     var latitude=results[0].geometry.location.lat();
-                    console.log(longitude);
                     $("#id_latitude").val(latitude);
-                    console.log($("#id_latitude").val());
                     $("#id_longitude").val(longitude);
+                    var administrative_level_1 = '';
+                    var administrative_level_2 = '';
+                    if(results[0]['address_components'][1] && results[0]['address_components'][2]){
+                        administrative_level_1 = results[0]['address_components'][1].long_name;
+                        administrative_level_2 = results[0]['address_components'][2].long_name; 
+                        $("#id_area_level1").val(administrative_level_1);
+                        $("#id_area_level2").val(administrative_level_2);
+                        }
+                    if(results[0]['address_components'][2] == undefined){
+                        administrative_level_1 = results[0]['address_components'][1].long_name;
+                        $("#id_area_level1").val(administrative_level_1);
+                    }
+
                 }//end if                                                                                                       
         });//end geocode
         ui      
@@ -159,10 +172,8 @@ tinyMCE.init({
 {% endblock %}
 
 {% block main %}
-<fieldset class="well">
-    <div class="">
-    <h3>{{ title }}</h3>
-    </div>
+<fieldset class="">
+    <h3 class="short_headline margin-top"><span>{{ title }}</span></h3>
         <form name="post_job_form" method="post" enctype="multipart/form-data" action="{% url 'post_job' %}">{% csrf_token %}
             {% if not request.user.is_authenticated and not request.user.company%}
             <div class="page-header">
