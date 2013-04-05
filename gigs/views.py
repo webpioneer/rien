@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,10 +7,40 @@ from cartridge.shop.models import (Cart, CartItem, Product,
  ProductImage, ProductVariation)
 from cartridge.shop.views import cart, product as product_view
 
-from mezzanine.utils.views import render
+from mezzanine.utils.views import paginate, render
 
 from gigs.forms import CompanyForm, PostJobForm
-from gigs.models import Category, GigType
+from gigs.models import Category, Gig, GigType
+
+def all_gigs(request, template_name = 'gigs/index.html'):
+    """
+    Returns gigs on the home page
+    """
+    # gigs need to be filtred based on order processed
+    # based on site_id,etc by creating a models.Manager
+    gigs = Gig.objects.all().order_by('-publish_date')
+    categories = Category.objects.all()
+    #starting_price = GigType.get_starting_price()
+    starting_price = GigType.objects.filter(type__contains="Internship")[0].price
+    context = {
+        'gigs' : gigs,
+        'categories' : categories,
+        'starting_price' : starting_price,
+    }
+    return render(request, template_name, context)
+
+def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
+    """
+    Returns the Gig page
+    """
+    try:
+        gig = get_object_or_404(Gig, slug = slug)
+    except:
+        pass
+    context = {
+        'gig' : gig,
+    }
+    return render(request, template_name, context)
 
 def post_job(request, template_name = 'gigs/post_job.html'):
     """ 
@@ -19,7 +49,7 @@ def post_job(request, template_name = 'gigs/post_job.html'):
     gig_types = GigType.objects.all()
     if request.method == 'POST':
         post_job_form = PostJobForm(request.POST)
-        company_form = CompanyForm(request.POST)
+        company_form = CompanyForm(request.POST, request.FILES)
         #post_job_form_data = post_job_form.get_gig_create_data()
 
         if  post_job_form.is_valid() and company_form.is_valid():
@@ -28,7 +58,7 @@ def post_job(request, template_name = 'gigs/post_job.html'):
             company = company_form.get_company_object()
             company.ip_address = request.META['REMOTE_ADDR']
             #company.profile_picture = company_form.cleaned_data['profile_picture']
-            company.profile_picture = request.FILES.get('profile_picture', '')
+            #company.profile_picture = request.FILES.get('profile_picture', '')
             company.save()
             # save gig
             gig = post_job_form.get_gig_object()
