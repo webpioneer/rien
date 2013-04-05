@@ -1,7 +1,5 @@
 <div id='company-information'> 
-            <div class="page-header">
-                <h3>{{ company_information }}</h3>  
-            </div>
+            <h3 class="short_headline margin-top"><span>{{ company_information }}</span></h3>
             <div class="page-header">
                 <p class="control-group">
                     <label class="span2" for="id_type">{{ company_form.type.label}}</label>
@@ -94,6 +92,12 @@
                     <br />
                     <!-- <input id="id_profile_picture" type="file" name="profile_picture" /> -->
                     {{ company_form.profile_picture }}
+                    {% if company_form.profile_picture.errors %}
+                    <span class="help-block error">
+                    {% for error in company_form.profile_picture.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
                 </p>
             </div>
             </div> <!-- end of company information -->
