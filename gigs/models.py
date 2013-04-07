@@ -20,6 +20,7 @@ class Category(Slugged):
     Job Category
     """
     pub_date = models.DateTimeField(auto_now_add = True)
+    description = models.CharField(max_length = 50, null = True, blank = True)
     is_custom = models.BooleanField()
 
     class Meta:
@@ -64,13 +65,11 @@ class Company(Displayable):
         help_text=_("What s your company about (i.e. tag line)"))
     # figure out upload_to function and its 2 arguments
     profile_picture_choice = models.CharField(max_length = 60, 
-        choices = PROFILE_PICTURE_SOURCE, default = PROFILE_PICTURE_SOURCE[0][1])
-    #profile_picture = FileField(verbose_name = _('Profile Picture'),
-    #    upload_to = 'company_logos', format = 'Image',
-    #    max_length=255, null=True, blank=True)   
+        choices = PROFILE_PICTURE_SOURCE, default = PROFILE_PICTURE_SOURCE[0][1])  
     profile_picture = models.ImageField(verbose_name= _('Profile Picture'),
         upload_to = 'company_logos', max_length=255,
-        null = True, blank = True, default = COMPANY_LOGO_DEFAULT)                     
+        null = True, blank = True, default = COMPANY_LOGO_DEFAULT)
+    twitter_username = models.CharField(max_length = 50, null= True, blank = True)                      
     ip_address = models.GenericIPAddressField()
     user = models.OneToOneField(User) 
 
