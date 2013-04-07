@@ -2,6 +2,7 @@
 {% load pages_tags mezzanine_tags i18n future %}
 {% block extra_css %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
+
 <style type="text/css">
 form fieldset{}
 form legend{
@@ -30,53 +31,126 @@ form input, form textarea{
     line-height:1.23em;
     font-size:100%;
     }
+
+/* for radio */
+.radioGroup input[type=radio] {
+  visibility: hidden;
+}
+
+.radioGroup input[type=radio]:before + label ,
+.radioGroup input[type=radio]:after + label , {
+  display: table;
+  content: "";
+}
+
+.radioGroup input[type=radio]:after + label ,{
+  clear: both;
+}
+
+.radioGroup input[type=radio]:hover + label {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #eeeeee;
+}
+
+.radioGroup input[type=radio]+ label {
+  float: left;
+  line-height: 14px;
+  padding-right: 12px;
+  padding-left: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-right: 2px;
+  margin-top: 0px;
+  margin-bottom: 4px;
+  *zoom: 1;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+}
+.radioGroup input[type=radio]:checked + label,
+.radioGroup input[type=radio]:checked:hover + label  {
+  color: #ffffff;
+  background-color: #0088cc;
+}
+/*
+.radioGroup input[type=radio]:checked + label> i[class*="icon-"],
+.radioGroup input[type=radio]:checked + label> i[class*=" icon-"]:hover,
+.radioGroup input[type=radio]:checked + label> i[class^=" icon-"],
+.radioGroup input[type=radio]:checked + label> i[class^=" icon-"]:hover {
+  background-image: url("http://twitter.github.com/bootstrap/assets/img/glyphicons-halflings-white.png");
+}
+*/
 </style>
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
 {% endblock %}
 {% block extra_js %}
 <script type="text/javascript"  
                 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=en"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}js/upload_file.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-    show_optional();
-    get_twitter_picture();
+    init();
 
-    $("#id_how_to_apply").change(function(){
-        var how_to_apply = $(this).val();
-        if(how_to_apply == 'VIA_EMAIL') {
-            $("#via_url").hide();
-            $("#via_email").show();
-        }
-        if(how_to_apply == 'VIA_URL') {
-            $("#via_email").hide();
-            $("#via_url").show();
+    function init(){
+        // for categories
+        $('.selectpicker').selectpicker();
+
+        show_optional();
+
+        $("#id_how_to_apply").change(function(){
+            var how_to_apply = $(this).val();
+            if(how_to_apply == 'VIA_EMAIL') {
+                $("#via_url").hide();
+                $("#via_email").show();
+                $("#via_email input").focus();
+            }
+            if(how_to_apply == 'VIA_URL') {
+                $("#via_email").hide();
+                $("#via_url").show();
+                $("#via_url input").focus();
+            }
+        });
+
+        function handle_company_logo_upload(){
+        $("#id_company_profile_picture").change(function(e){
+            handleFileSelect(e);
+        });}
+
+        handle_company_logo_upload();
+
+        // Get twitter picture
+        get_twitter_picture();
+    }
+    
+    $("#id_profile_picture_choice").change(function(){
+        var profile_picture_choice = $(this).val();
+        if(profile_picture_choice == 'TWITTER_PICTURE'){
+            $("#id_company_profile_picture").hide();
+            $("#id_twitter_picture").show('slow');
+            $("#id_twitter_picture input").focus();
+            $("#employer_picture").attr('src', '{{STATIC_URL}}media/company_logos/employer_default.png');
+        }else if(profile_picture_choice == 'OWN_PICTURE'){
+            $("#id_twitter_picture").hide();
+            $("#id_company_profile_picture").show('slow');
+            $("#employer_picture").attr('src', '{{STATIC_URL}}media/company_logos/employer_default.png');
+        }else{
+            $("#id_twitter_picture").hide();
+            $("#id_company_profile_picture").hide();
+            $("#employer_picture").attr('src', '{{STATIC_URL}}media/company_logos/employer_default.png');
         }
     });
     function get_twitter_picture(){
         $("#get_twitter_picture").click(function(e){
             e.preventDefault();
-            var twitter_username = $("#id_twitter").val();
-            var URL = 'https://api.twitter.com/1/users/profile_image?screen_name='+ twitter_username +'&size=bigger';
-            //alert(URL);
-            /*
-            $.get(URL, function(data) {
-                alert(data.location);
-                console.log(data);
-                $("#employer_picture").html("hello");
-                //alert(data);
-                alert('Load was performed.');
-            }); // end get
-        */
-            $.ajax({ 
-                'type' : 'GET',
-                data: '',
-                url: URL,
-                async: false,
-                complete: function (xhr, status) { 
-                    $('#employer_picture').html(xhr.responseText); 
-                }
-            });
+            var twitter_username = $("#id_twitter_username").val();
+            //var URL = 'https://api.twitter.com/1/users/profile_image?screen_name='+ twitter_username +'&size=bigger';
+            var URL = 'http://api.twitter.com/1/users/profile_image/'+ twitter_username +'.png?size=bigger';
+            $("#employer_picture").attr("src", URL);
         });
     } // end get_twitter_picture
     function show_optional(){
@@ -89,7 +163,8 @@ $(document).ready(function(){
         var remove_icon;        
         $('a[id^="add"]').click(function(e){
             e.preventDefault();
-            $(this).parent().children("textarea").show();
+            $(this).parent().children("textarea").show('slow');
+            $(this).parent().children("textarea").focus();
             remove_icon = $(this).parent().children('a[id^="remove"]');
             remove_icon.show("slow");
             $(this).parent().children("span").show();
@@ -125,15 +200,7 @@ $(document).ready(function(){
             console.log(loc);
             geocoder.geocode({'address':loc},function(results,status){                                                      
                 if(status==google.maps.GeocoderStatus.OK){
-                    //console.log('oK');
-                    //console.log(results[0].geometry.location.lat());
-                    //var longitude=results[0].geometry.location['Za'];
-                    //var latitude=results[0].geometry.location["Ya"];
-                    /*
-                    $("#result").append("<input type='hidden' name='loc' id='loc' value='"+loc+"'> \
-                        <input type='hidden' name='longitude' id='longitude' value='"+longitude+"'> \
-                        <input type='hidden' name='latitude' id='latitude' value='"+latitude+"'>");
-                    */
+                    
                     var longitude=results[0].geometry.location.lng();
                     var latitude=results[0].geometry.location.lat();
                     $("#id_latitude").val(latitude);
@@ -159,15 +226,22 @@ $(document).ready(function(){
 }); // end document.ready
 
 tinyMCE.init({
-        mode : "textareas",
-        theme : "simple"   //(n.b. no trailing comma, this will be critical as you experiment later)
+    //mode : "textareas",
+    mode : "specific_textareas",
+    editor_selector : "myTextEditor",
+    theme : "advanced",
+    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright, justifyfull,bullist,numlist,undo,redo",
+    theme_advanced_buttons2 : "",
+    theme_advanced_buttons3 : "",
+    theme_advanced_toolbar_location : "top",
+    theme_advanced_toolbar_align : "left",
+    theme_advanced_statusbar_location : "bottom",
+    plugins : 'inlinepopups',
+    content_css : '{{ STATIC_URL }}css/bootstrap.min.css,',
 });
 </script>
 
 
-<!--
-<script type="text/javascript" src="/static/mezzanine/js/tinymce_setup.js"></script>
--->
 
 {% endblock %}
 

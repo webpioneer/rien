@@ -1,0 +1,27 @@
+{% extends 'base2.html' %}
+{% load mezzanine_tags %}
+
+{% block meta_title %}{{ gig.title }} {{ gig.company.company_name }}{% endblock %}
+
+{% block title_bread %}{% endblock %}
+
+{% block main %}
+<div class="row">
+	<div class="span1">
+		<a href="#">
+			<img src="{{ STATIC_URL }}media/{% thumbnail gig.company.profile_picture 80 80 %}" alt="" />
+
+		</a>
+	</div>
+	<div class="span4">
+		<a href="#">{{ gig.company.company_name }}</a>
+	</div>
+</div>
+<div id="">
+		<h2 class="page-header">{{ gig.title }}</h2>
+		<span class="">{{ gig.job_type.type }}</span>
+		<span class=""><i class="icon-map-marker"></i>{{ gig.location }}</span>
+		<span class="pull-right">{{ gig.publish_date|date:'M d' }}</span>
+		{{ gig.content|safe}}
+</div>
+{% endblock %}

@@ -1,20 +1,20 @@
+   {% load i18n %}
    <fieldset>
     <div class="page-header">
-                <p class="control-group">
+                <p class="control-group radioGroup">
                     <label class="span2" for="id_jobtype">Job Type</label>
-                    <table class="span5 table-hover">
                         {% for gig_type in gig_types %}
-                            <tr>
-                                <td>{% ifequal 1 1 %}{{job_type}}{% endifequal %}
-                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="id_job_type" 
-                                {% ifequal post_job_form.job_type.value gig_type.id %}checked="checked"{% endifequal %}
+                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype" 
+                                {% if post_job_form.job_type.value = gig_type.id %}checked="checked"{% endif %}
                                 />
-                                {{gig_type.type}} {{ gig_type.price }}
-                                <br /><span class="help_text">{{gig_type.description}}</span>
-                                </td>
-                            </tr>
+                                <label class="radioPill" for="{{gig_type.id}}_jobtype">
+                                    {% if post_job_form.job_type.value = gig_type.id %}
+                                    <i class="icon-ok-sign"></i>&nbsp;{% endif %}
+                                    {{gig_type.type}} {{ gig_type.price }}
+                                </label>
+                                <!-- <br /><span class="help_text">{{gig_type.description}}</span>-->
+
                         {% endfor %}
-                    </table>
                      {% if post_job_form.job_type.errors %}
                      <br /><label class="span2"></label>
                      <span class="help-block error">
@@ -27,9 +27,9 @@
                     <p class="control-group">
                         <label class="span2" for="id_gig_categories">Categories</label>
                         {% comment %}{{ post_job_form.categories }} {% endcomment %}
-                        <select class="span4" multiple="multiple" name="gig_categories" id="id_gig_categories">
+                        <select class="selectpicker" multiple name="gig_categories" id="id_gig_categories" data-width="auto" multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}...">
                              {% for category in gig_categories %}
-                                <option value="{{ category.id }}">{{ category.title }}</option>
+                                <option value="{{ category.id }}" data-subtext="{{ category.description }}">{{ category.title }}</option>
                              {% endfor %}
                         </select>
                         {% if post_job_form.gig_categories.errors %}
@@ -43,7 +43,7 @@
                     </p>
                     <p class="control-group">
                         <label class="span2" for="id_title">Job Title</label>
-                        <input id="id_title" class="span5" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}" />
+                        <input id="id_title" class="span6" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}" />
                         {% if post_job_form.title.errors %}
                         <label class="span2"></label>
                             <span class="help-block error">
@@ -56,7 +56,7 @@
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_location">Job Location</label>
-                        <input class="span5" id="id_location" type="text" name="location" maxlength="200" value="{% if post_job_form.location.value %}{{ post_job_form.location.value }}{% else %}{% endif %}" />
+                        <input class="span6" id="id_location" type="text" name="location" maxlength="200" value="{% if post_job_form.location.value %}{{ post_job_form.location.value }}{% else %}{% endif %}" />
                          
                         <br /><label class="span2"></label>
                         {% if post_job_form.location.errors %}
@@ -67,10 +67,10 @@
                         {% endif %}
                         <span class="help_text">Examples: San Francisco, CA; Seattle; Anywhere</span>
                     </p>
-                    <p>
-                        <label class="offset2" for="id_is_relocation">{{ post_job_form.is_relocation }}
+                    <p class="offset2">
+                        <label class="checkbox" for="id_is_relocation">{{ post_job_form.is_relocation }}
                         Relocation assistance offered for this opposition</label>
-                        <label class="offset2" for="id_is_onsite">{{ post_job_form.is_onsite }}
+                        <label class="checkbox" for="id_is_onsite">{{ post_job_form.is_onsite }}
                         Work can be done from anywhere (i.e. telecommuting)</label>
                         <input type="hidden" name="latitude" id="id_latitude" value="{{ post_job_form.latitude.value }}" />
                         <input type="hidden" name="longitude" id="id_longitude" value="{{ post_job_form.longitude.value }}" />
@@ -81,7 +81,7 @@
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_content">Description</label>
-                        <textarea id="id_content" rows="40" cols="40" name="content" class="mceEditor">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
+                        <textarea id="id_content" rows="30" name="content" class="span10 myTextEditor">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
                         <br /><span class="help-block"></span>
                         {% if post_job_form.content.errors %}
                         <label class="span2"></label>
@@ -95,10 +95,11 @@
             </div>
             <div class="page-header">
                     <p>
-                        <a id="add-job-perks" href="#">Add job Perks</a> (Optional)
-                        <a id="remove-job-perks" href="#"><i class="icon-remove"></i></a>
                         <label class="span2" for="id_perks">Job Perks</label>
-                        <textarea class="perks" id="id_perks" rows="10" cols="40" name="perks">{% if post_job_form.perks.value %}{{ post_job_form.perks.value }}{% else %}{% endif %}</textarea>
+                        <a id="add-job-perks" href="#">Add job Perks</a> (Optional)
+                        <a id="remove-job-perks" href="#"><i class="icon-remove"></i></a><br />
+                        <textarea class="perks span10" id="id_perks" rows="3" name="perks" {% if post_job_form.perks.value %}
+                        style="display:block"{% endif %}>{% if post_job_form.perks.value %}{{ post_job_form.perks.value }}{% else %}{% endif %}</textarea>
                         <br /><label class="span2"></label>
                         <span class="perks help_text">Sell your position! If you&#39;re willing         to relocate, mention it here. If you&#39;ve got great benefits, bonuses        , paid trips to conferences, free food, discounts, etc., talk it up.</span>
                     </p>                                                                                                                                 </div>
@@ -106,27 +107,21 @@
                     <p class="control-group">
                     <label class="span2" for="id_how_to_apply">How to apply</label>
                     {{ post_job_form.how_to_apply }}
-                    <!--
-                    <select name="how_to_apply" id="id_how_to_apply">
-                        <option value="VIA_EMAIL" {% if how_to_apply == "VIA_EMAIL" %}selected="selected"{% endif %}>by Email</option>
-                        <option value="VIA_URL" {% if how_to_apply == "VIA_URL" %}selected="selected"{% endif %}>via URL</option>
-                    </select>
-                    -->
-                        <span id="via_email" class="input-prepend">
-                            <span class="add-on"><i class="icon-envelope"></i></span>
-                            <input type="text" name="via_email" placeholder="job@domain.com" value="{% if post_job_form.via_email.value %}{{ post_job_form.via_email.value }}{% endif %}" />
-                        </span>
-                        <span id="via_url" class="input-prepend" style="display:none">
+                    <span id="via_url" class="input-prepend inline" style="display:{% if post_job_form.via_url.value %}block{% else %}none{% endif %}">
                             <span class="add-on">http://</span>
                             <input type="text" name="via_url" value="{% if post_job_form.via_url.value %}{{ post_job_form.via_url.value }}{% endif %}" />
+                        </span>
+                        <span id="via_email" class="input-prepend" {% if post_job_form.via_url.value %}style="display:none"{% endif %}><span class="add-on"><i class="icon-envelope"></i></span>
+                            <input type="text" name="via_email" placeholder="job@domain.com" value="{% if post_job_form.via_email.value %}{{ post_job_form.via_email.value }}{% endif %}" />
                         </span>
                         {% if request.POST.via_email == "" and request.POST.via_url == "" %}
                         error 
                         {% endif %}
                     </p>
                     <label class="span2"></label>
-                    <a id="add-instructions" href="#">Add Instructions</a> (Optional)
-                    <a id="remove-add-instructions" href="#"><i class="icon-remove"></i></a>
-                    <textarea class="add-instructions" id="id_add_instructions" rows="10" cols="40" name="add-instructions"></textarea>
+                    <a id="add_instructions" href="#">Add Instructions</a> (Optional)
+                    <a id="remove-apply_instructions" href="#"><i class="icon-remove"></i></a><br />
+                    <textarea class="add-instructions span10" id="id_apply_instructions" rows="3" cols="40" name="apply_instructions" {% if post_job_form.apply_instructions.value %}style="display:block"{% endif %}
+                    >{% if post_job_form.apply_instructions.value %}{{ post_job_form.apply_instructions.value }}{% endif %}</textarea>
               </div> 
             </fieldset>

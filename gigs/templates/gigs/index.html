@@ -1,0 +1,231 @@
+{% extends 'base2.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block meta_title %}{% trans "All Jobs" %}{% endblock %}
+{% block extra_css %}
+<style type="text/css">
+ul {
+list-style-type: disc;
+}
+li {
+display: list-item;
+text-align: -webkit-match-parent;
+}
+.jobs-list {
+    list-style:none;
+    margin:0;
+    padding:0;
+    min-height:1%
+}
+.jobs-list .contract {
+    float:right;
+    text-transform:uppercase;
+    font-size:12px;
+    font-weight:bold;
+    color:#4b5a76;
+    height:17px;
+    line-height:20px
+}
+.jobs-list .job-item {
+    border-top:1px solid #d9d9e1;
+    padding:20px 0;
+    width:100%;
+    min-height:1%;
+    position:relative
+}
+.jobs-list .job-item:first-child {
+    border-top:0
+}
+.jobs-list .job-item a:hover {
+    text-decoration:underline
+}
+.jobs-list .job-item .job-infos {
+    float:left;
+    width:780px
+}
+.jobs-list .job-item .job-title {
+    float:left;
+    line-height:15px;
+    padding-bottom:8px;
+    margin:0
+}
+.jobs-list .job-item .job-title:first-letter {
+    text-transform:uppercase
+}
+.jobs-list .job-item .job-title .job-link {
+    font-size:16px;
+    color:#4b5a76
+}
+.jobs-list .job-item .job-tags {
+    clear:both;
+    padding-top:7px
+}
+.jobs-list .job-item .job-tags .tag {
+    padding:0 9px;
+    position:relative;
+    background:#f1f1f7;
+    -webkit-border-radius:2px;
+    -moz-border-radius:2px;
+    -ms-border-radius:2px;
+    -o-border-radius:2px;
+    border-radius:2px;
+    border:0;
+    height:21px;
+    line-height:21px;
+    -webkit-box-shadow:0 1px 0 #ceced8;
+    -moz-box-shadow:0 1px 0 #ceced8;
+    box-shadow:0 1px 0 #ceced8;
+    margin-right:4px;
+    color:#43536f;
+    font-size:13px;
+    font-weight:bold;
+    font-family:"ProximaNovaSemibold";
+    display:-moz-inline-box;
+    -moz-box-orient:vertical;
+    display:inline-block;
+    vertical-align:middle;
+    *vertical-align:auto;
+    cursor:pointer
+}
+.jobs-list .job-item .job-tags .tag {
+    *display:inline
+}
+.jobs-list .job-item .job-tags .tag:hover {
+    text-decoration:none;
+    cursor:pointer;
+    background-image:-webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#f7f7f9),color-stop(100%,#e8e8ed));
+    background-image:-webkit-linear-gradient(#f7f7f9,#e8e8ed);
+    background-image:-moz-linear-gradient(#f7f7f9,#e8e8ed);
+    background-image:-o-linear-gradient(#f7f7f9,#e8e8ed);
+    background-image:-ms-linear-gradient(#f7f7f9,#e8e8ed);
+    background-image:linear-gradient(#f7f7f9,#e8e8ed);
+    color:#43536f
+}
+.jobs-list .job-item.highlight {
+    background:#fff6ef
+}
+.jobs-list .job-item.highlight .job-tags .tag {
+    background:#fffffe;
+    -webkit-box-shadow:0 1px 0 #d0d0d9;
+    -moz-box-shadow:0 1px 0 #d0d0d9;
+    box-shadow:0 1px 0 #d0d0d9
+}
+.jobs-list .job-item.soldout {
+    filter:alpha(opacity=80);
+    opacity:.8
+}
+.jobs-list .job-item.soldout+.job-item {
+    border-top-color:#ececf0
+}
+.jobs-list .job-item.soldout+.job-item.soldout {
+    border-top-colot:#d9d9e1
+}
+.jobs-list .job-item .job-details {
+    clear:both;
+    /* line-height:11px; */
+    line-height:14px;
+    font-size:12px;
+    font-weight:bold
+}
+.jobs-list .job-item .job-details .company {
+    color:#0c88cc
+}
+.jobs-list .job-item .job-details-left {
+    float:left;
+    color:#8b95a2
+}
+.jobs-list .job-item .job-details-right {
+    float:right;
+    font-size:12px;
+    color:#8b95a2;
+    font-family:"ProximaNovaSemibold"
+}
+.jobs-list .job-item .job-details-right span.time {
+    float:right;
+    font-size:11px;
+    color:#a6a7ba
+}
+.jobs-list .btn-pink.small {
+    float:left;
+    margin-left:12px;
+    box-shadow:none
+}
+.jobs-list .heart {
+    margin-top:3px; 
+}
+</style>
+
+{% endblock %}
+{% block title %}{% trans "All Jobs" %}{% endblock %}
+
+{% block title_bread %}{% endblock %}
+
+{% block main %}
+
+	 <!-- Search and Filter
+    ================================================== -->
+
+	<ul class="jobs-list">
+	{% for gig in gigs %}
+		<li class="job-item clearfix">
+<!--
+            <a class="pull-left heart" href="#">
+                    {% if gig.company.profile_picture %}
+                    <img class="media-object" src="{{STATIC_URL}}media/{% thumbnail gig.company.profile_picture 64 64 %}">
+                    {% else %}
+                    <img class="media-object" src="{{STATIC_URL}}media/company_logos/.thumbnails/employer_default.png" width="64" height="64">
+                    {% endif %}
+                </a>
+-->
+            <div class="job-infos">
+                    <h3 class="job-title"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a></h3>
+                    <a class="contract clearfix">{{ gig.job_type.type }}</a>
+                    <div class="job-details">
+        				<span class="job-details-left">
+                            <span>{{ gig.company.company_name|capfirst }}</span>
+        					<span class="muted">{{ gig.company.elevator_pitch }}</span>
+        				</span> 
+        				<span class="muted span4"><i class="icon-map-marker"></i>{{ gig.location }}</span>
+        				<span class="job-details-right">
+        					<span class="text-center date">{{ gig.publish_date|date:'M d' }}
+                                <span class="month">{{ gig.public_date|date:'M' }}</span>
+                                <span class="day">{{ gig.public_date|date:'d' }}</span> 
+                            </span>
+        				</span>
+                    </div><!-- end .job-details -->
+
+            </div>
+		</li>
+	{% endfor %}
+	</ul>
+
+{% endblock %}
+
+{% block right_panel %}
+	{% include 'gigs/right_panel.html' %}
+
+    <aside class="well">
+        <h3>The job board for IT professionals.</h3>
+            <p> <img class="alignleft" src="../demo/80x80-Diego_Velazquez_028.png" alt="Velazquez" /> Authentic Jobs is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small. </p>
+            <p class="right">
+                <a href="#" class="btn-primary btn">Go for it &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
+    </aside>
+    <!--close .well --> 
+    <aside class="widget">
+        <img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">
+    </aside>            
+	<aside class="widget">
+		<h3 class="short_headline">
+            <span>{% trans 'Follow' %}</span> {{ settings.SITE_TITLE }}
+        </h3>
+		<ul class="social">
+			<li><a class="socicon rss" href="#" title="RSS"></a></li>
+            <li><a class="socicon facebook" href="#" title="Facebook"></a></li>
+			<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
+			<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
+			<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
+			<li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
+		</ul>
+	</aside>
+
+{% endblock %}

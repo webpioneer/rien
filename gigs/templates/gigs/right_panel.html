@@ -1,0 +1,9 @@
+{% load mezzanine_tags i18n pages_tags %}
+<!-- Post Job Button 
+	================================================== -->
+<div class="well small-well">
+	<a href="{% url post_job %}" class="btn btn-large btn-block btn-success">{% trans 'Post A Job' %}
+		&nbsp;&nbsp;&nbsp;&nbsp;<i class="icon-circle-arrow-right icon-white"></i>
+	</a>
+	<p class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Starting at' %}{{ starting_price }} {% trans 'unlimited' %}</p>
+</div>

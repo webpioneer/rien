@@ -3,7 +3,16 @@
             <div class="page-header">
                 <p class="control-group">
                     <label class="span2" for="id_type">{{ company_form.type.label}}</label>
-                    {{ company_form.type}}
+                    {% comment %}{{ company_form.type}} {% endcomment %}
+                    <select class="selectpicker" name="type" id="id_type" data-width="auto">
+                    <option value="STARTUP">Startup</option>
+                    <option value="STUDIO">Studio</option>
+                    <option value="SMALL_BUSINESS">Small Business</option>
+                    <option value="MID_SIZED_BUSINESS">Mid Sized Business</option>
+                    <option value="LARGE_ORGANIZATION">Large Organization</option>
+                    <option value="EDUCATIONAL_INSTITUTION">Educational Institution</option>
+                    <option value="NON_PROFIT">Non-profit</option>
+                    </select>
                     {% if company_form.type.errors %}
                     <br /><label class="span2"></label>
                     <span class="help-block error">
@@ -17,8 +26,12 @@
                 <p class="control-group">
                     <label class="span2" for="id_company_name">{{ company_form.company_name.label}}</label>
                     {{ company_form.company_name }}
-                    {{ company_form.title_is_confidential }} {{ company_form.title_is_confidential.label }}
-                    <br />
+                    <span>
+                    <label class="checkbox inline" for="id_title_is_confidential">{{ company_form.title_is_confidential }}
+                        {{ company_form.title_is_confidential.label }}</label>
+                       
+                    </span>
+
                     {% if company_form.company_name.errors %}
                     <label class="span2"></label>
                     <span class="help-block error">
@@ -79,19 +92,36 @@
             <div class="page-header">
                 <p class="control-group">
                     <label class="span2" for="id_profile_picture">{{ company_form.profile_picture.label }}</label>
-                    {{company_form.profile_picture_choice }} 
-                    <span class="pull-right"><img id="employer_picture" src="{{STATIC_URL}}media/company_logos/employer_default.png" width="50" height="50" /></span>
+                    <span class="span4">{{company_form.profile_picture_choice }}</span>
+                    <span id="id_twitter_picture" class="input-prepend input-append" style="display:{% if company_form.profile_picture_choice.value != 'TWITTER_PICTURE' %}none{% else %}block{% endif %}">
+                            <span class="add-on">@</span>
+                            <input class="span2" id="id_twitter_username" type="text" name="twitter_username" maxlength="200" autofocus value="{% if company_form.twitter_username.value %}{{ company_form.twitter_username.value }}{% endif %}" />
+                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="socio small twitterbird"></i> picture</button>
+                    </span>
+                    <span id="id_company_profile_picture" class="btn btn-warning fileinput-button" style="display:{% if company_form.profile_picture_choice.value != 'OWN_PICTURE' %}none{% else %}block{% endif %}"><span><i class="icon-plus icon-white"></i> Select Image...</span>
+                        <input type="file" name="profile_picture" id="id_profile_picture"/>
+                    </span>
+
+                    <span id="list" class="pull-right"><img id="employer_picture" src="{% if company_form.profile_picture.value %}{{STATIC_URL}}media/company_logos/{{ company_form.profile_picture.value }}{% elif company_form.twitter_username.value %}http://api.twitter.com/1/users/profile_image/{{ company_form.twitter_username.value }}.png?size=bigger 
+                    {% else %}{{STATIC_URL}}media/company_logos/employer_default.png{% endif %}"  style="margin-top:-25px" height="60" width="80" /></span>
+                </p>
+                    <!--
                     <p class="well" style="display:">
                         <label class="span2" for="id_twitter_picture">Company Twitter</label>
                         <span id="id_twitter_picture" class="input-prepend input-append">
                             <span class="add-on">@</span>
                             <input class="span2" id="id_twitter" type="text" name="twitter" maxlength="200" />
-                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="">Twitter</i> picture</button>
+                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="small twitterbird"></i> picture</button>
                         </span>
                     </p>
                     <br />
                     <!-- <input id="id_profile_picture" type="file" name="profile_picture" /> -->
-                    {{ company_form.profile_picture }}
+                    {% comment %}{{ company_form.profile_picture }}{% endcomment %}
+                    <!--
+                    <span class="btn btn-warning fileinput-button"><span><i class="icon-plus icon-white"></i> Select Image...</span>
+                        <input type="file" name="profile_picture" id="id_profile_picture"/>
+                    </span>
+                    -->
                     {% if company_form.profile_picture.errors %}
                     <span class="help-block error">
                     {% for error in company_form.profile_picture.errors %}
