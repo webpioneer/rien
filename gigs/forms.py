@@ -20,7 +20,7 @@ class PostJobForm(forms.ModelForm):
             'job_type', 'gig_categories', 'title', 'location', 'latitude', 
             'longitude', 'is_relocation', 'area_level1', 'area_level2',
             'is_onsite', 'content', 'perks', 'how_to_apply', 'via_email',
-            'via_url', 'apply_instructions',
+            'via_url', 'apply_instructions', 'job_type',
         ]
  
     def get_gig_object(self):
@@ -44,7 +44,7 @@ class PostJobForm(forms.ModelForm):
         """
         Returns the dict of data to be used to create a Gig
         """
-         
+
         return dict(
             job_type = self.cleaned_data['job_type'],
             title = self.cleaned_data['title'],
@@ -60,7 +60,7 @@ class PostJobForm(forms.ModelForm):
             how_to_apply = self.cleaned_data['how_to_apply'],
             via_email = self.cleaned_data.get('via_email', ''),
             via_url = self.cleaned_data.get('via_url', ''),
-            apply_instructions = self.cleaned_data.get('add-instructions', ''),
+            apply_instructions = self.cleaned_data.get('apply_instructions', ''),
         )
 
     def _add_categories_to_gig(self, gig):
@@ -79,6 +79,7 @@ class CompanyForm(forms.ModelForm):
         fields = (
             'type', 'company_name', 'title_is_confidential', 'url', 'email',
             'elevator_pitch', 'profile_picture_choice', 'profile_picture',
+            'twitter_username',
             )
     
     def get_company_model(self):
@@ -97,6 +98,7 @@ class CompanyForm(forms.ModelForm):
             elevator_pitch = self.cleaned_data['elevator_pitch'],
             profile_picture_choice = self.cleaned_data['profile_picture_choice'],
             profile_picture = self.cleaned_data['profile_picture'],
+            twitter_username = self.cleaned_data['twitter_username'],
         )
 
     def get_company_object(self):
