@@ -4,10 +4,8 @@
                 <p class="control-group radioGroup">
                     <label class="span2" for="id_jobtype">Job Type</label>
                         {% for gig_type in gig_types %}
-                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype" 
-                                {% if post_job_form.job_type.value = gig_type.id %}checked="checked"{% endif %}
-                                />
-                                <label class="radioPill" for="{{gig_type.id}}_jobtype">
+                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype" {% if post_job_form.job_type.value == gig_type.id %}checked="checked"{% endif %}
+                                /><label class="radioPill" for="{{gig_type.id}}_jobtype">
                                     {% if post_job_form.job_type.value = gig_type.id %}
                                     <i class="icon-ok-sign"></i>&nbsp;{% endif %}
                                     {{gig_type.type}} {{ gig_type.price }}
@@ -26,8 +24,7 @@
             </div>
                     <p class="control-group">
                         <label class="span2" for="id_gig_categories">Categories</label>
-                        {% comment %}{{ post_job_form.categories }} {% endcomment %}
-                        <select class="selectpicker" multiple name="gig_categories" id="id_gig_categories" data-width="auto" multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}...">
+                        <select class="selectpicker" multiple name="gig_categories" id="id_gig_categories" ``multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}...">
                              {% for category in gig_categories %}
                                 <option value="{{ category.id }}" data-subtext="{{ category.description }}">{{ category.title }}</option>
                              {% endfor %}
@@ -107,7 +104,7 @@
                     <p class="control-group">
                     <label class="span2" for="id_how_to_apply">How to apply</label>
                     {{ post_job_form.how_to_apply }}
-                    <span id="via_url" class="input-prepend inline" style="display:{% if post_job_form.via_url.value %}block{% else %}none{% endif %}">
+                    <span id="via_url" class="input-prepend" style="display:{% if post_job_form.via_url.value %}block{% else %}none{% endif %}">
                             <span class="add-on">http://</span>
                             <input type="text" name="via_url" value="{% if post_job_form.via_url.value %}{{ post_job_form.via_url.value }}{% endif %}" />
                         </span>

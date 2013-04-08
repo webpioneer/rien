@@ -96,7 +96,7 @@
                     <span id="id_twitter_picture" class="input-prepend input-append" style="display:{% if company_form.profile_picture_choice.value != 'TWITTER_PICTURE' %}none{% else %}block{% endif %}">
                             <span class="add-on">@</span>
                             <input class="span2" id="id_twitter_username" type="text" name="twitter_username" maxlength="200" autofocus value="{% if company_form.twitter_username.value %}{{ company_form.twitter_username.value }}{% endif %}" />
-                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="socio small twitterbird"></i> picture</button>
+                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="icon-twitter"></i> picture</button>
                     </span>
                     <span id="id_company_profile_picture" class="btn btn-warning fileinput-button" style="display:{% if company_form.profile_picture_choice.value != 'OWN_PICTURE' %}none{% else %}block{% endif %}"><span><i class="icon-plus icon-white"></i> Select Image...</span>
                         <input type="file" name="profile_picture" id="id_profile_picture"/>
