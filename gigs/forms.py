@@ -20,7 +20,8 @@ class PostJobForm(forms.ModelForm):
             'job_type', 'gig_categories', 'title', 'location', 'latitude', 
             'longitude', 'is_relocation', 'area_level1', 'area_level2',
             'is_onsite', 'content', 'perks', 'how_to_apply', 'via_email',
-            'via_url', 'apply_instructions', 'job_type',
+            'via_url', 'apply_instructions', 'job_type', 
+            #'gig_categories',
         ]
  
     def get_gig_object(self):
@@ -61,6 +62,7 @@ class PostJobForm(forms.ModelForm):
             via_email = self.cleaned_data.get('via_email', ''),
             via_url = self.cleaned_data.get('via_url', ''),
             apply_instructions = self.cleaned_data.get('apply_instructions', ''),
+            #gig_categories = self.cleaned_data['gig_categories'],
         )
 
     def _add_categories_to_gig(self, gig):
