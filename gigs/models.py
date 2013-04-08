@@ -59,7 +59,7 @@ class Company(Displayable):
     type = models.CharField(max_length = 200, choices = COMPANY_TYPES,
                     verbose_name = _('Company type'))
     title_is_confidential = models.BooleanField(verbose_name = _("Confidential"))
-    url = models.URLField(verbose_name = _("Company URL"))
+    url = models.URLField(verbose_name = _("Company URL"), null = True, blank = True)
     email = models.EmailField()
     elevator_pitch = models.CharField(max_length = 200, verbose_name = _("Elevator pitch"),
         help_text=_("What s your company about (i.e. tag line)"))
