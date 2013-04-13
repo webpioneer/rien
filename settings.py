@@ -45,7 +45,7 @@ SHOP_CHECKOUT_STEPS_CONFIRMATION = False
 # Dotted package path and class name of the function that
 # is called on submit of the payment checkout step. This is where
 # integration with a payment gateway should be implemented.
-SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
+#SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
 
 #PAYPAL SETTINGS
 PAYPAL_USER = 'contact_api1.djangojobs.org'
@@ -314,6 +314,7 @@ INSTALLED_APPS = (
     #"mezzanine.mobile",
     'gigs',
     'fts',
+    'searchapp',
 )
 # Company Settings
 COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
@@ -383,6 +384,9 @@ OPTIONAL_APPS = (
 )
 
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
+
+# CUSTOM SETTINGS
+GOOGLE_MAPS_KEY = 'AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM'
 
 
 ##################
