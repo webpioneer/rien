@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
@@ -8,9 +8,11 @@ from cartridge.shop.models import (Cart, CartItem, Product,
 from cartridge.shop.views import cart, product as product_view
 
 from mezzanine.utils.views import paginate, render
+from mezzanine.utils.sites import current_site_id
 
 from gigs.forms import CompanyForm, PostJobForm
 from gigs.models import Category, Gig, GigType
+from searchapp.forms import GigSearchForm
 
 def all_gigs(request, template_name = 'gigs/index.html'):
     """
@@ -18,14 +20,21 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     """
     # gigs need to be filtred based on order processed
     # based on site_id,etc by creating a models.Manager
-    gigs = Gig.objects.all().order_by('-publish_date')
+
+    gigs = Gig.objects.all().filter(site_id=current_site_id()).order_by('-publish_date')[0:5]
     categories = Category.objects.all()
     #starting_price = GigType.get_starting_price()
     starting_price = GigType.objects.filter(type__contains="Internship")[0].price
+    # for search and filtering
+    gig_types = GigType.objects.all()
+    # search form
+    gig_search_form = GigSearchForm()
     context = {
         'gigs' : gigs,
         'categories' : categories,
+        'gig_types' : gig_types,
         'starting_price' : starting_price,
+        'gig_search_form' : gig_search_form,
     }
     return render(request, template_name, context)
 
@@ -73,9 +82,11 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                 request.session['gig'] = gig
                 request.session['gig_categories'] = gig_categories
                 gig.available = True
-                gig.unit_price = 100.0
+                gig.unit_price = 100
                 gig.sku = gig.id
                 gig.image = company.profile_picture
+                # updating the status to draft (needs review)
+                #gig.status = 1
                 gig.save()
                 gig_variation = ProductVariation(product = gig, default = True,
                  unit_price = gig.job_type.price.amount, sale_price = gig.job_type.price.amount)
