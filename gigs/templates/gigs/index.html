@@ -3,6 +3,7 @@
 
 {% block meta_title %}{% trans "All Jobs" %}{% endblock %}
 {% block extra_css %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 <style type="text/css">
 ul {
 list-style-type: disc;
@@ -153,9 +154,162 @@ text-align: -webkit-match-parent;
 .jobs-list .heart {
     margin-top:3px; 
 }
+/* Infinite scroll */
+#more{
+        background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #CFCFCF;
+    color: #000000;
+    display: none;
+    font-weight: bold;
+    left: 1100px;
+    padding: 5px;
+    position: fixed;
+    top: 100px;
+        }
+#no-more{
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #CFCFCF;
+    color: #000000;
+    display: none;
+    font-weight: bold;
+    left: 1100px;
+    padding: 5px;
+    position: fixed;
+    top: 100px;
+}
+/* id_search styling */
+#id_search{
+    background-color: #336699;
+    padding-top:20px;
+    padding-bottom:2px;
+    padding-right:5px;
+    padding-left:5px;
+}
+#id_search input{
+    padding:15px;
+    font-size: 14px;
+}
+#id_filter{
+    margin-top:5px;
+    background-color: #000;
+    padding:10px;
+    color:#fff;
+}
 </style>
-
 {% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script type="text/javascript"  
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=en"></script>
+<script src="{{ STATIC_URL }}js/location.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#id_find_jobs").click(function(e){
+        e.preventDefault();
+        find_jobs(method = 'POST', page = 1, search = true);
+    });
+    /*
+    $('#id_filter input[type=checkbox]').each(function () {
+           if (this.checked) {
+               console.log($(this).val()); 
+           }
+    });
+    */
+    $("#id_filter input").click(function(){
+        console.log($(this).val() + 'is clicked');
+        find_jobs(method = 'GET', page = 1, search = true);
+    });
+});
+function find_jobs(method, page, search){
+    var gig_types = '';
+        $("#id_filter input").each(function(){
+            if(this.checked){
+
+                gig_types += $(this).val() + ':'; 
+            }
+        });
+    console.log(gig_types);
+    $.ajax({
+        type: method,
+        url : "{% url find_jobs %}",
+        data : {
+            csrfmiddlewaretoken : $("input[name=csrfmiddlewaretoken]").val(),
+            what : $("#id_what").val(),
+            location : $("#id_location").val(),
+            gig_types : gig_types,
+            page : page,
+        },
+        dataType : 'json',
+    }).done(function( msg ) {
+        $("#what").html(msg.what);
+        $("#location").html(msg.location);
+        
+
+        var html_string = '';
+        for(var i = 0; i < msg.results.length; i++){
+            html_string += "<li class='job-item clearfix'>\
+            <h3 class='job-title'><a href='"+ msg.results[i].gig_link +"'>"+ msg.results[i].gig_title+"</a></h3>";
+            html_string += "<a class='contract clearfix'>"+ msg.results[i].gig_job_type +"</a>";
+            html_string += "<div class='job-details'> \
+                        <span class='job-details-left'> \
+                            <span>"+ msg.results[i].gig_company +"</span>";
+            html_string += "<span class='muted'>"+ msg.results[i].gig_company_elevator_pitch +"</span></span>";
+            html_string += "<span class='muted span4'><i class='icon-map-marker'></i>"+ msg.results[i].gig_location +"</span>";
+            html_string += "<span class='job-details-right'> \
+                            <span class='text-center date'>"+ msg.results[i].gig_publish_date +"\
+                                <span class='month'>{{ gig.public_date|date:'M' }}</span>\
+                                <span class='day'>{{ gig.public_date|date:'d' }}</span> \
+                            </span>\
+                        </span>\
+                    </div><!-- end .job-details -->\
+            </div>\
+        </li>";     
+        }
+        console.log(html_string);
+        $(".jobs-list").css('border-bottom', '1px dotted solid');
+        if(search){
+            $(".jobs-list").html(html_string);}
+        else{
+            $(".jobs-list").append(html_string);
+        }
+
+    });
+}// end find_jobs()
+
+// Infinite scroll implementation
+            var page = 1;
+
+            $(window).scroll(function () {
+                $('#more').hide();
+                $('#no-more').hide();
+
+                if($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
+                    $('#more').css("top","400");
+                    $('#more').show();
+                }
+                if($(window).scrollTop() + $(window).height() == $(document).height()) {
+
+                    $('#more').hide();
+                    $('#no-more').hide();
+
+                    page++;
+
+                    var actual_count = "102";
+
+                    if((page-1)* 12 > actual_count){
+                        $('#no-more').css("top","400");
+                        $('#no-more').show();
+                    }else{
+                        console.log('hey');
+                        find_jobs(method = 'GET', page = page, search = false);
+                    }
+                }
+            }); // end scroll()
+    
+</script>
+{% endblock %}
+
 {% block title %}{% trans "All Jobs" %}{% endblock %}
 
 {% block title_bread %}{% endblock %}
@@ -164,9 +318,71 @@ text-align: -webkit-match-parent;
 
 	 <!-- Search and Filter
     ================================================== -->
+    {% block search_form %}
+    <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}
+        <div class="controls controls-row">
+            {{ gig_search_form.what }}
+            {{ gig_search_form.location }}
+            <button id="id_find_jobs" type="submit" class="btn btn-primary span2">{% trans 'Find Jobs' %}</button>
+        </div><!-- .controls .controls-row-->
+        <div id="id_filter">
+            {% for gig_type in gig_types %}
+            <label class="checkbox inline">
+              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" checked> {{ gig_type.type }}
+            </label>
+            {% endfor %}
+            <label class="checkbox pull-right">
+              <input type="checkbox" id="inlineCheckbox1" value="remote" class=""> {% trans 'Remote' %}
+            </label>
+        </div>
 
+    </form>
+    
+    {% endblock %}
+    <!-- 
+    <section class="">
+        <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}
+            <div class="control-group">
+                <div class="controls">
+                <div class="input-prepend">
+                  <span class="add-on"><i class="icon-search"></i></span>
+                  <input type="text" name="what" id="id_what" placeholder="Job Title, Keyword, Company Name ...">
+                </div>
+                <div class="input-prepend">
+                  <span class="add-on"><i class="icon-map-marker"></i></span>
+                  <input class="" type="text" name="where" id="where" placeholder="City, State or Zip code">
+                </div>
+                <button id="id_find_jobs" type="submit" class="btn btn-primary">{% trans 'Find Jobs' %}</button>
+              </div>   
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <ul class="inline">
+                        {% for gig_type in gig_types %}
+                        <li>
+                            <label class="checkbox">
+                                <input type="checkbox" checked> {{ gig_type.type }}
+                            </label>
+                        </li>
+                        {% endfor %}
+                        <li class="pull-right span2">
+                            <label class="checkbox">
+                                <input type="checkbox" checked>Remote
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </form>
+    </section>
+-->
+    <div id='more' >Loading More Content</div>
+    <div id='no-more' >No More Content</div>
+    <div id='page-header'><h3>Showing all jobs matching <span id="what"></span> at <span id="location"></span></h3></div>
 	<ul class="jobs-list">
 	{% for gig in gigs %}
+        <div id="results"></div>
 		<li class="job-item clearfix">
 <!--
             <a class="pull-left heart" href="#">
