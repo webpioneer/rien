@@ -1,0 +1,16 @@
+{% extends "base2.html" %}
+{% load i18n %}
+
+{% block meta_title %}{% trans "Home" %}{% endblock %}
+{% block title %}{% trans "Home" %}{% endblock %}
+
+{% block title_bread %}{% endblock %}
+{% comment %}
+{% block breadcrumb_menu %}
+<li class="active">{% trans "Home" %}</li>
+{% endblock %}
+{% endcomment %}
+
+{% block main %}
+{% trans "This is the homepage." %}
+{% endblock %}

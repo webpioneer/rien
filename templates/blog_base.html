@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+{% load pages_tags mezzanine_tags i18n future %}
+<html>
+<head>
+
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+<meta name="description" content="{% block meta_description %}{% endblock %}">
+<title>{% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %}</title>
+<link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
+
+{% ifinstalled mezzanine.blog %}
+<link rel="alternate" type="application/rss+xml" title="RSS" href="{% url "blog_post_feed" "rss" %}">
+<link rel="alternate" type="application/atom+xml" title="Atom" href="{% url "blog_post_feed" "atom" %}">
+{% endifinstalled %}
+
+{% compress css %}
+<!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/mezzanine.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.responsive.css">-->
+<!-- CSS ================ -->
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" type="text/css"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}css/header-1.css" type="text/css"/>
+{% ifinstalled cartridge.shop %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/cartridge.css">
+{% endifinstalled %}
+{% block extra_css %}{% endblock %}
+{% endcompress %}
+
+{% compress js %}
+<script src="{{ STATIC_URL }}mezzanine/js/{{ settings.JQUERY_FILENAME }}"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script>
+$(function() {
+    $('.middleinput:text, textarea').addClass('xlarge');
+    $('.control-group label').addClass('control-label');
+});
+</script>
+{% block extra_js %}{% endblock %}
+{% endcompress %}
+<!--[if lt IE 9]>
+<script src="{{ STATIC_URL }}js/html5shiv.js"></script>
+<![endif]-->
+
+{% block extra_head %}{% endblock %}
+
+</head>
+<body id="{% block body_id %}body{% endblock %}" class="blog-single">
+     <section class="container preheader"> 
+    
+    <!--this is the login for the user-->
+    <nav class="user clearfix"> <a href="login.html"><i class="icon-user"></i> Login</a> </nav>
+    <!--close user nav-->
+    
+    <div class="search-wrapper">
+        <form class="search" method="post" action="someaction.php">
+            <div id="search-trigger">Search:</div>
+            <input id="search-box" type="text" placeholder="search + enter">
+        </form>
+    </div>
+    <div class="phone"><a href="tel:8135551234" class="tele">813.555.1234</a></div>
+    <ul class="social">
+        <li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>
+        <li><a class="socicon small facebook" href="#" data-placement="bottom" title="Follow us on Facebook"></a></li>
+        <li><a class="socicon small twitterbird" href="#" data-placement="bottom" title="Follow us on Twitter"></a></li>
+        <li><a class="socicon small linkedin" href="#" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+        <li><a class="socicon small dribbble" href="#" data-placement="bottom" title="Follow us on dribble"></a></li>
+        <li><a class="socicon small vimeo" href="#" data-placement="bottom" title="Follow us on Vimeo"></a></li>
+    </ul>
+    </section>
+
+        <!-- begin .header-->
+<header class="header clearfix"> <img src="assets/images/print-logo.png" class="print logo" alt="name of company" />
+    <div class="container"> 
+        
+        <!-- begin #main_menu -->
+        <nav id="main_menu">
+            <ul class="accordmobile">
+            </ul>
+            <div class="nav-collapse">
+            {% page_menu "pages/menus/dropdown.html" %}
+            </div>
+        </nav>
+        <!-- close / #main_menu --> 
+        
+        <!-- begin #logo -->
+        <div id="logo"> <!-- <a href="index.html"><img alt="" src="assets/images/trans.gif" /><em>Crisp Responsive HTML Retina Ready Bootstrap Goodness</em></a>
+        -->
+          {% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}
+          {% if settings.SITE_TAGLINE %}<p class="tagline">{{ settings.SITE_TAGLINE }}</p>{% endif %}
+        </div>
+        <!-- end #logo --> 
+        
+    </div>
+    <!-- close / .container--> 
+</header>
+<!-- close /.header -->
+<!-- begin #page - the container for everything but header -->
+<div id="page">
+
+<div class="container">
+
+{% nevercache %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}" data-alert="alert">
+<a class="close" href="#" onclick="$(this).parent().fadeOut('fast'); return false;">×</a>{{ message }}
+</div>
+{% endfor %}
+{% endnevercache %}
+
+{% block title_bread %}
+
+    <h1>{% block title %}{% endblock %}</h1>
+
+    <ul class="breadcrumb">
+    {% spaceless %}
+    {% block breadcrumb_menu %}{% page_menu "pages/menus/breadcrumb.html" %}{% endblock %}
+    {% endspaceless %}
+    </ul>
+
+{% endblock %}
+</div>
+
+<div class="container clearfix" id="main-content">
+  <!--begin main content-->
+  <div class="row-fluid sidebar-right">
+
+    <div class="span9 blog-detail primary-column">
+        {% block main %}{% endblock %}
+    </div>
+    <!-- close span9 primary-column-->
+
+    <section class="span3 sidebar secondary-column" id="secondary-nav">
+        {% block right_panel %}
+        {% endblock %}
+    </section>
+
+  </div>
+</div>
+<!--close .container id="main-content" --> 
+
+<footer id="footer" class="clearfix">
+  <div class="container">
+    <div class="row-fluid">
+          <div class="span4">
+            <section>
+              <h4>Contact Us</h4>
+              <p>Crisp Creative<br>
+                1255 Nowhere Street<br>
+                Tampa, FL 33655<br>
+                <strong>phone:</strong> <a href="tel:8135551234" class="tele">813.555.1234</a><br>
+                <strong>fax:</strong> 813.555.1235<br>
+                <strong>email:</strong> <a href="mailto:email@domain.com">crisp@companydomain.com</a> </p>
+            </section>
+            <!--close section-->
+            
+            <section>
+              <h4>Follow Us</h4>
+              <ul class="social">
+                <li><a class="socicon rss" href="#" title="RSS"></a></li>
+                <li><a class="socicon facebook" href="#" title="Facebook"></a></li>
+                <li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
+                <li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
+                <li><a class="socicon dribbble" href="#" title="dribble"></a></li>
+                <li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
+              </ul>
+            </section>
+            <!--close section--> 
+          </div>
+          <!-- close .span4 --> 
+          <!--section containing newsletter signup and recent images-->
+          <div class="span4">
+            <section>
+              <h4>Stay Updated</h4>
+              <p>Sign up for our crispy newsletter. We won't share your email address.</p>
+              <form action="yourscript.php" method="post">
+                <div class="input-append">
+                  <input type="email" placeholder="Email Address" class="span6" name="email" />
+                  <button class="btn btn-primary">Sign Up</button>
+                </div>
+                <!--close input-append-->
+              </form>
+            </section>
+            <!--close section-->
+          </div>
+          <!-- close .span4 --> 
+          <div class="span4">
+          </div>
+          <section class="footerCredits">
+          <div class="container">
+            <ul class="clearfix">
+              <li>© 2012 {{ SITE_TITLE }} {% trans 'All rights reserved.' %}</li>
+              <li><a href="sitemap.html">Site Map</a></li>
+              <li><a href="privacy.html">Privacy</a></li>
+            </ul>
+          </div>
+        <!--footerCredits container--> 
+        </section>
+        <!--close section-->
+  </div> 
+</footer>
+<!--/.footer--> 
+<span class="backToTop"><a href="#top">back to top</a></span> </div>
+<!-- close #page--> 
+
+{% include "includes/footer_scripts.html" %}
+
+</body>
+</html>
