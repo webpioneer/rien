@@ -91,7 +91,7 @@ form input, form textarea{
 <script type="text/javascript" src="{{STATIC_URL}}js/upload_file.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
 <script type="text/javascript"  
-                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language=en"></script>
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language={{ LANGUAGE_CODE }}"></script>
 <script src="{{ STATIC_URL }}js/location.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
