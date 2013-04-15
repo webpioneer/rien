@@ -173,7 +173,7 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE = 'en'
 
 # A boolean that turns on/off debug mode. When set to ``True``, stack traces
 # are displayed for error pages. Should always be set to ``False`` in
@@ -187,7 +187,7 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = False
+USE_I18N = True
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "aef96f8e-2bfd-4c65-a87c-d3fbb91e13a583371b52-aaa5-4513-8434-d199f6006d394e04c22e-238c-49e6-b9b8-5687de56a7e3"
@@ -355,6 +355,8 @@ MIDDLEWARE_CLASSES = (
     "mezzanine.core.middleware.SSLRedirectMiddleware",
     "mezzanine.pages.middleware.PageMiddleware",
     "mezzanine.core.middleware.FetchFromCacheMiddleware",
+    # Custom middleware
+    "middlewares.LocaleSelectorMiddleware",
 )
 
 # Sequence of URL prefixes that will be forced to run over
