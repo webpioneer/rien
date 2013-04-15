@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-14 22:54-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: forms.py:14
+msgid "Job Title"
+msgstr "Titre"
+
+#: forms.py:77 models.py:69
+msgid "Profile Picture"
+msgstr ""
+
+#: models.py:27
+msgid "Job Category"
+msgstr "Categorie"
+
+#: models.py:28
+msgid "Categories"
+msgstr ""
+
+#: models.py:54
+msgid "No picture"
+msgstr "Aucune image"
+
+#: models.py:55
+msgid "Use Twitter profile picture (recommended)"
+msgstr ""
+
+#: models.py:56
+msgid "Upload a picture"
+msgstr "Telecharger une image"
+
+#: models.py:58
+msgid "Company name"
+msgstr ""
+
+#: models.py:60
+msgid "Company type"
+msgstr ""
+
+#: models.py:61
+msgid "Confidential"
+msgstr ""
+
+#: models.py:62
+msgid "Company URL"
+msgstr ""
+
+#: models.py:64
+msgid "Elevator pitch"
+msgstr ""
+
+#: models.py:65
+msgid "What s your company about (i.e. tag line)"
+msgstr ""
+
+#: models.py:77
+msgid "Companies"
+msgstr ""
+
+#: models.py:111
+msgid "Job Type"
+msgstr "Type d'emploi"
+
+#: models.py:112
+msgid "Job Location"
+msgstr "Lieu"
+
+#: models.py:113
+msgid "Examples: San Francisco, CA; Seattle; Anywhere"
+msgstr ""
+
+#: models.py:118
+msgid "Relocation assistance offered                for this opposition"
+msgstr ""
+
+#: models.py:120
+msgid "Work can be done from anywhere         (i.e. telecommuting)"
+msgstr ""
+
+#: models.py:122
+msgid "Job Perks"
+msgstr ""
+
+#: models.py:123
+msgid ""
+"Sell your position! If you're willing         to relocate, mention it here. "
+"If you've got great benefits, bonuses        , paid trips to conferences, "
+"free food, discounts, etc., talk it up."
+msgstr ""
+
+#: models.py:127
+msgid "How to apply"
+msgstr ""
+
+#: models.py:131
+msgid "Add instructions(optional)"
+msgstr ""
+
+#: models.py:132
+msgid "Filled"
+msgstr ""
+
+#: models.py:152
+msgid "Number of Views"
+msgstr ""
+
+#: models.py:153
+msgid "Clicked Apply"
+msgstr ""
+
+#: models.py:154
+msgid "Notified Users"
+msgstr ""
+
+#: views.py:109
+msgid "Create Your Job Listing"
+msgstr ""
+
+#: views.py:110
+msgid "Company Information"
+msgstr ""
+
+#: views.py:124
+msgid "Item added to cart"
+msgstr ""
+
+#: templates/gigs/get_gig.html:46
+msgid "JOB PERKS"
+msgstr ""
+
+#: templates/gigs/get_gig.html:55
+msgid "Apply for this Job"
+msgstr ""
+
+#: templates/gigs/get_gig.html:85
+msgid "Recommended Jobs"
+msgstr ""
+
+#: templates/gigs/get_gig.html:98 templates/gigs/index.html:435
+msgid "Follow"
+msgstr ""
+
+#: templates/gigs/gig_product.html:15
+msgid "On sale:"
+msgstr ""
+
+#: templates/gigs/gig_product.html:32
+msgid "Buy"
+msgstr ""
+
+#: templates/gigs/index.html:4 templates/gigs/index.html.py:313
+msgid "All Jobs"
+msgstr ""
+
+#: templates/gigs/index.html:326 templates/gigs/index.html.py:355
+msgid "Find Jobs"
+msgstr ""
+
+#: templates/gigs/index.html:335
+msgid "Remote"
+msgstr ""
+
+#: templates/gigs/post_job.html:219
+msgid "Preview your listing"
+msgstr ""
+
+#: templates/gigs/right_panel.html:5
+msgid "Post A Job"
+msgstr "Poster une Offre"
+
+#: templates/gigs/right_panel.html:8
+msgid "Starting at"
+msgstr ""
+
+#: templates/gigs/right_panel.html:8
+msgid "unlimited"
+msgstr ""
+
+#: templates/gigs/includes/post_job_form.html:27
+msgid "Choose one or more category"
+msgstr "Choisir une ou plusieurs categories"
