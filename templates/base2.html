@@ -147,11 +147,9 @@ $(function() {
           <div class="span4">
             <section>
               <h4>Contact Us</h4>
-              <p>Crisp Creative<br>
-                1255 Nowhere Street<br>
-                Tampa, FL 33655<br>
-                <strong>phone:</strong> <a href="tel:8135551234" class="tele">813.555.1234</a><br>
-                <strong>fax:</strong> 813.555.1235<br>
+              <p>{{ settings.SITE_TITLE }}<br>
+                {{ settings.ADDRESS|safe }}<br />
+                <strong>phone:</strong> <a href="tel:{{ settings.PHONE }}" class="tele">{{ settings.PHONE }}</a><br>
                 <strong>email:</strong> <a href="mailto:email@domain.com">crisp@companydomain.com</a> </p>
             </section>
             <!--close section-->
