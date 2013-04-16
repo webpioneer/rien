@@ -7,6 +7,7 @@ from cartridge.shop.models import (Cart, CartItem, Product,
  ProductImage, ProductVariation)
 from cartridge.shop.views import cart, product as product_view
 
+from mezzanine.conf import settings
 from mezzanine.utils.views import paginate, render
 from mezzanine.utils.sites import current_site_id
 
@@ -21,6 +22,7 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     # gigs need to be filtred based on order processed
     # based on site_id,etc by creating a models.Manager
 
+    settings.use_editable()
     gigs = Gig.objects.all().filter(site_id=current_site_id()).order_by('-publish_date')[0:5]
     categories = Category.objects.all()
     #starting_price = GigType.get_starting_price()
