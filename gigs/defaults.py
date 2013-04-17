@@ -51,7 +51,7 @@ register_setting(
     name="TEMPLATE_ACCESSIBLE_SETTINGS",
     description=_("Sequence of setting names available within templates."),
     editable=False,
-    default=("ADDRESS", "PHONE", "LANGUAGE", "COUNTRY"),
+    default=("ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED"),
     append=True,
 )
 
