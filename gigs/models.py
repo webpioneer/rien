@@ -86,7 +86,7 @@ class Company(Displayable):
     def __unicode__(self):
         return ("{0} {1} {2}").format(self.title, self.type, self.profile_picture)
 
-class GigType(models.Model):
+class GigType(Slugged):
     """
     Gig Type 
     """
@@ -96,6 +96,7 @@ class GigType(models.Model):
 
     def __unicode__(self):
         return ("%s %s") % (self.type, self.price)
+
 
 class Gig(Product):
     """
