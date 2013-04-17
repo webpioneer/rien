@@ -6,5 +6,5 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;<i class="icon-circle-arrow-right icon-white"></i>
 	</a>
 	<p class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;{% if settings.SHOP_PAYMENT_STEP_ENABLED %}
-		{% trans 'Starting at' %}{{ starting_price }} {% trans 'unlimited' %}{% else %}{% trans 'For free Unlimited' %}{% endif %}</p>
+		{% trans 'Starting at' %} {{ starting_price|floatformat }} {% trans 'unlimited' %}{% else %}{% trans 'For free Unlimited' %}{% endif %}</p>
 </div>
