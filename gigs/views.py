@@ -1,3 +1,4 @@
+from django.db.models import Min
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -27,7 +28,7 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     gigs = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')[0:5]
     categories = Category.objects.all().filter(site_id = site_id)
     #starting_price = GigType.get_starting_price()
-    starting_price = GigType.objects.filter(type__contains="Internship")[0].price
+    starting_price = GigType.objects.all().aggregate(Min('price'))['price__min']
     # for search and filtering
     gig_types = GigType.objects.all()
     # search form
