@@ -23,8 +23,9 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     # based on site_id,etc by creating a models.Manager
 
     settings.use_editable()
-    gigs = Gig.objects.all().filter(site_id=current_site_id()).order_by('-publish_date')[0:5]
-    categories = Category.objects.all()
+    site_id = current_site_id()
+    gigs = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')[0:5]
+    categories = Category.objects.all().filter(site_id = site_id)
     #starting_price = GigType.get_starting_price()
     starting_price = GigType.objects.filter(type__contains="Internship")[0].price
     # for search and filtering
