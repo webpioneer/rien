@@ -16,7 +16,7 @@ from mezzanine.conf import register_setting
 
 register_setting(
     name="LANGUAGE",
-    label=_("Site Language"),
+    label=_("Site Language *"),
     description=_("The site language"),
     editable=True,
     default= 'en',
@@ -24,7 +24,7 @@ register_setting(
 
 register_setting(
     name="COUNTRY",
-    label=_("Site Country"),
+    label=_("Site Country *"),
     description=_("country matches a country name or a two letter ISO 3166-1 country code \
         refer to : https://developers.google.com/maps/documentation/geocoding/ and http://en.wikipedia.org/wiki/CcTLD"),
     editable=True,
@@ -33,7 +33,7 @@ register_setting(
 
 register_setting(
     name="ADDRESS",
-    label=_("Address"),
+    label=_("Address *"),
     description=_("Site address"),
     editable=True,
     default= '836 Sierra Vista Mountain View Ca',
@@ -41,7 +41,7 @@ register_setting(
 
 register_setting(
     name="PHONE",
-    label=_("Phone"),
+    label=_("Phone *"),
     description=_("Site phone"),
     editable=True,
     default= '',
