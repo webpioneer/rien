@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "gigs/get_gig.html" %}
 {% load mezzanine_tags shop_tags rating_tags i18n %}
 
 {% block meta_title %}{{ product.meta_title }}{% endblock %}
@@ -34,6 +34,48 @@
 
 {% block main %}
 
+<article class="entry-post well well-small">
+        <header class="entry-post page-header">
+            <h1><strong>{{ product.gig.title|capfirst }}</strong></h1>
+            <div class="byline">
+                <span class="span3">
+                    <i class="icon-folder-open"></i>&nbsp;{{ product.gig.job_type.type }}
+                </span>
+                <span class="span4">
+                    <i class="icon-map-marker"></i>&nbsp;{{ product.gig.location }}
+                </span>
+                <span class="pull-right">
+                    <i class="icon-time"></i>
+                    <abbr class="published" title="{{ product.gig.publish_date|date:'M d' }}">{{ product.gig.publish_date|date:'M d, Y' }}</abbr>
+                </span>
+            </div>
+        </header>
+        <div class="entry-content">{{ product.content|safe }}</div>
+        {% if gig.perks or gig.apply_instructions %}
+        <div class="important">
+            {% if gig.perks %}
+            <h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
+            <p>{{ gig.perks|capfirst}}</p>
+            {% endif %}
+            {% if gig.apply_instructions %}
+            <h4 class="short_headline">How to apply</h4><p>{{ gig.apply_instructions|capfirst }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        <section>
+            <a href="#" class="btn btn-large btn-success disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </section>
+        <!--
+        <footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span> 
+
+                         
+        </footer>
+        <!--end entry-footer-->
+        <a href="#"></a>
+
+    </article>
+
+{% comment %}
 {% if images %}
 {% spaceless %}
 <ul id="product-images-large" class="thumbnails">
@@ -63,12 +105,15 @@
 
 {% endspaceless %}
 {% endif %}
-
+{% endcomment %}
+{% comment %}
 {% editable product.content %}
 {{ product.content|safe }}
 {% endeditable %}
+{% endcomment %}
 
 {% if product.available and has_available_variations %}
+{% comment %}
 <ul id="variations" class="unstyled">
 	{% for variation in variations %}
 	<li id="variation-{{ variation.sku }}"
@@ -87,21 +132,26 @@
 	</li>
 	{% endfor %}
 </ul>
+{% endcomment %}
+{% comment %}
 <form method="post" id="add-cart" class="form-horizontal form-shop">
     {% csrf_token %}
-    {% fields_for add_product_form %}
+    <span style="display:none">{% fields_for add_product_form %} </span>
     <div class="form-actions clearfix">
         <div class="form-actions-wrap">
-        <input type="submit" class="btn btn-primary btn-large" name="add_cart" value="{% trans "Buy" %}">
+        <input type="submit" class="btn btn-success btn-large" name="add_cart" value="{% trans "Continue (add to cart)" %}">
         <input type="submit" class="btn btn-large" name="add_wishlist" value="{% trans "Save for later" %}">
         </div>
     </div>
 </form>
+{% endcomment %}
 {% else %}
 <div>{% trans "This product is currently unavailable." %}</div>
 {% endif %}
-
+{% comment %}
 {% rating_for product %}
+{% endcomment %}
+{% comment %}
 
 {% if related_products %}
 <h2>{% trans "Related Products" %}</h2>
@@ -124,5 +174,25 @@
     {% endfor %}
 </ul>
 {% endif %}
+{% endcomment %}
+{% endblock %}
 
+{% block toolbar %}
+<div class="toolbar" style="background-color:#000;position:absolute; bottom:0px;left:0px; right:0px; overflow:hidden;z-index: 1000;">
+    <div class="container">
+      <div class="row-fluid">
+        <div class="span6">
+          <h1>Preview Your Listing</h1>
+        </div>
+        <div class="span6">
+          <form method="post" id="add-cart" class="form-horizontal form-shop fixed">
+            {% csrf_token %}
+            <span style="display:none">{% fields_for add_product_form %} </span>
+            <input type="submit" class="btn btn-large" name="add_wishlist" value="{% trans "Save for later" %}">
+            <input type="submit" class="btn btn-success btn-large" name="add_cart" value="{% trans "Continue (add to cart)" %}">
+        </form>
+        </div>
+      </div>
+    </div><!-- end .container -->
+  </div>
 {% endblock %}
