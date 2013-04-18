@@ -8,7 +8,9 @@
                                 /><label class="radioPill" for="{{gig_type.id}}_jobtype">
                                     {% if post_job_form.job_type.value = gig_type.id %}
                                     <i class="icon-ok-sign"></i>&nbsp;{% endif %}
-                                    {{gig_type.type}} {% if settings.SHOP_PAYMENT_STEP_ENABLED %}{{ gig_type.price }}{% endif %}
+                                    {{gig_type.type}} {% if settings.SHOP_PAYMENT_STEP_ENABLED %}{{ gig_type.price.amount }}
+                                    {{ gig_type.price.currency }}
+                                    {% endif %}
                                 </label>
                                 <!-- <br /><span class="help_text">{{gig_type.description}}</span>-->
 
