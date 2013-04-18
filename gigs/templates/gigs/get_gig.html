@@ -23,7 +23,7 @@ div.important * {
 
 	<article class="entry-post well well-small">
 		<header class="entry-post page-header">
-			<h1><strong>{{ gig.title|capfirst }}</strong></h1>
+			<h1><strong>{% editable gig.title %}{{ gig.title|capfirst }}{% endeditable %}</strong></h1>
 			<div class="byline">
 				<span class="span3">
 					<i class="icon-folder-open"></i>&nbsp;{{ gig.job_type.type }}
@@ -38,7 +38,9 @@ div.important * {
 			</div>
 		</header>
 		<div class="entry-content">
+			{% editable gig.content %}
 			{{ gig.content|safe}}
+			{% endeditable %}
 		</div>
 		{% if gig.perks or gig.apply_instructions %}
 		<div class="important">
@@ -54,13 +56,12 @@ div.important * {
 		<section>
 			<a href="#" class="btn btn-large btn-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 		</section>
-		<!--
+		
 		<footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span> 
 
 						 
 		</footer>
-		<!--end entry-footer-->
-		<a href="#"></a>
+		
 
 	</article>
 {% endblock %}
