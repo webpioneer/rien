@@ -12,6 +12,13 @@ div.important {
 div.important * { 
 	color:#fcf8e5;
 }
+.company{
+	
+}
+.company #company_title{
+	padding: 8px;
+	background-color: #efefef;
+}
 </style>
 {% endblock %}
 
@@ -21,12 +28,29 @@ div.important * {
 
 {% block main %}
 
-	<article class="entry-post well well-small">
+
+
+	<article class="entry-post row-fuild">
+		<div class="company row-fuild clearfix">
+			<div class="span2">
+				<a href="#">
+					{% if gig.company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 73 73 %}">
+					{% endif %}
+				</a>
+			</div>
+			<div class="span4" id="company_title">
+				<a href="#"><h2>{{ gig.company.company_name|capfirst }}</h2>
+				<span class="">{{ gig.company.elevator_pitch|capfirst }}</span></a>
+			</div>
+		</div>
 		<header class="entry-post page-header">
 			<h1><strong>{% editable gig.title %}{{ gig.title|capfirst }}{% endeditable %}</strong></h1>
-			<div class="byline">
+			<div class="">
 				<span class="span3">
-					<i class="icon-folder-open"></i>&nbsp;{{ gig.job_type.type }}
+					<i class="icon-folder-open"></i>&nbsp;&nbsp;{{ gig.job_type.type }}
 				</span>
 				<span class="span4">
 					<i class="icon-map-marker"></i>&nbsp;{{ gig.location }}
@@ -37,30 +61,30 @@ div.important * {
 				</span>
 			</div>
 		</header>
-		<div class="entry-content">
-			{% editable gig.content %}
-			{{ gig.content|safe}}
+		<div class="">
+			{% editable gig.content %}{{ gig.content|safe}}
 			{% endeditable %}
-		</div>
-		{% if gig.perks or gig.apply_instructions %}
-		<div class="important">
-			{% if gig.perks %}
-			<h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
-			<p>{{ gig.perks|capfirst}}</p>
+			{% if gig.perks or gig.apply_instructions %}
+			<div class="important">
+				{% if gig.perks %}
+				<h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
+				<p>{{ gig.perks|capfirst}}</p>
+				{% endif %}
+				{% if gig.apply_instructions %}
+				<h4 class="short_headline">How to apply</h4><p>{{ gig.apply_instructions|capfirst }}</p>
+				{% endif %}
+			</div>
 			{% endif %}
-			{% if gig.apply_instructions %}
-			<h4 class="short_headline">How to apply</h4><p>{{ gig.apply_instructions|capfirst }}</p>
-			{% endif %}
+			<section>
+				<a href="#" class="btn btn-large btn-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+			</section>
 		</div>
-		{% endif %}
-		<section>
-			<a href="#" class="btn btn-large btn-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-		</section>
 		
-		<footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span> 
-
-						 
+		
+		<!--
+		<footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span>
 		</footer>
+	-->
 		
 
 	</article>
