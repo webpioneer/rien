@@ -34,12 +34,27 @@
 
 {% block main %}
 
-<article class="entry-post well well-small">
+    <article class="entry-post row-fuild">
+        <div class="company row-fuild clearfix">
+            <div class="span2">
+                <a href="#">
+                    {% if product.gig.company.twitter_username %}
+                    <img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ product.gig.company.twitter_username }}.png?size=bigger">
+                    {% else %}
+                <img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail product.gig.company.profile_picture 73 73 %}">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="span4" id="company_title">
+                <a href="#"><h2>{{ product.gig.company.company_name|capfirst }}</h2>
+                <span class="">{{ product.gig.company.elevator_pitch|capfirst }}</span></a>
+            </div>
+        </div>
         <header class="entry-post page-header">
-            <h1><strong>{{ product.gig.title|capfirst }}</strong></h1>
-            <div class="byline">
+            <h1><strong>{% editable product.gig.title %}{{ product.gig.title|capfirst }}{% endeditable %}</strong></h1>
+            <div class="">
                 <span class="span3">
-                    <i class="icon-folder-open"></i>&nbsp;{{ product.gig.job_type.type }}
+                    <i class="icon-folder-open"></i>&nbsp;&nbsp;{{ product.gig.job_type.type }}
                 </span>
                 <span class="span4">
                     <i class="icon-map-marker"></i>&nbsp;{{ product.gig.location }}
@@ -50,28 +65,31 @@
                 </span>
             </div>
         </header>
-        <div class="entry-content">{{ product.content|safe }}</div>
-        {% if gig.perks or gig.apply_instructions %}
-        <div class="important">
-            {% if gig.perks %}
-            <h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
-            <p>{{ gig.perks|capfirst}}</p>
+        <div class="">
+            {% editable product.gig.content %}{{ product.gig.content|safe}}
+            {% endeditable %}
+            {% if product.gig.perks or product.gig.apply_instructions %}
+            <div class="important">
+                {% if product.gig.perks %}
+                <h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
+                <p>{{ product.gig.perks|capfirst}}</p>
+                {% endif %}
+                {% if product.gig.apply_instructions %}
+                <h4 class="short_headline">How to apply</h4><p>{{ product.gig.apply_instructions|capfirst }}</p>
+                {% endif %}
+            </div>
             {% endif %}
-            {% if gig.apply_instructions %}
-            <h4 class="short_headline">How to apply</h4><p>{{ gig.apply_instructions|capfirst }}</p>
-            {% endif %}
+            <section>
+                <a href="#" class="btn btn-large btn-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            </section>
         </div>
-        {% endif %}
-        <section>
-            <a href="#" class="btn btn-large btn-success disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-        </section>
+        
+        
         <!--
-        <footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span> 
-
-                         
+        <footer class="entry-footer"> <span class="blog date"> <span class="month">Dec</span> <span class="day">27</span> <span class="year">2012</span> </span>
         </footer>
-        <!--end entry-footer-->
-        <a href="#"></a>
+    -->
+        
 
     </article>
 
