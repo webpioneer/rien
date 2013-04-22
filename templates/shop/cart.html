@@ -1,6 +1,33 @@
 {% extends "base.html" %}
 {% load mezzanine_tags shop_tags i18n future %}
 
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+	$( "table td span" ).each(function( index ) {
+  		get_gig_info(sku = $(this).text(), element =$(this) );
+	});
+
+	function get_gig_info(sku, element){
+		console.log(sku);
+		$.ajax({
+	        type: 'GET',
+	        url : "http://{{ request.META.HTTP_HOST }}/get_gig_info/"+sku,
+	        dataType : 'json',
+	    }).done(function( msg ) {
+	    	if(msg.gig_twitter_username){
+	    		console.log(msg.gig_picture);
+	    		element.html("<img src='http://api.twitter.com/1/users/profile_image/"+ msg.gig_picture +".png?size=bigger'>").show();
+	    	}else{
+	    		element.html("<img src='{{ MEDIA_URL }}{% thumbnail '"+msg.gig_picture +"' 73 73 %}'>").show();
+	    	}
+	        $("#type_"+sku).html(msg.gig_type);
+	    });
+    }//end get_gig_info
+});
+</script>
+{% endblock %}
+
 {% block meta_title %}{% trans "Your Cart" %}{% endblock %}
 {% block title %}{% trans "Your Cart" %}{% endblock %}
 
@@ -11,17 +38,23 @@
 
 {% block main %}
 {% if request.cart.has_items %}
+{{ request.cart.total_quantity }}
+{% endif %}
+{% if request.cart.has_items %}
 <form method="post" class="form-cart form-shop">
 {% csrf_token %}
 {% for error in cart_formset.errors %}
 {% if error.values.0 %}{{ error.values.0 }}{% endif %}
 {% endfor %}
 {{ cart_formset.management_form }}
+
 <table class="table table-striped">
 	<tr>
-		<th colspan="2" class="left">{% trans "Item" %}</th>
+		<th colspan="2" class="left">{% trans "Description" %}</th>
+		<th>{% trans "Type" %}</th>
 		<th>{% trans "Unit Price" %}</th>
 		<th class="center">{% trans "Qty" %}</th>
+		<th>{% trans "Duration" %}</th>
 		<th>{% trans "Price" %}</th>
 		<th class="center">{% trans "Remove?" %}</th>
 	</tr>
@@ -30,6 +63,8 @@
 	<tr>
 		<td width="30">
             {{ form.id }}
+
+            <span id="sku" style="display:none">{{ item.sku }}</span>
 			{% if item.image %}
 			<a href="{{ item.get_absolute_url }}">
                 <img alt="{{ item.description }}" src="{{ MEDIA_URL }}{% thumbnail item.image 30 30 %}">
@@ -37,17 +72,19 @@
 			{% endif %}
 		</td>
 		<td class="left">
-		    <a href="{{ item.get_absolute_url }}">{{ item.description }}</a>
+		    <a href="{{ item.get_absolute_url }}">{{ item.description|capfirst }}</a>
         </td>
+        <td id="type_{{ item.sku }}"></td>
 		<td>{{ item.unit_price|currency }}</td>
 		<td class="quantity">{{ form.quantity }}</td>
+		<td>{% trans 'Unlimited' %}</td>
 		<td>{{ item.total_price|currency }}</td>
 		<td class="center">{{ form.DELETE }}</td>
 	</tr>
 	{% endwith %}
 	{% endfor %}
 	<tr>
-		<td colspan="5">{% order_totals %}</td>
+		<td colspan="7"><strong>{% order_totals %}</strong></td>
 		<td>&nbsp;</td>
 	</tr>
 </table>
