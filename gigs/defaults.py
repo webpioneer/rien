@@ -48,10 +48,35 @@ register_setting(
 )
 
 register_setting(
+    name="PAYPAL_USER",
+    label=_("Paypal User *"),
+    description=_("Paypal user"),
+    editable=True,
+    default= 'contact_api1.djangojobs.org',
+)
+
+register_setting(
+    name="PAYPAL_PASSWORD",
+    label=_("Paypal password *"),
+    description=_("Paypal password"),
+    editable=True,
+    default= 'U4E2VWF3KWU9A2XX',
+)
+
+register_setting(
+    name="PAYPAL_SIGNATURE",
+    label=_("Paypal signature *"),
+    description=_("Paypal signature"),
+    editable=True,
+    default= 'AR6gDcq86QpriE9SFyYUOIjn4mByANdDCi9Tmu.OemEkbdE6g-dDyWVO',
+)
+
+register_setting(
     name="TEMPLATE_ACCESSIBLE_SETTINGS",
     description=_("Sequence of setting names available within templates."),
     editable=False,
-    default=("ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED"),
+    default=("ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED",
+        "PAYPAL_USER", "PAYPAL_PASSWORD", "PAYPAL_SIGNATURE"),
     append=True,
 )
 
