@@ -1,5 +1,77 @@
 {% extends "shop/checkout.html" %}
 {% load i18n future mezzanine_tags %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$("fieldset h2").css("padding", "10px");
+	$("#id_paypal").click(function(){
+		$("#checkout-form").toggle('slow');
+		$("#paypal_pay").toggle('slow');
+	});
+	$("#id_card").click(function(){
+		$("#paypal_pay").toggle('slow');
+		$("#checkout-form").toggle('slow');
+	});
+	$("#id_card_number").attr("placeholder","No spaces or hiphens");
+	$("#id_card_number").focus(function(){
+		$(this).attr("placeholder","");
+	})
+	setTimeout(function(){
+		$("#id_card_ccv").attr("size","1100");
+	},2000);
+
+	
+
+	$( ".checkout-panel ul li #sku" ).each(function( index ) {
+  		get_gig_info(sku = $(this).text(), element =$(this) );
+	});
+
+
+	function get_gig_info(sku, element){
+		console.log(sku);
+		$.ajax({
+	        type: 'GET',
+	        url : "http://{{ request.META.HTTP_HOST }}/get_gig_info/"+sku,
+	        dataType : 'json',
+	    }).done(function( msg ) {
+	    	if(msg.gig_twitter_username){
+	    		console.log(msg.gig_picture);
+	    		element.html("<img src='http://api.twitter.com/1/users/profile_image/"+ msg.gig_picture +".png?size=bigger' width='30'>").show();
+	    	}else{
+	    		element.html("<img src='{{ MEDIA_URL }}{% thumbnail '"+msg.gig_picture +"' 30 30 %}' width='30'>").show();
+	    	}
+	        $("#type_"+sku).html(msg.gig_type);
+	    });
+    }//end get_gig_info
+});
+</script>
+{% endblock %}
+{% block extra_css %}
+<style type="text/css">
+/* Forms */
+.control-group label {font-weight:bold; margin-bottom:3px;}
+.control-group ul, .control-group li {list-style-type:none; display:inline; margin:0;}
+                         /* radio/checkbox groups */
+.control-group li label {width:auto !important; float:none !important; display:inline;
+                         font-weight:normal; vertical-align:middle;
+                         padding:0 !important; line-height:27px; margin-right:10px;}
+.control-group li input {width:auto !important; margin-top:-2px;}
+.input ul {margin:0;}
+.input li {list-style-type:none;}
+.input li input {width:auto;}
+.input label {font-weight:normal;}
+textarea.xlarge {width:480px; height:120px;}
+.datefield select, .datetimefield select,
+.datefield input, .datetimefield input {width:auto; margin-right:5px;}
+.form-actions {background:rgba(220,220,220, 0.1); margin-left:-10px !important; border-top:1px solid #eee;}
+a.btn-large, input.btn-large {width:auto; min-width:100px; margin-right:10px;}
+.help-inline {color:#999;}
+#account .middle form {padding-top:20px;}
+.btn-account {margin:auto 5px;}
+.non-field-errors .help-inline {padding:0; margin-bottom:5px; display:block;}
+</style>
+{% endblock %}
 
 {% block extra_head %}
 {{ block.super }}
@@ -7,7 +79,9 @@
 {% endblock %}
 
 {% block fields %}
+
 {% if request.cart.has_items %}
+
 {% if not request.user.is_authenticated %}
 {% ifinstalled mezzanine.accounts %}
 <p>
@@ -16,29 +90,43 @@
 {% with request.path as next %}
 {% blocktrans %}
 If you have an existing account or would like to create one, please
-<a href="{{ login_url }}?next={{ next }}">log in</a> or
-<a href="{{ signup_url }}?next={{ next }}">sign up</a>.
+<a href="{{ login_url }}?next={{ next }}">log in</a> <!-- or
+<a href="{{ signup_url }}?next={{ next }}">sign up</a>-->.
 {% endblocktrans %}
 {% endwith %}
 </p>
 {% endifinstalled %}
 {% endif %}
 
-<fieldset>
-	<legend>{% trans "Billing Details" %}</legend>
-	{% fields_for form.billing_detail_fields %}
-</fieldset>
+
+
+{% if not settings.SHOP_CHECKOUT_STEPS_SPLIT and settings.SHOP_PAYMENT_STEP_ENABLED %}
+{% include "shop/includes/payment_fields.html" %}
+{% endif %}
 
 <fieldset>
+	<h2 class="page-header">{% trans "Billing Details" %}</h2>
+	{% fields_for form.billing_detail_fields %}
+	
+</fieldset>
+
+<fieldset style="display:none">
 	<legend>{% trans "Delivery Details" %}</legend>
-	{% fields_for form.same_billing_shipping_field %}
+	{% comment %}{% fields_for form.same_billing_shipping_field %}{% endcomment %}
+	<div class="control-group input_id_same_billing_shipping">
+    <label for="id_same_billing_shipping">My delivery details are the same as my billing details</label>
+    <div class="controls">
+        <input checked="checked" type="checkbox" name="same_billing_shipping" id="id_same_billing_shipping" />
+        
+        <span class="help-inline"></span>
+        
+    </div>
+</div>
 	<div id="shipping_fields">{% fields_for form.shipping_detail_fields %}</div>
 	{% fields_for form.additional_instructions_field %}
     {% fields_for form.remember_field %}
 </fieldset>
-{% if not settings.SHOP_CHECKOUT_STEPS_SPLIT and settings.SHOP_PAYMENT_STEP_ENABLED %}
-{% include "shop/includes/payment_fields.html" %}
-{% endif %}
+
 
 {% fields_for form.other_fields %}
 
