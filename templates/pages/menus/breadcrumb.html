@@ -1,6 +1,7 @@
 {% load i18n future pages_tags %}
 
 {% if on_home %}
+<ul class="breadcrumb">
 <li>{% trans "Home" %}</li>
 {% else %}
 {% for page in page_branch %}
@@ -25,4 +26,5 @@
     {% endif %}
 
 {% endfor %}
+</ul>
 {% endif %}
