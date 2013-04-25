@@ -45,12 +45,8 @@ SHOP_CHECKOUT_STEPS_CONFIRMATION = False
 # Dotted package path and class name of the function that
 # is called on submit of the payment checkout step. This is where
 # integration with a payment gateway should be implemented.
-#SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
+SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
 
-#PAYPAL SETTINGS
-PAYPAL_USER = 'contact_api1.djangojobs.org'
-PAYPAL_PASSWORD = 'U4E2VWF3KWU9A2XX'
-PAYPAL_SIGNATURE = 'AR6gDcq86QpriE9SFyYUOIjn4mByANdDCi9Tmu.OemEkbdE6g-dDyWVO'
 
 # Sequence of value/name pairs for order statuses.
 # SHOP_ORDER_STATUS_CHOICES = (
