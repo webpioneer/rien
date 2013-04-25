@@ -1,8 +1,13 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 {% load shop_tags mezzanine_tags i18n future %}
 
-{% block meta_title %}{% trans "Checkout" %} - {{ step_title }}{% endblock %}
-{% block title %}{% trans "Checkout" %} - {% trans "Step" %} {{ step }} {% trans "of" %} {{ steps|length }}{% endblock %}
+{% block meta_title %}{% trans "Checkout" %}{% comment %} - {{ step_title }}{% endcomment %}{% endblock %}
+{% block title %}
+{% trans "Checkout" %} 
+{% comment %}
+- {% trans "Step" %} {{ step }} {% trans "of" %} {{ steps|length }}
+{% endcomment %}
+{% endblock %}
 {% block body_id %}checkout{% endblock %}
 
 {% block extra_head %}
@@ -11,8 +16,10 @@ var _gaq = [['_trackPageview', '{{ request.path }}{{ step_url }}/']];
 $(function() {$('.middle :input:visible:enabled:first').focus();});
 </script>
 {% endblock %}
-
+{% block breadcrumb_menu %}{% endblock %}
+{% comment %}
 {% block breadcrumb_menu %}
+
 {% for step in steps %}
 <li>
     {% if step.title == step_title %}
@@ -24,30 +31,39 @@ $(function() {$('.middle :input:visible:enabled:first').focus();});
 </li>
 {% endfor %}
 <li>{% trans "Complete" %}</li>
+
 {% endblock %}
+{% endcomment %}
 
 {% block main %}
-
 {% if request.cart.has_items %}
-<div class="panel checkout-panel span3">
-<ul class="unstyled">
-{% for item in request.cart %}
-<li>
-    {% if item.image %}
-    <img alt="{{ item.description }}" src="{{ MEDIA_URL }}{% thumbnail item.image 30 30 %}">
-    {% endif %}
-    {{ item.quantity }} x {{ item.description }}
-    <span class="price">{{ item.total_price|currency }}</span>
-</li>
-{% endfor %}
-</ul>
-{% order_totals %}
-<br style="clear:both;">
-<a class="btn" href="{% url "shop_cart" %}">{% trans "Edit Cart" %}</a>
+<div class="page-header">
+    {% trans 'Choose a payment method ?' %}&nbsp;&nbsp;&nbsp;&nbsp;
+
+<label class="radio inline" for="cards"><input type="radio" id="id_card" checked="checked" name="payment_choice" value="card"><img src="{{STATIC_URL}}images/card.png"></label>
+<label class="radio inline" for="paypal">
+  <input type="radio" id="id_paypal" name="payment_choice" value="paypal"><img src="{{STATIC_URL}}images/paypal.png"></label>
+
 </div>
 {% endif %}
-
-<form method="post" id="checkout-form" class="form-horizontal form-shop span8">
+<div id="paypal_pay" style="display:none">
+    <p>{% block trans %}Cliquez sur “Payer & Publier mon annonce”. Vous allez être redirigé vers Paypal afin de finaliser votre paiement. Une fois validé, votre annonce sera automatiquement publiée après validation.{% endblock %}</p>
+    <hr>
+    <form name="_cart" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <!-- refer to https://www.paypal.com/cgi-bin/webscr?cmd=p/pdn/howto_checkout-outside#methodtwo -->
+    <input type="hidden" name="upload" value="1">
+    <input type="hidden" name="cmd" value="_cart">
+    <input type="hidden" name="business" value="contact@djangojobs.org">
+    <input type="hidden" name="currency_code" value="USD">
+    {% for item in request.cart %}
+        <input type="hidden" name="item_name_{{ forloop.counter }}" value="{{ item.description|capfirst }}">
+        <input type="hidden" name="amount_{{ forloop.counter }}" value="{{ item.total_price }}">
+    {% endfor %}
+    <input type="submit" class="btn btn-success btn-large pull-right" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" value="Pay directly by Paypal"> 
+</form>
+    
+</div>
+<form method="post" id="checkout-form" class="form-horizontal form-shop">
     {% csrf_token %}
 
 	{% with form.non_field_errors as errors %}
@@ -83,4 +99,27 @@ $(function() {$('.middle :input:visible:enabled:first').focus();});
 
 </form>
 
+{% endblock %}
+
+{% block right_panel %}
+{% if request.cart.has_items %}
+<div class="panel checkout-panel">
+    <h5 class="short_headline"><span>{% trans 'ORDER DETAILS' %}</span></h5>
+<ul class="unstyled blogposts clearfix">
+{% for item in request.cart %}
+<li><span id="sku">{{ item.sku }}</span>
+    {% comment %}
+    {% if item.image %}
+    <img alt="{{ item.description }}" src="{{ MEDIA_URL }}{% thumbnail item.image 30 30 %}">
+    {% endif %}
+    {{ item.quantity }} x {% endcomment %}{{ item.description|capfirst }}
+    <span class="price">{{ item.total_price|currency }}</span>
+</li>
+{% endfor %}
+</ul>
+{% order_totals %}
+<br style="clear:both;">
+<a class="btn" href="{% url "shop_cart" %}">{% trans "Edit Cart" %}</a>
+</div>
+{% endif %}
 {% endblock %}
