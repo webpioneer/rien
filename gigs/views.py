@@ -1,8 +1,11 @@
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from django.contrib.messages import info
 from django.db.models import Min
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+
 
 
 from cartridge.shop.forms import AddProductForm
@@ -72,14 +75,24 @@ def post_job(request, template_name = 'gigs/post_job.html'):
         company_form = CompanyForm(request.POST, request.FILES)
         #post_job_form_data = post_job_form.get_gig_create_data()
 
-        if  post_job_form.is_valid() and company_form.is_valid():
+        if  post_job_form.is_valid():
             print 'forms are valid'
             # save company first
-            company = company_form.get_company_object()
-            company.ip_address = request.META['REMOTE_ADDR']
-            #company.profile_picture = company_form.cleaned_data['profile_picture']
-            #company.profile_picture = request.FILES.get('profile_picture', '')
-            company.save()
+            if request.user.is_authenticated() and request.user.company:
+                company = request.user.company
+            else:
+                if company_form.is_valid():
+                    company = company_form.get_company_object()
+                    company.ip_address = request.META['REMOTE_ADDR']
+                    #company.profile_picture = company_form.cleaned_data['profile_picture']
+                    #company.profile_picture = request.FILES.get('profile_picture', '')
+                    company_password = company.save()
+                    # authenticate company
+                    print company.user.username
+                    print company.user.password
+                    user = authenticate(username=company.user.username, password=company_password)
+                    print user
+                    login(request, user)
             # save gig
             gig = post_job_form.get_gig_object()
             gig.company = company
@@ -121,6 +134,25 @@ def post_job(request, template_name = 'gigs/post_job.html'):
         'company_information': _('Company Information'),
         }
     return render(request, template_name, context)
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from mezzanine.utils.email import send_mail_template
+
+from gigs.models import Company
+
+@receiver(post_save, sender = Company)
+def welcome_company(sender, **kwargs):
+    print kwargs
+    subject = 'welcome'
+    addr_from = 'elmahdibouhram@els-MacBook-Pro.local'
+    #addr_to = sender.email
+    addr_to = 'elmahdibouhram@els-MacBook-Pro.local'
+    template = "email/comment_notification"
+    send_mail_template(subject, template, addr_from, addr_to, context=None,
+                       attachments=None, fail_silently = settings.DEBUG)
 
 def gig_product(request, slug, template_name = 'gigs/gig_product.html'):
     product = request.session['product']
