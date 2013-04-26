@@ -1,7 +1,9 @@
+from django.contrib.messages import info
 from django.db.models import Min
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+
 
 from cartridge.shop.forms import AddProductForm
 from cartridge.shop.models import (Cart, CartItem, Product,
@@ -45,14 +47,19 @@ def all_gigs(request, template_name = 'gigs/index.html'):
 def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
     """
     Returns the Gig page
-    """
+    """   
     try:
         gig = get_object_or_404(Gig, slug = slug)
+        if 'shop/product' in request.META['HTTP_REFERER']:
+            message = _('Your listing is published successfully. \
+            Please visit "%s" to track listing statistics, make edits, and more.') % gig.company.email
+            info(request, message)
     except:
         pass
+        
     context = {
         'gig' : gig,
-    }
+    }   
     return render(request, template_name, context)
 
 def post_job(request, template_name = 'gigs/post_job.html'):
