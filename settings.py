@@ -146,6 +146,7 @@ USE_SOUTH = True
 ########################
 # MAIN DJANGO SETTINGS #
 ########################
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # People who get code error notifications.
 # In the format (('Full Name', 'email@example.com'),
