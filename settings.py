@@ -45,7 +45,7 @@ SHOP_CHECKOUT_STEPS_CONFIRMATION = False
 # Dotted package path and class name of the function that
 # is called on submit of the payment checkout step. This is where
 # integration with a payment gateway should be implemented.
-SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
+# SHOP_HANDLER_PAYMENT = "cartridge.shop.payment.paypal.process"
 
 
 # Sequence of value/name pairs for order statuses.
