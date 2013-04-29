@@ -2,18 +2,17 @@ import moneyed
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 import settings
 
-from cartridge.shop.models import Product
+from cartridge.shop.models import Product, OrderItem
 
 from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
 
 from djmoney.models.fields import MoneyField
-
-
 
 class Category(Slugged):
     """
@@ -79,12 +78,21 @@ class Company(Displayable):
     def save(self, *args, **kwargs):
         company_password = User.objects.make_random_password()
         print company_password
+        #User.objects.get_or_create(username = self.email, email = self.email,
+        # password = company_password)
         self.user = User.objects.create_user(username = self.email, email = self.email,
          password = company_password)
         super(Company, self).save(*args, **kwargs)
+        return company_password
 
     def __unicode__(self):
-        return ("{0} {1} {2}").format(self.title, self.type, self.profile_picture)
+        return ("{0} {1} {2} {3} {4}").format(self.company_name, self.email, self.url,  self.type, self.profile_picture)
+
+    def number_posted_gigs(self):
+        return self.gig_set.count()
+
+    def company_gigs(self):
+        return self.gig_set.all().order_by('-publish_date')
 
 class GigType(Slugged):
     """
@@ -144,6 +152,13 @@ class Gig(Product):
         url_name = 'get_gig'
         kwargs = {"slug" : self.slug}
         return (url_name, (), kwargs)
+
+    def is_processed(self):
+        try:
+            status = True if OrderItem.objects.filter(sku = self.product.variations.all()[0].sku)[0].order.status == 2 else False
+            return status
+        except IndexError:
+            return False
 
 
 class GigStat(models.Model):
