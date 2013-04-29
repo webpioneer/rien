@@ -1,0 +1,133 @@
+<div id='company-information'> 
+            <h3 class="short_headline margin-top"><span>{{ company_information }}</span></h3>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_type">{{ company_form.type.label}}</label>
+                    {% comment %}{{ company_form.type}} {% endcomment %}
+                    <select class="selectpicker" name="type" id="id_type" data-width="auto">
+                    <option value="STARTUP">Startup</option>
+                    <option value="STUDIO">Studio</option>
+                    <option value="SMALL_BUSINESS">Small Business</option>
+                    <option value="MID_SIZED_BUSINESS">Mid Sized Business</option>
+                    <option value="LARGE_ORGANIZATION">Large Organization</option>
+                    <option value="EDUCATIONAL_INSTITUTION">Educational Institution</option>
+                    <option value="NON_PROFIT">Non-profit</option>
+                    </select>
+                    {% if company_form.type.errors %}
+                    <br /><label class="span2"></label>
+                    <span class="help-block error">
+                        {% for error in company_form.type.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_company_name">{{ company_form.company_name.label }}</label>
+                    {{ company_form.company_name|capfirst }}
+                    <span>
+                    <label class="checkbox inline" for="id_title_is_confidential">{{ company_form.title_is_confidential }}
+                        {{ company_form.title_is_confidential.label }}</label>
+                       
+                    </span>
+
+                    {% if company_form.company_name.errors %}
+                    <label class="span2"></label>
+                    <span class="help-block error">
+                        {% for error in company_form.company_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_url">{{ company_form.url.label}}</label>
+                    <div class="input-prepend">
+                        <span class="add-on">http://</span>
+                        <input id="id_url" type="text" name="url" maxlength="200" value="{% if company_form.url.value %}{{ company_form.url.value }}{% else %}{% endif %}" />
+                    </div>
+                    {% if company_form.url.errors %}
+                    <label class="span2"></label>
+                    <span class="help-block error">
+                    {% for error in company_form.title.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                <label class="span2" for="id_email">{{ company_form.email.label}}</label>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-envelope"></i></span>
+                    <input id="id_email" type="text" name="email" maxlength="75" placeholder="company@email.com" value="{% if company_form.email.value %}{{ company_form.email.value }}{% else %}{% endif %}" />
+                </div>
+                {% if company_form.email.errors %}
+                <label class="span2"></label>
+                <span class="help-block error">
+                {% for error in company_form.email.errors %}
+                    {{ error }}
+                {% endfor %}
+                </span>
+                {% endif %}
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_elevator_pitch">{{ company_form.elevator_pitch.label}}</label>
+                    <input id="id_elevator_pitch" type="text" name="elevator_pitch" maxlength="200" value="{% if company_form.elevator_pitch.value %}{{ company_form.elevator_pitch.value }}{% else %}{% endif%}" />
+                    <br /><label class="span2"></label>
+                    {% if company_form.elevator_pitch.errors %}
+                    <span class="help-block error">
+                    {% for error in company_form.elevator_pitch.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
+                    <span class="help_text">{{ company_form.elevator_pitch.help_text }}</span>
+                </p>
+            </div>
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span2" for="id_profile_picture">{{ company_form.profile_picture.label }}</label>
+                    <span class="span4">{{company_form.profile_picture_choice }}</span>
+                    <span id="id_twitter_picture" class="input-prepend input-append" style="display:{% if company_form.profile_picture_choice.value != 'TWITTER_PICTURE' %}none{% else %}block{% endif %}">
+                            <span class="add-on">@</span>
+                            <input class="span2" id="id_twitter_username" type="text" name="twitter_username" maxlength="200" autofocus value="{% if company_form.twitter_username.value %}{{ company_form.twitter_username.value }}{% endif %}" />
+                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="icon-twitter"></i> picture</button>
+                    </span>
+                    <span id="id_company_profile_picture" class="btn btn-warning fileinput-button" style="display:{% if company_form.profile_picture_choice.value != 'OWN_PICTURE' %}none{% else %}block{% endif %}"><span><i class="icon-plus icon-white"></i> Select Image...</span>
+                        <input type="file" name="profile_picture" id="id_profile_picture"/>
+                    </span>
+
+                    <span id="list" class="pull-right"><img id="employer_picture" src="{% if company_form.profile_picture.value %}{{STATIC_URL}}media/company_logos/{{ company_form.profile_picture.value }}{% elif company_form.twitter_username.value %}http://api.twitter.com/1/users/profile_image/{{ company_form.twitter_username.value }}.png?size=bigger 
+                    {% else %}{{STATIC_URL}}media/company_logos/employer_default.png{% endif %}"  style="margin-top:-25px" height="60" width="80" /></span>
+                </p>
+                    <!--
+                    <p class="well" style="display:">
+                        <label class="span2" for="id_twitter_picture">Company Twitter</label>
+                        <span id="id_twitter_picture" class="input-prepend input-append">
+                            <span class="add-on">@</span>
+                            <input class="span2" id="id_twitter" type="text" name="twitter" maxlength="200" />
+                            <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="small twitterbird"></i> picture</button>
+                        </span>
+                    </p>
+                    <br />
+                    <!-- <input id="id_profile_picture" type="file" name="profile_picture" /> -->
+                    {% comment %}{{ company_form.profile_picture }}{% endcomment %}
+                    <!--
+                    <span class="btn btn-warning fileinput-button"><span><i class="icon-plus icon-white"></i> Select Image...</span>
+                        <input type="file" name="profile_picture" id="id_profile_picture"/>
+                    </span>
+                    -->
+                    {% if company_form.profile_picture.errors %}
+                    <span class="help-block error">
+                    {% for error in company_form.profile_picture.errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            </div> <!-- end of company information -->

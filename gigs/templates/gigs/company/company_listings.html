@@ -1,0 +1,36 @@
+{% extends 'gigs/company/company.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_block %}
+	{% with logged_company=request.user.company %}  
+		<table class="responsive">
+			<thead>
+				<tr>
+					<th> {% trans 'Listing' %} </th>
+					<th> {% trans 'Posted' %} </th>
+					<th> {% trans 'Candidates' %} </th>
+					<th> {% trans 'Listing Status' %}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for gig in logged_company.company_gigs %}
+				<tr>
+					<td><a href="#">{{ gig.title|capfirst }}</a></td>
+					<td>{{ gig.publish_date|date:"D y" }}</td>
+					<td><!-- --></td>
+					<td>
+						{% if gig.is_processed %}
+						<span class="label label-success">{% trans 'Published' %}</span>
+
+						{% else %}
+						<span class="label label-warning">{% trans 'Waiting Payment' %}</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% endwith %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base2.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block extra_css %}
+<style type="text/css">
+#company{
+	background-color: #efefef;
+	padding:2px;
+	margin-bottom:2px;
+}
+
+</style>
+{% endblock %}
+
+{% block main %}
+	{% with logged_company=request.user.company %}
+	<div id="company" class="row-fluid">
+	  <div class="span9">
+	  	<div class="row-fluid">
+	  		<div class="span2">
+	  			<a href="#">
+					{% if logged_company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ logged_company.twitter_username }}.png?size=bigger">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail logged_company.profile_picture 73 73 %}">
+					{% endif %}
+				</a>
+	  		</div>
+	  		<div class="span7">
+	  			<h2>{{ logged_company.company_name|capfirst }} </h2>
+	  			<span class="tagline">{{ logged_company.elevator_pitch|capfirst }}</span>
+	  			<span><a target="_blank" href="{{ logged_company.url }}">{{ logged_company.url }}</a></span>
+	  		</div>
+	  	</div><!-- end .row-fluid -->
+	  	<!-- 
+	  	<span class="span2">
+	  	{% if logged_company.twitter_username %}
+	  <img src="">
+	  {% endif %}
+	  	</span>
+	  	<span class="span4"><h1>{{ logged_company.company_name }} {{ logged_company.user.username }} </h1></span>
+	  -->
+	  </div>
+	  <div class="span3">
+	  	<ul class="unstyled">
+	  		<li>Posted Listings {{ logged_company.number_posted_gigs }}</li>
+	  	<ul>
+	  </div>
+	</div><!-- end .row-fluid -->
+	  
+	{% endwith %}
+
+	{% block company_nav %}
+
+		<ul class="nav nav-tabs">
+		  <li {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url company_listings %}">{% trans 'My Listings' %}</a></li>
+		  <li><a href="#"><i class="icon-envelope"></i>&nbsp;&nbsp;{% trans 'Messages' %}</a></li>
+		  <li {% if 'info' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url company_infos %}">{% trans 'Company Info' %}</a></li> 
+		  <li><a href="#"><i class="icon-cog"></i>&nbsp;&nbsp;{% trans 'My Account' %}</a></li>
+		</ul>
+	{% endblock %}
+
+	{% block company_block%}
+	
+	{% endblock %}
+{% endblock %}

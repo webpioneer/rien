@@ -1,0 +1,14 @@
+{% extends 'gigs/company/company.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_block %}
+	<h3>{% trans 'This information appears on your public profile, search results, and beyond.' %}</h3>
+	{% with company=request.user.company %}
+	<form name="company_form" method="post" enctype="multipart/form-data" action="">{% csrf_token %}
+		{% include 'gigs/company/company_form.html' %}
+		<div class="form-actions">
+        	<input class="btn btn-success btn-large pull-right" type="submit" name="submit" value="{% trans 'Save Changes' %}">
+        </div>
+    </form>
+	{% endwith %}
+{% endblock %}
