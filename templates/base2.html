@@ -71,7 +71,7 @@ $(function() {
     {% endif %}
                         <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a> -->
                         <ul class="dropdown-menu">
-                          <li><a href="#">Something else here</a></li>
+                          <li><a href="{% url 'company_listings' %}">{% trans ' my Listings' %}</a></li>
                           <li class="divider"></li>
                           <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans 'Logout' %}</a></li>
                         </ul>
@@ -85,7 +85,8 @@ $(function() {
     </div>
     <div class="phone">
       {% if request.cart.has_items %}
-      <a href="{% url 'shop_cart' %}"><i class="icon-shopping-cart"></i> Cart {{ request.cart.items.count }}</a>
+      <a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
+        {{ request.cart.items.count }}</span></a>
       {% else %}
       <a href="tel:8135551234" class="tele">813.555.1234</a>
       {% endif %}
