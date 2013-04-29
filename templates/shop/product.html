@@ -29,7 +29,7 @@
 
 
 {% block title %}
-{% editable product.title %}{{ product.title }}{% endeditable %}
+{% editable product.title %}{{ product.title|capfirst }}{% endeditable %}
 {% endblock %}
 
 {% block main %}
