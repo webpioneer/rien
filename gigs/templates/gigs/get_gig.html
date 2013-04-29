@@ -33,7 +33,7 @@ div.important * {
 	<article class="entry-post row-fuild">
 		<div class="company row-fuild clearfix">
 			<div class="span2">
-				<a href="#">
+				<a href="{% url company_profile slug=gig.company.slug %}">
 					{% if gig.company.twitter_username %}
 					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
 					{% else %}
