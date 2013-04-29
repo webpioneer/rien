@@ -5,6 +5,7 @@ from django.db.models import Min
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -16,6 +17,7 @@ from cartridge.shop.views import cart, product as product_view
 from mezzanine.conf import settings
 from mezzanine.utils.views import paginate, render
 from mezzanine.utils.sites import current_site_id
+from mezzanine.utils.urls import slugify
 
 from gigs.forms import CompanyForm, PostJobForm
 from gigs.models import Category, Gig, GigType
@@ -83,6 +85,8 @@ def post_job(request, template_name = 'gigs/post_job.html'):
             else:
                 if company_form.is_valid():
                     company = company_form.get_company_object()
+                    company.slug = slugify(company.company_name)
+                    print company.slug
                     company.ip_address = request.META['REMOTE_ADDR']
                     #company.profile_picture = company_form.cleaned_data['profile_picture']
                     #company.profile_picture = request.FILES.get('profile_picture', '')
@@ -107,14 +111,16 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                 request.session['gig_categories'] = gig_categories
                 gig.available = True
                 gig.unit_price = 100
-                gig.sku = gig.id
+
                 gig.image = company.profile_picture
                 # updating the status to draft (needs review)
                 #gig.status = 1
                 gig.save()
+                
                 gig_variation = ProductVariation(product = gig, default = True,
                  unit_price = gig.job_type.price.amount, sale_price = gig.job_type.price.amount)
                 gig_variation.save()
+                print 'product variation sku %s'  % gig_variation.sku
                 product_image = ProductImage(file = company.profile_picture, product = gig)
                 product_image.save()
                 for category in gig_categories:
@@ -173,3 +179,33 @@ def gig_product(request, slug, template_name = 'gigs/gig_product.html'):
         'add_product_form' : add_product_form,
     }
     return render(request, template_name, context)
+
+@login_required
+def company_listings(request, template_name = 'gigs/company/company_listings.html'):
+    print 'company_listings called'
+    context = {}
+    return render(request, template_name, context)
+
+@login_required
+def company_infos(request, template_name ='gigs/company/company_infos.html'):
+    if request.method == 'POST':
+        company_form = CompanyForm(request.POST, request.FILES)
+        if company_form.is_valid():
+            company = company_form.get_company_object()
+            company.save()
+
+    else:
+        company_form = CompanyForm(instance = request.user.company)
+    context = {
+        'company_form' : company_form,
+    }
+    return render(request, template_name, context)
+
+def company_profile(request, slug, template_name = 'gigs/company/company_profile.html'):
+    company = get_object_or_404(Company, slug = slug)
+    print company
+    context = {'company' : company, }
+    return render(request, template_name, context)
+
+
+
