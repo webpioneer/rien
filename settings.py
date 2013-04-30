@@ -312,6 +312,7 @@ INSTALLED_APPS = (
     'gigs',
     'fts',
     'searchapp',
+    'django_messages',
 )
 # Company Settings
 COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
@@ -329,6 +330,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
     "django.core.context_processors.tz",
     "mezzanine.conf.context_processors.settings",
+    # to show the inbox count on every page
+    # refer to : http://files.arnebrodowski.de/software/django-messages/Documentation/usage.html
+    'django_messages.context_processors.inbox',
 )
 
 # List of middleware classes to use. Order is important; in the request phase,
