@@ -98,7 +98,7 @@ $(function() {
 
     <div class="phone">
       {% if request.cart.has_items %}
-      <a href="#"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
+      <a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
         {{ request.cart.items.count }}</span></a>
       {% else %}
       <a href="tel:8135551234" class="tele">813.555.1234</a>
