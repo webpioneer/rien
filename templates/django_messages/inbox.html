@@ -1,0 +1,37 @@
+{% extends 'gigs/company/company.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_toolbar %}
+        <div class="btn-toolbar" style="margin: 2;">
+              <div class="btn-group">
+                <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_inbox %}">{% trans 'Inbox' %}</a>
+                <a class="btn {% if 'outbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_outbox %}">{% trans 'Sent Messages' %}</a>
+                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_trash %}">{% trans 'Trash' %}</a>
+              </div>
+            </div>
+{% endblock %}
+
+{% block company_block %}
+    
+    {% with company=request.user.company %}
+
+            <table class="table">
+                <th>{% trans 'Sender' %}</th>
+                <th>{% trans 'Subject' %}</th>
+                <th>{% trans "Received" %}</th>
+                {% for message in message_list %}
+                <tr {% if message.read_at %}class="read"{% endif %}{% if message.sender.is_staff %}class="info"{% endif %}>
+                        
+                    <td><span><input class="inline" type="checkbox"></span> {{ message.sender|capfirst }}</td>
+                    <td><a href='{{ message.get_absolute_url }}'>{{ message.subject|capfirst }}</a></td>
+                    <td>{{ message.sent_at|date:"D m" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+        
+    {% endwith %}
+
+{% endblock %}
+
+
