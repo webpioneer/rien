@@ -72,6 +72,7 @@ $(function() {
                         <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a> -->
                         <ul class="dropdown-menu">
                           <li><a href="{% url 'company_listings' %}">{% trans ' my Listings' %}</a></li>
+                          <li><a href="{% url 'messages_inbox' %}">{% trans ' Messages' %}</a></li>
                           <li class="divider"></li>
                           <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans 'Logout' %}</a></li>
                         </ul>
@@ -83,15 +84,28 @@ $(function() {
 
       -->
     </div>
+    {% if request.user.is_authenticated %}
+    <div class="phone">
+      
+      <a href="{% url 'messages_inbox' %}">
+        <span class="badge {% if messages_inbox_count %}badge-important{% endif %}">
+        {{ messages_inbox_count }}
+      </span></a>
+      
+      <!-- <a href="tel:8135551234" class="tele">813.555.1234</a>-->
+    </div>
+    {% endif %}
+
     <div class="phone">
       {% if request.cart.has_items %}
-      <a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
+      <a href="#"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
         {{ request.cart.items.count }}</span></a>
       {% else %}
       <a href="tel:8135551234" class="tele">813.555.1234</a>
       {% endif %}
       <!-- <a href="tel:8135551234" class="tele">813.555.1234</a>-->
     </div>
+    
     <ul class="social">
         <li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>
         <li><a class="socicon small facebook" href="#" data-placement="bottom" title="Follow us on Facebook"></a></li>
