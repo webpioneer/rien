@@ -23,7 +23,7 @@ urlpatterns = patterns("",
         name="shop_order_history"),
     ('^', include("gigs.urls")),
     ('^search', include("searchapp.urls")),
-    (r'^company/messages/', include('django_messages.urls')),
+    (r'^profile/messages/', include('django_messages.urls')),
      # We don't want to presume how your homepage works, so here are a
     # few patterns you can use to set it up.
 
