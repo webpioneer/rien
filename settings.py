@@ -332,7 +332,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "mezzanine.conf.context_processors.settings",
     # to show the inbox count on every page
     # refer to : http://files.arnebrodowski.de/software/django-messages/Documentation/usage.html
-    'django_messages.context_processors.inbox',
+    #'django_messages.context_processors.inbox',
+    'gigs.context_processors.inbox',
 )
 
 # List of middleware classes to use. Order is important; in the request phase,
