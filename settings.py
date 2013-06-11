@@ -311,7 +311,7 @@ INSTALLED_APPS = (
     #"mezzanine.mobile",
     'gigs',
     'fts',
-    'searchapp',
+    #'searchapp',
     'django_messages',
 )
 # Company Settings
@@ -391,6 +391,10 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
 # CUSTOM SETTINGS
 GOOGLE_MAPS_KEY = 'AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM'
+
+#TASK_UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application',]
+TASK_UPLOAD_FILE_TYPES = ['pdf',]
+TASK_UPLOAD_FILE_MAX_SIZE = "5242880"
 
 
 ##################
