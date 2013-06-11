@@ -1,4 +1,5 @@
-{% extends 'gigs/company/company.html' %}
+{% extends 'gigs/applier/applier.html' %}
+
 {% load mezzanine_tags i18n pages_tags %}
 
 {% block company_toolbar %}
@@ -20,12 +21,17 @@
                 <th>{% trans 'Subject' %}</th>
                 <th>{% trans "Received" %}</th>
                 {% for message in message_list %}
+                    {% if not message.application %}
                 <tr {% if message.read_at %}class="read"{% endif %}{% if message.sender.is_staff %}class="info"{% endif %}>
                         
                     <td><span><input class="inline" type="checkbox"></span> {{ message.sender|capfirst }}</td>
-                    <td><a href='{{ message.get_absolute_url }}'>{{ message.subject|capfirst }}</a></td>
-                    <td>{{ message.sent_at|date:"D m" }}</td>
+                    <td>{% if message.replied%}<i class="icon-share-alt"></i>&nbsp;&nbsp;{% endif %}<a href='{{ message.get_absolute_url }}'> {{ message.subject|capfirst }}</a></td>
+                    <td>{% if message.sent_at|timesince > 1 %}
+                        {{ message.sent_at|date:"D d M Y h:m a" }}{% else %} {{ message.sent_at|timesince }} 
+                        {% endif %}{{ message.sent_at|timesince }} </td>
+
                 </tr>
+                    {% endif %}
                 {% endfor %}
             </table>
             

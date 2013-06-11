@@ -11,6 +11,7 @@
         </thead>
         <tbody>
     {% for message in message_list %} 
+        {% if not message.application %}
         <tr>
             <td>{{ message.recipient }}</td>
             <td>
@@ -19,6 +20,7 @@
             <td>{{ message.sent_at|date:_("DATETIME_FORMAT") }}</td>
             <td><a href="{% url messages_delete message.id %}?next={% url messages_outbox %}">{% trans "delete" %}</a></td>
         </tr>
+        {% endif %}
     {% endfor %}
         </tbody>
     </table>
