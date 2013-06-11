@@ -4,8 +4,10 @@ from django.contrib.messages import info
 from django.db.models import Min
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
+from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -14,14 +16,19 @@ from cartridge.shop.models import (Cart, CartItem, Product,
  ProductImage, ProductVariation)
 from cartridge.shop.views import cart, product as product_view
 
+from mezzanine.accounts import get_profile_form
 from mezzanine.conf import settings
 from mezzanine.utils.views import paginate, render
 from mezzanine.utils.sites import current_site_id
+from mezzanine.utils.timezone import now
 from mezzanine.utils.urls import slugify
 
-from gigs.forms import CompanyForm, PostJobForm
-from gigs.models import Category, Gig, GigType
+
+from gigs.forms import CompanyForm, PostJobForm, ApplyForm, ReplyForm, ProfileForm2
+from gigs.models import Category, Gig, GigType, Application, Resume
+from gigs.utils.views import application_messages
 from searchapp.forms import GigSearchForm
+
 
 def all_gigs(request, template_name = 'gigs/index.html'):
     """
@@ -55,6 +62,9 @@ def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
     """   
     try:
         gig = get_object_or_404(Gig, slug = slug)
+        apply_form = ApplyForm()
+        signup_form = ProfileForm2()
+
         if 'shop/product' in request.META['HTTP_REFERER']:
             message = _('Your listing is published successfully. \
             Please visit "%s" to track listing statistics, make edits, and more.') % gig.company.email
@@ -64,6 +74,8 @@ def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
         
     context = {
         'gig' : gig,
+        'apply_form' : apply_form,
+        'signup_form' : signup_form,
     }   
     return render(request, template_name, context)
 
@@ -182,12 +194,13 @@ def gig_product(request, slug, template_name = 'gigs/gig_product.html'):
 
 @login_required
 def company_listings(request, template_name = 'gigs/company/company_listings.html'):
-    print 'company_listings called'
+    """ returns a list of gigs based on the logged in company """
     context = {}
     return render(request, template_name, context)
 
 @login_required
 def company_infos(request, template_name ='gigs/company/company_infos.html'):
+    """ handle the input of the company Information """
     if request.method == 'POST':
         company_form = CompanyForm(request.POST, request.FILES)
         if company_form.is_valid():
@@ -202,10 +215,165 @@ def company_infos(request, template_name ='gigs/company/company_infos.html'):
     return render(request, template_name, context)
 
 def company_profile(request, slug, template_name = 'gigs/company/company_profile.html'):
+    """ returns the public company profile """
     company = get_object_or_404(Company, slug = slug)
-    print company
     context = {'company' : company, }
     return render(request, template_name, context)
+
+def view_listing(request, slug, template_name = 'gigs/company/view_listing.html'):
+
+    gig = get_object_or_404(Gig, slug = slug)
+    context = {
+        'gig' : gig,
+    }
+    return render(request, template_name, context)
+
+
+
+#Applier 
+
+@login_required
+def applier_applications(request, template_name = 'gigs/applier/applier_applications.html'):
+    """ returns a list of applications related to an applier """
+    applications = Application.objects.filter(sender = request.user).filter(gig__isnull = False)
+    context = {
+        'applications' : applications,
+    }
+    return render(request, template_name, context)
+
+def apply(request, gig_slug, template_name = 'gigs/apply.html'):
+    """ handle applying to an application """
+    gig = get_object_or_404(Gig, slug = gig_slug)
+
+    if request.method == 'POST':
+        signup_form = ProfileForm2(request.POST)
+        apply_form = ApplyForm(request.POST, request.FILES)
+        if request.user.is_authenticated():
+            if apply_form.is_valid():
+                user = request.user
+                #apply_form.save()
+                application = Application()
+                application.subject = gig.title
+                application.sender = user
+                application.recipient = gig.company.user
+                application.gig = gig
+                application.body = apply_form.cleaned_data['motivation']
+                application.save()
+                # upload file
+                resume = Resume(file = request.FILES['resume'], user = user)
+                resume.save()
+                message = _('You applied successfully')
+                info(request, message)
+        else:
+            if signup_form.is_valid() and apply_form.is_valid():
+                print 'both forms are valid'
+                user, password = signup_form.save()
+                
+                application = Application()
+                application.subject = gig.title
+                application.sender = user
+                application.recipient = gig.company.user
+                application.gig = gig
+                application.body = apply_form.cleaned_data['motivation']
+                application.save()
+                # upload file
+                resume = Resume(file = request.FILES['resume'], user = user)
+                resume.save()
+                user = authenticate(username = user.username,
+                                    password = password)
+                login(request, user)
+                message = _('You applied successfully')
+                # an email is sent to the user with his new password
+                info(request, message)
+    else:
+        signup_form = ProfileForm2()
+        apply_form = ApplyForm()
+    context = {
+        'signup_form' : signup_form,
+        'apply_form': apply_form,
+        'gig' : gig,
+    }
+
+    return render(request, template_name, context)
+
+def reply_to_apply(request, application_id, template_name = 'gigs/applier/application_detail.html'):
+    """ handles reply to application """
+    print 'CALL TO : reply_to_apply - > %s' % application_id
+    app = get_object_or_404(Application, id = application_id)
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        print reply_form
+        if reply_form.is_valid():
+            print 'reply form is valid'
+            application = Application()
+            #application.subject = gig.title
+            application.sender = request.user
+            application.recipient = app.sender
+            application.body = reply_form.cleaned_data['reply']
+            application.parent_msg = app
+            application.save()
+            print application.sender, application.recipient
+
+    else:
+        reply_form = ReplyForm()
+    context = {
+        'reply_form' : reply_form,
+    }
+
+    return render(request, template_name, context)
+
+def application_detail(request, message_id, template_name = 'gigs/applier/application_detail.html'):
+    """ returns application details """
+    application = get_object_or_404(Application, id = message_id)
+    print application.body
+    if (application.sender != request.user) and (application.recipient != request.user):
+        raise Http404
+    if application.read_at is None and application.recipient == request.user:
+        application.read_at = now()
+        application.save()
+    application_followup = application_messages(application, user = request.user, application_followup = [])
+
+    context ={
+        'application' : application,
+        'application_followup' : application_followup,
+    }
+    return render(request, template_name, context)
+ 
+def application_follower(request, sign, id, template_name = 'gigs/applier/application_detail.html'):
+    """ Browse to the next/previous application"""
+    app = get_object_or_404(Application, id = id)
+    if sign == 'previous':
+        # and app has_next()
+        # application.next()
+        follower_id = app.id - 1
+    if sign == 'next':
+        follower_id = app.id + 1
+    application = Application.objects.filter(gig = app.gig, id = follower_id)
+    context ={
+        'application' : application,
+        
+    }
+    return render(request, template_name, context)
+
+def application_accept(request):
+    """ Flag the application as favorited or rejected"""
+    app = get_object_or_404(Application, id = int(request.GET['id']))
+    if request.is_ajax():
+        action = request.GET['action']
+        if action == 'Favorite' and not app.favorited_at:
+            app.favorited_at = now()
+            app.save()
+            message = 'Added to favorites'
+        if action == 'Reject':
+            app.rejected_at = now()
+            app.save()
+            message = 'Added to rejected'
+    response = simplejson.dumps({
+        'message' :  message,
+                })
+    return HttpResponse(response, content_type='application/javascript')
+
+
 
 
 
