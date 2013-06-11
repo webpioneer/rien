@@ -1,0 +1,80 @@
+{% extends 'gigs/company/company.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% comment %}
+{% block company_toolbar %}
+        <div class="btn-toolbar" style="margin: 2;">
+              <div class="btn-group">
+                <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url company_listings %}"><i class="icon-arrow-left"></i>{% trans 'Back to Listings' %}</a>
+              </div>
+
+            </div>
+{% endblock %}
+{% endcomment %}
+
+{% block company_block %}
+
+	{% block bread_crumb %}
+			<ul class="breadcrumb">
+			  <li><a href="{% url company_listings %}">{% trans 'my Listings' %}</a> <span class="divider">/</span></li>
+			  <li class="active"><a href="#">{{ gig.title|capfirst }}</a></li>
+			</ul>
+	{% endblock %}
+	<h2>{{ gig.title|capfirst }} <div class="btn-group">
+                <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{{ gig.get_absolute_url }}" target="_blank">{% trans 'See online' %}</a>
+                <a class="btn {% if 'outbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_outbox %}">{% trans 'Edit' %}</a>
+              </div></h2>
+	{% with logged_company=request.user.company %}  
+	<ul class="unstyled">
+		{% for app in gig.applications %}
+				<li class="fluid-row">
+					<div class="media" style="background-color:#efefef;padding:4px;margin-bottom:2px">
+					  <a class="pull-left" href="#">
+					  	{% if request.user.picture %}
+					    	<img class="media-object" src="{{ STATIC_URL }}media/profiles/profile.jpg">
+					    {% else %}
+					    	<img class="media-object" src="{{ STATIC_URL }}media/profiles/profile.jpg">
+					    {% endif %}
+					  </a>
+					  
+					  <div class="media-body">
+					  	
+					    <h4 class="media-heading">{{ app.sender.get_full_name }}
+					    	<span class="pull-right"><small>{{ app.sent_at }} ({{ app.sent_at|timesince }})</small></span>
+					    </h4>
+					    <span><small>
+					    	{% if app.read_at %}<span class="label label-info">read</span>{% endif %}
+					    	{% if app.favorited_at%}<span class="label label-success">favorite</span>{% endif %}
+					    	{% if app.rejected_at%}<span class="label label-warning">rejected</span>{% endif %}
+					    </small></span><br />
+					    	<p>{{ app.body|truncatewords:25 }}</p>
+					    <a class="btn btn-mini" href="{{ app.get_absolute_url }}">view application</a>			    
+					  </div><!-- end .media-body -->			  
+					</div><!-- end .media -->
+				</li>
+		{% endfor %}
+	</ul>
+	<!-- 
+		<table class="responsive">
+			<thead>
+				<tr>
+					<th> {% trans 'Job Seeker' %} </th>
+					<th> {% trans 'Posted' %} </th>
+					<th> {% trans 'Candidates' %} </th>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for app in gig.applications %}
+				<tr>
+					<td><a href="#">{{ app.sender|capfirst }}</a></td>
+					<td>{{ app.sent_at|date:"D y" }}</td>
+					<td></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	-->
+	</div>
+	{% endwith %}
+{% endblock %}

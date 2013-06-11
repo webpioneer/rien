@@ -1,0 +1,19 @@
+{% load mezzanine_tags i18n pages_tags %}
+
+<div class="btn-toolbar" style="margin: 2;">
+        	<div class="btn-group">
+              <a class="btn btn-primary" href="{% url company_listings %}"><i class="icon-share-alt"></i>{% trans 'Reply' %}</a>
+              </div>
+            <div class="btn-group">
+                
+                <a class="btn btn-success" href="{% url company_listings %}"><i class="icon-arrow-left"></i>{% trans 'Favorite' %}</a>
+                <a class="btn btn-warning" href="{% url company_listings %}">{% trans 'Reject' %}</a>
+                <a class="btn btn-info" href="{% url company_listings %}"><i class="icon-edit"></i>{% trans 'Leave note' %}</a>
+                <a class="btn" href="{% url company_listings %}"><i class="icon-print"></i>{% trans 'print' %}</a>
+              </div>
+
+              <div class="btn-group pull-right">
+              <a class="btn" href="{% url application_follower sign='previous' id=application.id %}"><i class="icon-arrow-left"></i>{% trans 'Previous' %}</a>
+                <a class="btn" href="{% url company_listings %}">{% trans 'Next' %}<i class="icon-arrow-right"></i></a>
+              </div>
+</div>

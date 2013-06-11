@@ -1,0 +1,71 @@
+Alexander Meng
+
+407-454-2097
+
+AlexBMeng@GMail.com
+
+Center for Independent Living
+2009 – Present
+407-623-1070
+
+● Oversaw and participated in developing in-house software suite.
+● Suite included data entry, time clock, and advanced reporting tools.
+● Programmed in Python/Django; extremely in-depth with both.
+● Wrote and maintained unit tests for every aspect of the project.
+● Worked collaboratively with a team both remotely and in-office.
+● Provided support for local and regional offices via phone and e-mail.
+
+Python, SQL, HTML, CSS, Javascript, C#, Java
+Django, JQuery
+SVN, Git
+Windows, Linux
+
+8 S. Osceola Ave #2211
+Orlando, FL  32801
+
+ 
+Experience
+ 
+
+Company:
+Held:
+Phone:
+Responsibilities:
+
+ 
+Relevant Skills
+ 
+
+Languages:
+Frameworks:
+Version Control:
+Operating Systems:
+
+ 
+Projects
+ 
+
+Check Out My URL (www.checkoutmyurl.com)
+● Won first place at StartUp Weekend Tampa 2011, a 54-hour hack-a-thon
+● Worked with a team of five to develop a winning idea in a weekend
+● Interfaced with Amazon and PayPal APIs to create an automated system
+
+ 
+Emovolution (www.emovolution.com)
+● A mood tracking application built in spare time with one other developer
+● Utilized several open source JQuery libraries for graphing data
+
+ 
+
+ 
+
+GitHub (www.github.com/AMeng)
+ 
+Education
+ 
+
+Computer Programming and Analysis AS Degree
+Valencia Community College
+
+Currently completing:  Computer Science BS Degree
+University of Central Florida

@@ -320,6 +320,7 @@ function find_jobs(method, page, search){
 
 {% block main %}
 
+    {% ifinstalled searchapp %}
 	 <!-- Search and Filter
     ================================================== -->
     {% block search_form %}
@@ -343,6 +344,7 @@ function find_jobs(method, page, search){
     </form>
     
     {% endblock %}
+    {% endifinstalled %}
     <!-- 
     <section class="">
         <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}

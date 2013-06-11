@@ -16,9 +16,9 @@
 			<tbody>
 				{% for gig in logged_company.company_gigs %}
 				<tr>
-					<td><a href="#">{{ gig.title|capfirst }}</a></td>
+					<td><a href="{% url view_listing slug=gig.slug %}">{{ gig.title|capfirst }}</a></td>
 					<td>{{ gig.publish_date|date:"D y" }}</td>
-					<td><!-- --></td>
+					<td>{{ gig.num_applications }}</td>
 					<td>
 						{% if gig.is_processed %}
 						<span class="label label-success">{% trans 'Published' %}</span>

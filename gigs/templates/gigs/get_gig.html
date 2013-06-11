@@ -28,8 +28,6 @@ div.important * {
 
 {% block main %}
 
-
-
 	<article class="entry-post row-fuild">
 		<div class="company row-fuild clearfix">
 			<div class="span2">
@@ -75,10 +73,18 @@ div.important * {
 				{% endif %}
 			</div>
 			{% endif %}
+			<a href="{% url apply gig_slug=gig.slug %}">hello</a>
 			<section>
-				<a href="#" class="btn btn-large btn-success">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+				<!-- in case it's remote href="{% url apply gig_slug=gig.slug %}" -->
+				<a href="{% url apply gig_slug=gig.slug %}" data-target="#myModal" class="btn btn-large btn-success" data-toggle="modal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 			</section>
+
 		</div>
+		{% comment %}
+		{% include 'gigs/apply.html' %}
+		{% endcomment %}
+	
+
 		
 		
 		<!--

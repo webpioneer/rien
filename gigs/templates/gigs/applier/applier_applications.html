@@ -1,0 +1,54 @@
+{% extends 'gigs/applier/applier.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_toolbar %}
+<div class="btn-toolbar" style="margin: 2;">
+              <div class="btn-group">
+              	<a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_inbox %}">{% trans 'All' %}</a>
+                <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_inbox %}">{% trans 'Favortited' %}</a>
+                <a class="btn {% if 'outbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_outbox %}">{% trans 'Rejected' %}</a>
+                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_trash %}">{% trans 'read' %}</a>
+                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_trash %}">{% trans 'printed' %}</a>
+
+              </div>
+            </div>
+{% endblock %}
+
+{% block company_block %}
+	{% with logged_company=request.user.company %}  
+		<table class="responsive">
+			<thead>
+				<tr>
+					<th> {% trans 'Application' %} </th>
+					<th> {% trans 'Company' %}</th>
+					<th> {% trans 'Posted' %} </th>
+					<th> {% trans 'Status' %}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for app in applications %}
+				<tr>
+					<td><a href="{{ app.get_absolute_url }}">{{ app.gig.title|capfirst }}</a></td>
+					<td><a href="{{ app.get_absolute_url }}">{{ app.gig.company.company_name|capfirst }}</a></td>
+					<td>{{ app.sent_at|date:"D y" }}</td>
+					
+					<td>
+						{% if app.read_at %}
+						<span class="label label-info">{% trans 'Read' %} at {{ app.read_at }}</span>
+							{% if app.favorited_at %}
+							<span class="label label-success">{% trans 'Favorited' %} at {{ app.favorited_at }}</span>
+							{% endif %}
+							{% if app.rejected_at %}
+							<span class="label label-info">{% trans 'Not a fit' %} at {{ app.rejected_at }}</span>
+							{% endif %}
+						{% else %}
+						<span class="label label-warning">{% trans 'Waiting Review' %}</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% endwith %}
+{% endblock %}

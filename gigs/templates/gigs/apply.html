@@ -1,0 +1,31 @@
+{% load mezzanine_tags i18n %}
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">{% trans 'Apply to' %} {{ gig.title|capfirst }}</h3>
+  </div>
+  <div class="modal-body">
+  	{% if not request.user.is_authenticated and not request.user.company%}
+            <div class="page-header">
+                <p class="control-group">
+                    <label class="span3" for="">Have an account?</label>
+                    <a class="btn btn-success">Sign in</a> 
+                    Don't have one? No worries, you'll create one in a minute.
+                </p>
+            </div>
+    {% endif %}
+    <form method="post" action="" enctype="multipart/form-data">
+    {% if not request.user.is_authenticated %}
+    {% fields_for signup_form %}
+    {% endif %}
+    {% fields_for apply_form %}
+    <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button>
+    </form>
+    
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button>
+  </div>
+</div>

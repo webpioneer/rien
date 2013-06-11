@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block main %}
+
 	{% comment %}
 	{% with logged_company=request.user.company %}
 	<div id="company" class="row-fluid">
@@ -28,8 +29,8 @@
 				</a>
 	  		</div>
 	  		<div class="span7">
-	  			<h2>{{ logged_company.company_name|capfirst }} </h2>
-	  			<span class="tagline">{{ logged_company.elevator_pitch|capfirst }}</span>
+	  			<h2>{{ request.user|capfirst }} </h2>
+	  			<span class="tagline">{{ request.user.title|capfirst }}</span>
 	  			<span><a target="_blank" href="{{ logged_company.url }}">{{ logged_company.url }}</a></span>
 	  		</div>
 	  	</div><!-- end .row-fluid -->
@@ -57,7 +58,7 @@
 	{% block company_nav %}
 
 		<ul class="nav nav-tabs">
-		  <li {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url company_listings %}">{% trans 'My Listings' %}</a></li>
+		  <li {% if 'applications' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url applier_applications %}">{% trans 'Applications' %}</a></li>
 		  <li {% if 'messages' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url messages_inbox %}"><i class="icon-envelope"></i>&nbsp;&nbsp;{% trans 'Messages' %}</a></li>
 		  <li {% if 'info' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url company_infos %}">{% trans 'Company Info' %}</a></li> 
 		  <li><a href="#"><i class="icon-cog"></i>&nbsp;&nbsp;{% trans 'My Account' %}</a></li>
@@ -70,5 +71,4 @@
 	{% block company_block%}
 		
 	{% endblock %}
-	{% block company_toolbar_bottom %}{% endblock %}
 {% endblock %}

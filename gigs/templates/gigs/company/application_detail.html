@@ -1,0 +1,192 @@
+{% extends 'gigs/company/company.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<!-- <link rel="stylesheet" href="{{STATIC_URL}}js/pdfjs/build/generic/web/viewer.css" /> -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!-- Use latest PDF.js build from Github -->
+<!-- <script type="text/javascript" src="https://raw.github.com/mozilla/pdf.js/gh-pages/build/pdf.js"></script> -->
+<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/pdf.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/generic/web/compatibility.js"></script> 
+<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/generic/web/viewer.js"></script>
+
+{% endblock %}
+
+{% block company_toolbar %}
+
+		{% block bread_crumb %}
+			<ul class="breadcrumb">
+		  <li><a href="{% url company_listings %}">{% trans 'my Listings' %}</a> <span class="divider">/</span></li>
+		  <li><a href="{% url view_listing slug=application.gig.slug %}">{{ application.gig.title|capfirst }}</a><span class="divider">/</span></li>
+		  <li class="active"><a href='#'>{{ application.sender.get_full_name }} Application</a></li>
+			</ul>
+	{% endblock %}
+        <div class="btn-toolbar" style="margin: 2;">
+        	<div class="btn-group">
+        		<!--
+              <a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary" href="{% url company_listings %}"><i class="icon-share-alt"></i>{% trans 'Reply' %}</a> -->
+              <a href="#" class="btn reply_button"><i class="icon-share-alt"></i>{% trans 'Reply' %}</a>
+              </div>
+            <div class="btn-group">
+                
+                <a id="favorite" class="btn btn-success" href="#"><i class="icon-arrow-left"></i>{% trans 'Favorite' %}</a>
+                <a id="reject" class="btn btn-warning" href="#">{% trans 'Reject' %}</a>
+                <a class="btn btn-info" href="{% url company_listings %}"><i class="icon-edit"></i>{% trans 'Leave note' %}</a>
+                <a class="btn btn-info" href="{% url company_listings %}"><i class="icon-edit"></i>{% trans 'Mark as Called' %}</a>
+                <a class="btn" href="{% url company_listings %}"><i class="icon-print"></i>{% trans 'print' %}</a>
+              </div>
+
+              <div class="btn-group pull-right">
+              <a class="btn" href="{% url application_follower sign='previous' id=application.id %}"><i class="icon-arrow-left"></i>{% trans 'Previous' %}</a>
+                <a class="btn" href="{% url application_follower sign='next' id=application.id %}">{% trans 'Next' %}<i class="icon-arrow-right"></i></a>
+              </div>
+</div>
+{% endblock %}
+
+{% block company_block %}
+
+	
+	<!-- alert -->
+	<div id="message" style="display:none"><button type="button" class="close" data-dismiss="alert">&times;</button></div>
+	<!-- Modal -->
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Modal header</h3>
+	  </div>
+	  <form name="app_reply_form" method="post" action="{% url messages_reply message_id=application.id %}">{% csrf_token %}
+	  <div class="modal-body">
+	  		<input type="hidden" name="recipient" id="id_recipient" value="{{ application.sender }}" />
+	    	<input type="hidden" name="subject" id="id_subject" value="Re: Application to {{ application.title}} " />
+	    	<p class="fluid-row">
+	    		<label class="span2" for="id_body">
+	    			<a href="#">
+					{% if request.user.company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger" width="48" height="48">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 48 48 %}">
+					{% endif %}
+				</a> </label>
+	    		<textarea class="span10" rows="10" name="body" id="id_body"></textarea>
+	    	</p>
+	    
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	    <button type="submit" class="btn btn-primary">Save changes</button>
+	  </div>
+	  </form>
+	</div>
+
+
+	<! -- motivation -->
+	<div class="media">
+	  <a class="pull-left" href="#">
+	  	{% if request.user.picture %}
+	    	<img class="media-object" src="{{ STATIC_URL }}media/profiles/profile.jpg">
+	    {% else %}
+	    	<img class="media-object" src="{{ STATIC_URL }}media/profiles/profile.jpg">
+	    {% endif %}
+	  </a>
+	  <div class="media-body">
+	    <h4 class="media-heading">{{ application.sender.get_full_name }}
+	    	<span class="pull-right"></span>
+	    </h4>
+	    <small>{{ application.sent_at }} ({{ application.sent_at|timesince }})</small><br />
+	    {{ application.body }}
+	  
+	  </div>
+	</div>
+	<!-- end motivation -->
+
+	
+	
+	<div id="resume">
+		<iframe src="http://127.0.0.1:8000{{STATIC_URL}}media/{{ application.resume }}#view=fitH" 
+style="width:830px; height:600px;" frameborder="0"></iframe>
+  </div>
+  
+
+
+    
+ 
+		  <div style="display:none"></div>
+
+	</div> <!-- end #resume -->
+
+	{% if not application_followup %}
+
+	<div class="clearfix">
+		<form id="reply_form" name="reply" method="post" action="{% url reply_to_apply application_id=application.id %}" style="display:none">{% csrf_token %}
+			<p class="fluid-row">
+	    		<label class="span2" for="id_body">
+	    			<a href="#">
+					{% if request.user.company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger" width="48" height="48">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 48 48 %}">
+					{% endif %}
+				</a> </label>
+				 {{ reply_form.as_ul }}
+	    		<textarea class="span10" rows="5" name="reply" id="id_reply"></textarea>
+	    		<button type="submit" class="btn btn-primary btn-medium pull-right">Reply </button>
+	    	</p>
+
+		</form>
+	</div><!-- end . -->
+
+	{% else %}
+
+	{% for message in application_followup %}
+	<div class="row-fluid">
+		<div class="span2">
+			{% if message.sender.company %}
+					{% if message.sender.company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ message.sender.company.twitter_username }}.png?size=bigger" width="48" height="48">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail message.sender.company.profile_picture 48 48 %}">
+					{% endif %}
+
+				{% else %} {{message.sender}}
+				{% endif %}
+			</div>
+		<div class="span9 clearfix">
+			<p>posted at {{ message.sent_at }} ,{% if request.user !=  message.recipient and message.read_at  %} seen at {{ message.read_at }}{% endif %}</p>
+			{{ message.body|capfirst }}</div>
+	</div>
+		{% if forloop.last %}
+
+				<div class="clearfix">
+				<form id="reply_form" name="reply" method="post" action="{% url reply_to_apply application_id=message.id %}" style="display:none">{% csrf_token %}
+					<p class="fluid-row">
+			    		<label class="span2" for="id_body">
+			    			<a href="#">
+							{% if request.user.company.twitter_username %}
+							<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger" width="48" height="48">
+							{% else %}
+						<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 48 48 %}">
+							{% endif %}
+						</a> </label>
+						 {{ reply_form.as_ul }}
+			    		<textarea class="span10" rows="5" name="reply" id="id_reply"></textarea>
+			    		<button type="submit" class="btn btn-primary btn-medium pull-right">Reply </button>
+			    	</p>
+
+				</form>
+			</div><!-- end . -->
+
+		{% endif %}
+	{% endfor %}
+	{% endif %}<!-- endif application_followup -->
+
+	
+	
+{% endblock %}
+
+{% block company_toolbar_bottom %}
+        {% include 'gigs/company/includes/app_toolbar.html' %}
+{% endblock %}
