@@ -1,11 +1,15 @@
 import logging
 
+
 from django import forms
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.core.forms import TinyMceWidget
 
 from gigs.models import Category, Company, Gig, GigType
+from mezzanine.accounts.forms import ProfileForm
 
 class PostJobForm(forms.ModelForm):
     """ 
@@ -110,3 +114,69 @@ class CompanyForm(forms.ModelForm):
         new = CompanyModel(**self.get_company_create_data())
 
         return new
+
+class ApplyForm(forms.Form):
+    motivation = forms.CharField(widget= forms.Textarea)
+    resume = forms.FileField()
+
+    def clean_resume(self):
+        file = self.cleaned_data['resume']
+        if file:
+            file_type = file.content_type.split('/')[1]
+            print file_type
+
+            if len(file.name.split('.')) == 1:
+                raise forms.ValidationError(_('File type is not supported'))
+
+            if file_type in settings.TASK_UPLOAD_FILE_TYPES:
+                if file._size > settings.TASK_UPLOAD_FILE_MAX_SIZE:
+                    raise forms.ValidationError(_('Please keep file size under %s. Current filesize %s') % (filesizeformat(settings.TASK_UPLOAD_FILE_MAX_SIZE), filesizeformat(file._size)))
+            else:
+               raise forms.ValidationError(_('File type is not supported'))
+            
+        return file
+
+class ProfileForm2(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('last_name', 'first_name', 'email',)
+        #exclude = ('username', 'password2', )
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm2, self).__init__(*args, **kwargs)
+        user_fields = User._meta.get_all_field_names()
+        #self.fields['username'] = self.fields['email']
+        for field in self.fields:
+            # Make user fields required.
+            if field in user_fields:
+                self.fields[field].required = True
+
+    def clean_email(self):
+        """
+        Ensure the email address is not already registered.
+        """
+        email = self.cleaned_data.get("email")
+        try:
+            User.objects.exclude(id=self.instance.id).get(email=email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError(_("This email is already registered"))
+
+    def save(self, *args, **kwargs):
+        """
+        Create the new user using their email address as their username.
+        """
+
+        password = User.objects.make_random_password()
+        print password
+        user = User.objects.create_user(username = self.cleaned_data['email'], 
+            email = self.cleaned_data['email'], password = password)
+        user.last_name = self.cleaned_data['last_name']
+        user.first_name = self.cleaned_data['first_name']
+        user.save()
+
+        return user, password
+
+class ReplyForm(forms.Form):
+    reply = forms.CharField()
