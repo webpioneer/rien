@@ -12,7 +12,69 @@ from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
 
+from django_messages.models import Message
 from djmoney.models.fields import MoneyField
+
+def get_app_mother(message):
+    """ returns the mother app if any """
+    print message.id, message.body
+    if message.parent_msg == None:
+        print message.id, message.body
+        return message
+    get_app_mother(message.parent_msg)
+
+class Application(Message):
+    """Reprsents an application from an applier regarding a gig """
+    #message = models.OneToOneField(Message)
+    gig = models.ForeignKey('Gig', null = True, blank = True)
+    favorited_at = models.DateTimeField(null = True, blank = True)
+    rejected_at = models.DateTimeField(null = True, blank = True)
+    printed_at = models.DateTimeField(null = True, blank = True)
+
+    def __unicode__(self):
+        return "{0} {1} {2}".format(self.sender, self.recipient, self.body)
+
+    @models.permalink
+    def get_absolute_url(self):
+        url_name = 'application_detail'
+        #mother_app = get_app_mother(self)
+        #print mother_app
+        kwargs = {"message_id" : self.id}
+        return (url_name, (), kwargs)
+
+    def is_application(self):
+        if self.__class__.__name__ == 'Application':
+            return True
+
+    def get_mother_app(self, **kwargs):
+        if self.parent_msg is None:
+            return self
+        self.get_mother_app(**kwargs)
+
+    @property
+    def resume(self):
+        return self.sender.resume_set.all()[0].file
+
+    @property
+    def resume_name(self):
+        return self.sender.resume_set.all()[0].file.name.split('/')[1]
+
+
+
+def inbox_count_for(user):
+    """
+    returns the number of unread messages for the given user but does not
+    mark them seen and the message IS NOT an application
+    """
+    return Message.objects.filter(recipient=user, read_at__isnull=True, recipient_deleted_at__isnull=True, application__isnull=True).count()
+
+class Resume(models.Model):
+    file = models.FileField(upload_to = 'resumes')
+    user = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return ('{0} {1}').format(self.file, self.user)
+
 
 class Category(Slugged):
     """
@@ -35,6 +97,7 @@ class Category(Slugged):
 
 
 COMPANY_LOGO_DEFAULT = getattr(settings, 'COMPANY_LOGO_DEFAULT', 'static/media/company_logos/.thumbnails/employer_default.png')
+APPLIER_PICTURE_DEFAULT = getattr(settings, 'APPLIER_PICTURE_DEFAULT', 'static/media/company_logos/.thumbnails/employer_default.png')
 
 class Company(Displayable):
     """
@@ -93,6 +156,42 @@ class Company(Displayable):
 
     def company_gigs(self):
         return self.gig_set.all().order_by('-publish_date')
+
+class Applier(Displayable):
+    # title
+    PROFILE_PICTURE_SOURCE = (
+        ('NO_PICTURE', _('No picture')),
+        ('TWITTER_PICTURE', _('Use Twitter profile picture (recommended)')),
+        ('OWN_PICTURE', _('Upload a picture')),
+    )
+
+    profile_picture_choice = models.CharField(max_length = 60, 
+        choices = PROFILE_PICTURE_SOURCE, default = PROFILE_PICTURE_SOURCE[0][1])
+    profile_picture = models.ImageField(verbose_name= _('Profile Picture'),
+        upload_to = 'applier_pictures', max_length=255,
+        null = True, blank = True, default = APPLIER_PICTURE_DEFAULT)
+    twitter_username = models.CharField(max_length = 50, null= True, blank = True)                      
+    ip_address = models.GenericIPAddressField()
+    location = models.CharField(max_length = 200, null = True, blank = True,
+        verbose_name = _('Job Location'),
+        help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
+    latitude = models.CharField(max_length = 25, null = True, blank = True)
+    longitude = models.CharField(max_length = 25, null = True, blank = True)
+    area_level1 = models.CharField(max_length = 20, blank = True, null = True)
+    area_level2 = models.CharField(max_length = 20, blank = True, null = True)
+    # resume : an applier can have one or more resumes
+    #resume = models.FileField(verbose_name=_("Resume"), blank=True,
+    #    upload_to=upload_to("gigs.Applier.resume", "resumes"), help_text=_("Upload your resume"))
+    is_relocation = models.NullBooleanField(verbose_name = _("Ready to relocate"), null = True, blank = True, default = True)
+    is_looking = models.NullBooleanField(null = True, blank = True, default = True)
+    #phone_number refers to https://github.com/daviddrysdale/python-phonenumbers
+    #about_me = description
+    # experience, education many to many field
+    # social networks Foreign Key
+    user = models.OneToOneField(User)
+
+    def __unicode__(self):
+        return self.username, self.email, self.location
 
 class GigType(Slugged):
     """
@@ -159,6 +258,14 @@ class Gig(Product):
             return status
         except IndexError:
             return False
+
+    def applications(self):
+        return self.application_set.filter(gig__isnull= False)
+
+    def num_applications(self):
+        return self.application_set.count()
+
+
 
 
 class GigStat(models.Model):
