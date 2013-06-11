@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}css/header-1.css" type="text/css"/>
+
+
 {% ifinstalled cartridge.shop %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/cartridge.css">
 {% endifinstalled %}
@@ -48,78 +50,161 @@ $(function() {
 
 </head>
 <body id="{% block body_id %}body{% endblock %}" class="index">
-  <section class="container preheader"> 
-    
-    <!--this is the login for the user-->
-       <!-- <nav class="user clearfix"> <a href="login.html"><i class="icon-user"></i> Login</a> </nav> -->
-    <!--close user nav-->
-    
-    <div class="search-wrapper">
-      {% if request.user.is_authenticated %}
-        <a class="dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#">{% comment %}{{ request.user }}{% endcomment %}
-          {% if request.user.company.twitter_username %}
-            <img class="img-polaroid" src='http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger' width='30' height='30'>
-            {% elif request.user.company.profile_picture %}
-            <img class="img-polaroid" src='{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 73 73 %}'>
-            {% else %} 
-            {{ request.user }}
-          {% endif %}
-          <b class="caret"></b>
-        </a> 
-    {% else %}
-      <nav class="user clearfix"> <a href="{% url 'login' %}"><i class="icon-user"></i> Login</a> </nav>
-    {% endif %}
-                        <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a> -->
+  {% if request.user.is_authenticated %}
+  <div class="navbar navbar-inverse">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                  {% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}
+                  <div class="nav-collapse collapse navbar-responsive-collapse">
+                    
+                    <ul class="nav pull-right">
+                      <!-- shop cart -->
+                      {% if request.cart.has_items %}
+                        <li><a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
+                          {{ request.cart.items.count }}</span></a></li>
+                        {% endif %}
+                      <!-- end shop cart -->
+
+                      <li class="dropdown">
+                        <!-- notifications -->
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'messages_inbox' %}" class="dropdown-toggle" data-toggle="dropdown">
+                              <i class="icon-globe black"></i>&nbsp;&nbsp;
+                              {% if applications_inbox_count %}<span class="badge badge-important">{{ applications_inbox_count }}</span>{% endif %}
+                            </a>
+                            {% if unread_applications %}
+                            <ul class="dropdown-menu">
+                                <h5>{% trans 'Notifications' %}</h5>
+                              {% for app in unread_applications %}
+                                <!-- <li><a href="{{ app.get_absolute_url }}">{{ app.body|capfirst }}</a></li> -->
+                                <li><a href="{{ app.get_absolute_url }}">
+                                  
+                                  
+                                  {% if not app.sender.company %}
+                                    {% if app.gig %}
+                                    {{ app.sender|capfirst }} applied to "{{ app.gig.title|capfirst }}"
+                                    {% else %}
+                                    {{ app.sender|capfirst }} reply to {{ app.subject }}
+                                    {% endif %}
+                                  {% else %}
+                                  {{ app.sender|capfirst }} responded to "{{ app.subject|capfirst }}" application
+                                  {% endif %}
+
+                                  <span>{{ app.sent_at|date:" d M" }}</span>
+                                
+                                  </a></li>
+                                <li class="divider"></li>
+                              {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                        {% endif %}
+                        <!-- end notifications -->
+                      </li>
+                      <li class="divider-vertical"></li>
+                      <li><!-- inbox -->
+                      {% if request.user.is_authenticated %}
+                        <a href="{% url 'messages_inbox' %}">
+                          <i class="icon-envelope"></i>&nbsp;&nbsp;
+                          {% if messages_inbox_count %}<span class="badge badge-important">{{ messages_inbox_count }}</span>{% endif %}
+                        </a>
+                      {% endif %}
+                      <!-- end inbox -->
+                      </li>
+                      <li class="divider-vertical"></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                          {% if request.user.company.twitter_username %}
+                          <img  data-toggle="dropdown" class="btn dropdown-toggle" src='http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger' width='30' height='30'>&nbsp;&nbsp;<span class="caret"></span></a>
+                          {% elif request.user.company.profile_picture %}
+                          <img class="btn img-polaroid" src='{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 73 73 %}'>
+                          {% else %} 
+                          <i class="icon-user icon-white"></i>&nbsp;&nbsp;{{ request.user|capfirst }}&nbsp;&nbsp;<span class="caret"></span>
+                          {% endif %}
+                        </a>
                         <ul class="dropdown-menu">
-                          <li><a href="{% url 'company_listings' %}">{% trans ' my Listings' %}</a></li>
+                          {% if request.user.company %}
+                            <li><a href="{% url 'company_listings' %}">{% trans ' my Listings' %}</a></li>
+                          {% endif %}
+                          {% if not request.user.company %}
+                            <li><a href="{% url 'applier_applications' %}">{% trans ' my Applications' %}</a></li>
+                          {% endif %}
                           <li><a href="{% url 'messages_inbox' %}">{% trans ' Messages' %}</a></li>
+                          <li><a href="{% url 'company_infos' %}">{% trans ' Account Settings' %}</a></li>
                           <li class="divider"></li>
                           <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans 'Logout' %}</a></li>
                         </ul>
-      <!-- 
-        <form class="search" method="post" action="someaction.php">
-            <div id="search-trigger">Search:</div>
-            <input id="search-box" type="text" placeholder="search + enter">
-        </form>
+                      </li>
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div>
+              </div><!-- /navbar-inner -->
+            </div><!-- /navbar -->
+  {% endif %}
+  {% if not request.user.is_authenticated %}
+    <section class="container preheader"> 
+      
+      <!--this is the login for the user-->
+         <!-- <nav class="user clearfix"> <a href="login.html"><i class="icon-user"></i> Login</a></nav>  -->
+         <nav class="user clearfix">{% if settings.SITE_TITLE %}<a class="" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}</nav>
+      <!--close user nav-->
+      <!-- login -->
+      <div class="phone">
 
-      -->
-    </div>
-    {% if request.user.is_authenticated %}
-    <div class="phone">
+        <nav class="user clearfix"> <a href="{% url 'login' %}"><i class="icon-user"></i> Login</a> </nav> 
+
+      </div>
+
       
-      <a href="{% url 'messages_inbox' %}">
-        <span class="badge {% if messages_inbox_count %}badge-important{% endif %}">
-        {{ messages_inbox_count }}
-      </span></a>
-      
-      <!-- <a href="tel:8135551234" class="tele">813.555.1234</a>-->
-    </div>
+      </section>
     {% endif %}
-
-    <div class="phone">
-      {% if request.cart.has_items %}
-      <a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
-        {{ request.cart.items.count }}</span></a>
-      {% else %}
-      <a href="tel:8135551234" class="tele">813.555.1234</a>
+    <!-- dashboard nav -->
+    {% if request.user.is_authenticated %}
+    <div class="navbar" style="margin-top:-20px">
+    <div class="navbar-inner">
+    <div class="container">
+ 
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+ 
+      <!-- Be sure to leave the brand out there if you want it shown -->
+      <!-- {% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %} -->
+ 
+      <!-- Everything you want hidden at 940px or less, place within here -->
+      <div class="nav-collapse collapse">
+        <!-- .nav, .navbar-search, .navbar-form, etc -->
+        <ul class="nav">
+          {% if request.user.company %}
+          <li {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_listings' %}">{% trans 'My Listings' %}</a>
+          </li>
+          {% else %}
+          <li {% if 'application' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'applier_applications' %}">{% trans ' my Applications' %}</a></li>
+          {% endif %}
+          <li {% if 'messages' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'messages_inbox' %}"><i class="icon-envelope"></i>&nbsp;&nbsp;{% trans 'Messages' %}</a></li>
+          <li {% if 'info' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_infos' %}">{% trans 'Company Info' %}</a></li>
+          <li><a href="#"><i class="icon-cog"></i>&nbsp;&nbsp;{% trans 'My Account' %}</a></li>
+        </ul>
+      </div>
+ 
+          </div>
+        </div>
+      </div>
       {% endif %}
-      <!-- <a href="tel:8135551234" class="tele">813.555.1234</a>-->
-    </div>
-    
-    <ul class="social">
-        <li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>
-        <li><a class="socicon small facebook" href="#" data-placement="bottom" title="Follow us on Facebook"></a></li>
-        <li><a class="socicon small twitterbird" href="#" data-placement="bottom" title="Follow us on Twitter"></a></li>
-        <li><a class="socicon small linkedin" href="#" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
-        <li><a class="socicon small dribbble" href="#" data-placement="bottom" title="Follow us on dribble"></a></li>
-        <li><a class="socicon small vimeo" href="#" data-placement="bottom" title="Follow us on Vimeo"></a></li>
-    </ul>
-    </section>
-
-        <!-- begin .header-->
+      <!-- dashboard nav -->
+      <!-- begin .header-->
+      {%if not request.user.is_authenticated %}
 <header class="header clearfix"> <img src="assets/images/print-logo.png" class="print logo" alt="name of company" />
     <div class="container"> 
-        
+
         <!-- begin #main_menu -->
         <nav id="main_menu">
             <ul class="accordmobile">
@@ -141,6 +226,7 @@ $(function() {
     </div>
     <!-- close / .container--> 
 </header>
+{% endif %}
 <!-- close /.header -->
 <!-- begin #page - the container for everything but header -->
 <div id="page">
@@ -158,12 +244,11 @@ $(function() {
 {% block title_bread %}
 
     <h1>{% block title %}{% endblock %}</h1>
-
-    
-    {% spaceless %}
+    {% comment %}
+       {% spaceless %}
     {% block breadcrumb_menu %}{% page_menu "pages/menus/breadcrumb.html" %}{% endblock %}
     {% endspaceless %}
-    
+   {% endcomment %}
 
 {% endblock %}
 </div>
