@@ -1,14 +1,16 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 {% load i18n mezzanine_tags %}
 
 {% block meta_title %}{{ title }}{% endblock %}
 {% block title %}{{ title }}{% endblock %}
 {% block body_id %}account{% endblock %}
 
-{% block breadcrumb_menu %}
-{{ block.super }}
-<li>{{ title }}</li>
-{% endblock %}
+{% comment %}
+	{% block breadcrumb_menu %}
+	{{ block.super }}
+	<li>{{ title }}</li>
+	{% endblock %}
+{% endcomment %}
 
 {% block main %}
 <fieldset>

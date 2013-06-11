@@ -12,6 +12,75 @@
     {% url "mezzanine_password_reset" as password_reset_url %}
     {% url "profile_update" as profile_update_url %}
     {% blocktrans %}<p>You can also <a href="{{ password_reset_url }}?next={{ profile_update_url }}">reset your password</a> if you've forgotten it.</p>{% endblocktrans %}</p>
+
+    <!--begin login-box-->
+				<div class="login-box clearfix">
+					<header>
+						<h2 class="short_headline"><span>Login to your account...</span></h2>
+					</header>
+					<div class="login-wrapper clearfix">
+
+						<div class="float-right">
+							<form method="post">
+								{% if form.errors %}
+								<div class="control-group error non-field-errors">
+									{% for error in form.errors %}
+									<span class="help-inline">{{ error }}</span>
+									{% endfor %}
+								</div>
+								{% endif %}
+								<input type="hidden" name="referrer" value="">{% csrf_token %}
+								<label for="id_username" class="required">{{ form.username.label}}<span class="required">*</span></label>
+								<div class="input-prepend"> <span class="add-on"><i class="icon-user"></i></span>
+									<!-- <input name="username" id="id_username" type="text" autofocus required /> -->
+									{{ form.username }}
+									{% if form.username.errors %}
+										{% for error in form.username.errors %}
+											<span class="help-inline">{{ error }}</span>
+										{% endfor %}
+									{% endif %}
+								</div>
+								<label for="id_password" class="required">{{ form.password.label}} <span class="required">*</span></label>
+								<div class="input-prepend"> <span class="add-on">#</span>
+									{{ form.password }}
+									<!-- <input name="password" id="id_password" type="password" /> -->
+									{% if form.password.errors %}
+										{% for error in form.password.errors %}
+											<span class="help-inline">{{ error }}</span>
+										{% endfor %}
+									{% endif %}
+								</div>
+								<!-- 
+								<div class="form-actions">
+        <input class="btn btn-primary btn-large" type="submit" value="{{ title }}"> 
+    </div> -->
+								<div class="form-controls">
+									<input class="btn btn-primary btn-large" type="submit" name="login" value="{{ title }}" />
+								</div>
+							</form>
+							<footer class="clearfix"> <a href="#" class="forgotpw">Forgot Password?</a> {% url "signup" as signup_url %}
+    
+    {% url "mezzanine_password_reset" as password_reset_url %}
+    {% url "profile_update" as profile_update_url %}
+    {% blocktrans %}<p>You can also <a href="{{ password_reset_url }}?next={{ profile_update_url }}">reset your password</a> if you've forgotten it.</p>{% endblocktrans %}</p></footer>
+						</div>
+						<!--close .float-right-->
+						
+						<div class="float-left">
+							<ul>
+								<li><a href="#"><img src="{{ STATIC_URL }}/images/sign-in-twitter.png" alt="sign in with twitter" /></a></li>
+								<li><a href="#"><img src="{{ STATIC_URL }}/images/sign-in-google.png" alt="sign in with google" /></a></li>
+								<li><a href="#"><img src="{{ STATIC_URL }}/images/sign-in-openid.png" alt="sign in with openid" /></a></li>
+								<li><a href="#"><img src="{{ STATIC_URL }}/images/sign-in-linkedin.png" alt="sign in with linkedin" /></a></li>
+							</ul>
+							<p>{% blocktrans with request.GET.next as next %}If you don't have an account you can <a href="{{ signup_url }}?next={{ next }}">sign up</a> for one now.{% endblocktrans %}</p>
+							<p><a href="register.html" class="center">Not a member? Join today!</a></p>
+						</div>
+						<!--close .float-left--> 
+					</div>
+					<!--end .login-wrapper clearfix--> 
+				</div>
+				<!--end .login-box--> 
 {% endif %}
 
 {% endblock %}

@@ -1,12 +1,103 @@
 {% extends "accounts/account_form.html" %}
-{% load i18n %}
+{% load i18n mezzanine_tags %}
 
 {% block main %}
 
 {% if request.user.is_authenticated %}
     <p>{% trans "You're already logged in. If you'd like to create a new account, you'll need to log out first." %}</p>
 {% else %}
-    {{ block.super }}
+   
+<div class="register-box clearfix">
+				<h2 class="short_headline"><span>{% trans 'Create your Resume' %}</span></h2>
+				<form class="form-horizontal" action="" method="post">
+					<fieldset>{% csrf_token %}
+						<div class="control-group input_id_first_name {% if form.first_name.errors %}error{% endif %}">
+							<label for="id_first_name" class="required control-label">{% trans 'First Name' %} <span class="required">*</span></label>
+							<div class="controls">
+								<input name="first_name" id="id_first_name" class="span12" type="text" autofocus value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}" />
+								{% if form.first_name.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.first_name.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="control-group input_id_last_name {% if form.last_name.errors %}error{% endif %}">
+							<label for="id_last_name" class="required control-label">{% trans 'Last Name' %} <span class="required">*</span></label>
+							<div class="controls">
+								<input name="last_name" id="id_last_name" class="span12" type="text" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}" />
+								{% if form.last_name.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.last_name.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="control-group input_id_email {% if form.email.errors %}error{% endif %}">
+							<label for="id_email" class="required control-label">Email <span class="required">*</span></label>
+							<div class="controls">
+								<input name="email" id="id_email" class="span12" type="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}"/>
+								{% if form.email.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.email.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="control-group input_id_username {% if form.username.errors %}error{% endif %}">
+							<label for="id_username" class="required control-label">Username <span class="required">*</span></label>
+							<div class="controls">
+								<input name="username" id="id_username" class="span12" type="text" value="{% if form.username.value %}{{ form.username.value }}{% endif %}"/>
+								{% if form.username.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.username.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="control-group input_id_password1 {% if form.password1.errors %}error{% endif %}">
+							<label for="id_password1" class="required control-label">Password <span class="required">*</span></label>
+							<div class="controls">
+								<input name="password1" id="id_password1" class="span12" type="password" value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}" />
+								{% if form.password1.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.password1.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="control-group input_id_password2 {% if form.password2.errors %}error{% endif %}">
+							<label for="id_password2" class="required control-label">Password (again) <span class="required">*</span></label>
+							<div class="controls">
+								<input name="password2" id="id_password2" class="span12" type="password" value="{% if form.password2.value %}{{ form.password2.value }}{% endif %}" />
+								{% if form.password2.errors  %}
+			                    <span class="help-inline">
+			                        {% for error in form.password2.errors %}
+			                            {{ error }}
+			                        {% endfor %}
+			                    </span>
+			                    {% endif %}
+							</div>
+						</div>
+						<div class="form-actions">
+							<input class="btn btn-primary btn-large" type="submit" name="register" value="{{ title }}" />
+						</div>
+					</fieldset>
+				</form>
+				<!-- end registration form-->
+				<p>Already have an account? <a href="login.html">Login.</a></p>
+			</div>
+			<!--close .register-box--> 
     {% if settings.ACCOUNTS_VERIFICATION_REQUIRED %}
     <p>{% trans "After signing up, you'll receive an email with a link you need to click, in order to activate your account." %}</p>
     {% endif %}
