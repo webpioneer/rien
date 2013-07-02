@@ -406,6 +406,7 @@ NOTIFICATION_BACKENDS = [
 
 # USER NOTIFICATIONS SETTINGS
 USER_NOTIFICATION_SETTINGS = (
+    'welcome_user',
     'messages_received',
     'messages_reply_received',
     )

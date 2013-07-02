@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.db.models import Min
 from django.dispatch import receiver
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
-from django.template import RequestContext
+from django.template import Context, RequestContext, loader
 from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
@@ -23,6 +23,8 @@ from mezzanine.utils.views import paginate, render
 from mezzanine.utils.sites import current_site_id
 from mezzanine.utils.timezone import now
 from mezzanine.utils.urls import slugify
+
+from django_messages.models import Message
 
 
 from gigs.forms import CompanyForm, PostJobForm, ApplyForm, ReplyForm, ProfileForm2
@@ -432,6 +434,25 @@ def set_user_default_settings(sender, **kwargs):
     if group == 'Company':
     #else:
         set_user_settings(settings.COMPANY_NOTIFICATION_SETTINGS, user)
+
+
+@receiver(user_added_to_group, sender = 'apply')
+@receiver(user_added_to_group, sender = 'post_job')
+def welcome_user(sender, **kwargs):
+    user = kwargs['user']
+    if notification:
+        notification.send([user], "welcome_user")
+    # Send a welcome Message to Inbox 
+    # refer to Company Post a Job -2 
+    subject = 'hello there'
+    body = loader.get_template('django_messages/welcome_to_inbox.html')
+    context = Context({
+        'message' : 'something',
+        })
+    sender = User.objects.filter(username = 'admin')[0]
+    message = Message(subject = subject, body = body.render(context),
+        sender = sender, recipient = user)
+    message.save()
 
 
 
