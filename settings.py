@@ -146,7 +146,8 @@ USE_SOUTH = True
 ########################
 # MAIN DJANGO SETTINGS #
 ########################
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # People who get code error notifications.
 # In the format (('Full Name', 'email@example.com'),
@@ -312,7 +313,9 @@ INSTALLED_APPS = (
     'gigs',
     'fts',
     #'searchapp',
+    'notification',
     'django_messages',
+    
 )
 # Company Settings
 COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
@@ -395,6 +398,28 @@ GOOGLE_MAPS_KEY = 'AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM'
 #TASK_UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application',]
 TASK_UPLOAD_FILE_TYPES = ['pdf',]
 TASK_UPLOAD_FILE_MAX_SIZE = "5242880"
+
+#NOTIFICATION SETTING
+NOTIFICATION_BACKENDS = [
+    ("email", "notification.backends.email.EmailBackend"),
+]
+
+# USER NOTIFICATIONS SETTINGS
+USER_NOTIFICATION_SETTINGS = (
+    'messages_received',
+    'messages_reply_received',
+    )
+
+COMPANY_NOTIFICATION_SETTINGS = (
+    'applications_received',
+    )
+
+JOB_SEEKER_NOTIFICATION_SETTINGS = (
+    'applications_read',
+    #'applications_printed',
+    #'applications_favorited',
+    #'applications_rejected',
+    )
 
 
 ##################
