@@ -1,0 +1,12 @@
+1 st Feb - Chap 2 
+ Iterators
+ Generators, generator expression, use cases
+ Itertools islice, tee, groupby used with sorted for data summary
+    - TODO:
+        + take a look at the other itertools chain, izip, etc
+ Decorator patters :
+     - TODO : 
+        +proxy pattern
+        +context provider pattern
+
+

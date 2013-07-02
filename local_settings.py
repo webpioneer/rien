@@ -17,3 +17,10 @@ DATABASES = {
         "PORT": "",
     }
 }
+#Dev email debugging
+
+EMAIL_HOST_USER = 'webpioner@gmail.com'
+EMAIL_USE_TLS = True 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = 'passwd123'
+EMAIL_PORT = 587

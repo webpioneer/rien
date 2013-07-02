@@ -1,0 +1,29 @@
+{% extends 'gigs/account.html' %}
+
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_toolbar %}
+        <div class="btn-toolbar" style="margin: 2;">
+              <div class="btn-group">
+                <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url profile_update %}">{% trans 'Personal Info' %}</a>
+                <a class="btn {% if 'password' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Password' %}</a>
+                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_trash %}">{% trans 'Notifications' %}</a>
+              </div>
+            </div>
+{% endblock %}
+
+{% block company_block %}
+    <h4>{% trans 'You can change your password using this form' %}</h4>
+    {% with company=request.user.company %}
+    <form>
+      {% fields_for form%}
+        <div class="submit-row">
+			<input class="btn" type="submit" value="Change password" class="default" />
+		</div>
+</form>
+        
+    {% endwith %}
+
+{% endblock %}
+
+

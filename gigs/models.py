@@ -141,12 +141,15 @@ class Company(Displayable):
     def save(self, *args, **kwargs):
         company_password = User.objects.make_random_password()
         print company_password
-        #User.objects.get_or_create(username = self.email, email = self.email,
-        # password = company_password)
+                    #User.objects.get_or_create(username = self.email, email = self.email,
+                    # password = company_password)
         self.user = User.objects.create_user(username = self.email, email = self.email,
-         password = company_password)
+                     password = company_password)
+
+
         super(Company, self).save(*args, **kwargs)
         return company_password
+
 
     def __unicode__(self):
         return ("{0} {1} {2} {3} {4}").format(self.company_name, self.email, self.url,  self.type, self.profile_picture)

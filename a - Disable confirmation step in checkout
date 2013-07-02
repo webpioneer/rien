@@ -1,0 +1,10 @@
+a - Disable confirmation step in checkout
++SHOP_CHECKOUT_STEPS_CONFIRMATION = False
+ 
+ b - Unforce the use of variations
++SHOP_USE_VARIATIONS = False
+ 
+c - Enabling the SSL middleware
+-    # "mezzanine.core.middleware.SSLRedirectMiddleware",
++    "mezzanine.core.middleware.SSLRedirectMiddleware",
+

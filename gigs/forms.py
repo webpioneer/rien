@@ -3,7 +3,7 @@ import logging
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.core.forms import TinyMceWidget
@@ -152,6 +152,11 @@ class ProfileForm2(forms.ModelForm):
             if field in user_fields:
                 self.fields[field].required = True
 
+    # Add user to the JobSeeker group
+    def _add_to_job_seeker_group(self, user):
+        job_seeker_group = Group.objects.get(name = 'JobSeeker')
+        user.groups.add(job_seeker_group)
+
     def clean_email(self):
         """
         Ensure the email address is not already registered.
@@ -170,11 +175,12 @@ class ProfileForm2(forms.ModelForm):
 
         password = User.objects.make_random_password()
         print password
-        user = User.objects.create_user(username = self.cleaned_data['email'], 
-            email = self.cleaned_data['email'], password = password)
-        user.last_name = self.cleaned_data['last_name']
-        user.first_name = self.cleaned_data['first_name']
+        user = User(username = self.cleaned_data['email'], 
+            email = self.cleaned_data['email'],
+            last_name = self.cleaned_data['last_name'], first_name = self.cleaned_data['first_name'])
+        user.set_password(password)
         user.save()
+        self._add_to_job_seeker_group(user)
 
         return user, password
 

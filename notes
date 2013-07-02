@@ -1,0 +1,17 @@
+- all communication should go through the website. Ex : company would like to see the 
+appliers, they login and check the appliers. If they don't, send a reminder and vice versa.
+
+- Make it social.
+
+- Create a JobBoard for company to implement on their website, like JobVit.
+
+- Break down payment : a company would choose between payment methods, either pay per job 
+listing or pay by applier to the job listing after paying a fee (i.e $50).
+
+- Create a job board ( inspire from EasyJobBoard, JobBoard.io).
+
+- Remind users that they have products in their after certain period of time.
+
+- Use resume browsing like on indeed.
+
+- Use reportlab to convert resumes ( so they can be searchable).

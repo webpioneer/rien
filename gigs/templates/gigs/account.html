@@ -1,0 +1,24 @@
+{% extends 'gigs/applier/applier.html' %}
+
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block company_toolbar %}
+        <div class="btn-toolbar" style="margin: 2;">
+              <div class="btn-group">
+                <a class="btn {% if 'personal' in request.META.PATH_INFO %}active{% endif %}" href="{% url profile_update %}">{% trans 'Personal Info' %}</a>
+                <a class="btn {% if 'password' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Password' %}</a>
+                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Notifications' %}</a>
+              </div>
+            </div>
+{% endblock %}
+
+{% block company_block %}
+    
+    {% with company=request.user.company %}
+    
+        
+    {% endwith %}
+
+{% endblock %}
+
+

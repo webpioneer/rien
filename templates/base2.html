@@ -191,7 +191,7 @@ $(function() {
           {% endif %}
           <li {% if 'messages' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'messages_inbox' %}"><i class="icon-envelope"></i>&nbsp;&nbsp;{% trans 'Messages' %}</a></li>
           <li {% if 'info' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_infos' %}">{% trans 'Company Info' %}</a></li>
-          <li><a href="#"><i class="icon-cog"></i>&nbsp;&nbsp;{% trans 'My Account' %}</a></li>
+          <li {% if 'account' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'account' %}"><i class="icon-cog"></i>&nbsp;&nbsp;{% trans 'My Account' %}</a></li>
         </ul>
       </div>
  

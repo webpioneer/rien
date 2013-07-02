@@ -1,13 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib.messages import info
+from django.db.models.signals import post_save
 from django.db.models import Min
+from django.dispatch import receiver
 from django.shortcuts import HttpResponse, get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-
 
 
 
@@ -26,8 +27,14 @@ from mezzanine.utils.urls import slugify
 
 from gigs.forms import CompanyForm, PostJobForm, ApplyForm, ReplyForm, ProfileForm2
 from gigs.models import Category, Gig, GigType, Application, Resume
+from gigs.signals import user_added_to_group
 from gigs.utils.views import application_messages
 from searchapp.forms import GigSearchForm
+
+if "notification" in settings.INSTALLED_APPS:
+    from notification import models as notification
+else:
+    notification = None
 
 
 def all_gigs(request, template_name = 'gigs/index.html'):
@@ -103,6 +110,12 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                     #company.profile_picture = company_form.cleaned_data['profile_picture']
                     #company.profile_picture = request.FILES.get('profile_picture', '')
                     company_password = company.save()
+                    # Add company to the group Company
+                    company_group = Group.objects.get(name = 'Company')
+                    company.user.groups.add(company_group)
+                    # send a signal that a user is added to a group
+                    user_added_to_group.send(sender = post_job.func_name,
+                        user = company.user, group = 'Company')
                     # authenticate company
                     print company.user.username
                     print company.user.password
@@ -264,10 +277,15 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 resume.save()
                 message = _('You applied successfully')
                 info(request, message)
+                if notification:
+                    notification.send([application.recipient], "applications_received", {'message': message,})
         else:
             if signup_form.is_valid() and apply_form.is_valid():
                 print 'both forms are valid'
                 user, password = signup_form.save()
+                # send signal user_added_to_group
+                user_added_to_group.send(sender = apply.func_name,
+                        user = user, group = 'JobSeeker')
                 
                 application = Application()
                 application.subject = gig.title
@@ -285,6 +303,8 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 message = _('You applied successfully')
                 # an email is sent to the user with his new password
                 info(request, message)
+                if notification:
+                    notification.send([user], "applications_received", {'message': message,})
     else:
         signup_form = ProfileForm2()
         apply_form = ApplyForm()
@@ -331,6 +351,8 @@ def application_detail(request, message_id, template_name = 'gigs/applier/applic
     if application.read_at is None and application.recipient == request.user:
         application.read_at = now()
         application.save()
+        if notification:
+            notification.send([application.sender], "applications_read")
     application_followup = application_messages(application, user = request.user, application_followup = [])
 
     context ={
@@ -372,6 +394,48 @@ def application_accept(request):
         'message' :  message,
                 })
     return HttpResponse(response, content_type='application/javascript')
+
+#Account
+def account(request, template_name = 'gigs/account.html'):
+    context = {}
+    return render(request, template_name, context)
+
+
+# Set DEFAULT USER SETTINGS
+
+def set_user_settings(notification_settings, user):
+    for notice_type in notification_settings:
+        print notice_type
+        notice_type_obj = notification.NoticeType.objects.get(label = notice_type)
+        print notice_type_obj
+        try:
+            notification.NoticeSetting(user = user, 
+                notice_type = notice_type_obj, medium = '0', send = True).save()
+        except:
+            pass
+
+@receiver(user_added_to_group, sender = 'apply')
+@receiver(user_added_to_group, sender = 'post_job')
+def set_user_default_settings(sender, **kwargs):
+    user = kwargs['user']
+    group = kwargs['group']
+    print kwargs
+    # set General USER_NOTIFICATION_SETTINGS
+    set_user_settings(settings.USER_NOTIFICATION_SETTINGS, user)
+    print user
+    print user.groups.all()
+
+    # set specific USER_NOTIFICATION_SETTINGS
+    if group == 'JobSeeker':
+    #if not user.company:
+        set_user_settings(settings.JOB_SEEKER_NOTIFICATION_SETTINGS, user)
+    if group == 'Company':
+    #else:
+        set_user_settings(settings.COMPANY_NOTIFICATION_SETTINGS, user)
+
+
+
+
 
 
 
