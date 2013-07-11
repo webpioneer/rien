@@ -293,6 +293,7 @@ INSTALLED_APPS = (
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.formtools",
+    "django.contrib.humanize", 
     "django.contrib.redirects",
     "django.contrib.sessions",
     "django.contrib.sites",
@@ -312,7 +313,7 @@ INSTALLED_APPS = (
     #"mezzanine.mobile",
     'gigs',
     'fts',
-    #'searchapp',
+    'searchapp',
     'notification',
     'django_messages',
     
@@ -421,6 +422,12 @@ JOB_SEEKER_NOTIFICATION_SETTINGS = (
     #'applications_favorited',
     #'applications_rejected',
     )
+
+# AKISMET settings
+AKISMET_API_KEY = 'c74b430a9ac6'
+
+# Company settings
+
 
 
 ##################

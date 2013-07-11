@@ -23,7 +23,7 @@ class PostJobForm(forms.ModelForm):
         fields = [
             'job_type', 'gig_categories', 'title', 'location', 'latitude', 
             'longitude', 'is_relocation', 'area_level1', 'area_level2',
-            'is_onsite', 'content', 'perks', 'how_to_apply', 'via_email',
+            'is_remote', 'content', 'perks', 'how_to_apply', 'via_email',
             'via_url', 'apply_instructions', 'job_type', 
             #'gig_categories',
         ]
@@ -35,6 +35,7 @@ class PostJobForm(forms.ModelForm):
         (i.e. ``user`` or ``ip_address``
         """
         GigModel = self.get_gig_model()
+        print self.get_gig_create_data()
         gig = GigModel(**self.get_gig_create_data())
         
         return gig
@@ -59,7 +60,7 @@ class PostJobForm(forms.ModelForm):
             area_level1 = self.cleaned_data['area_level1'],
             area_level2 = self.cleaned_data['area_level2'],
             is_relocation = self.cleaned_data['is_relocation'],
-            is_onsite = self.cleaned_data.get('is_onsite', True),
+            is_remote = self.cleaned_data.get('is_remote', True),
             content = self.cleaned_data['content'],
             perks = self.cleaned_data.get('perks',''),
             how_to_apply = self.cleaned_data['how_to_apply'],

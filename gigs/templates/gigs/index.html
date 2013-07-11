@@ -1,17 +1,13 @@
-{% extends 'base2.html' %}
-{% load mezzanine_tags i18n pages_tags %}
+{% extends 'base.html' %}
+{% load mezzanine_tags i18n pages_tags humanize %}
 
 {% block meta_title %}{% trans "All Jobs" %}{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 <style type="text/css">
-ul {
-list-style-type: disc;
-}
-li {
-display: list-item;
-text-align: -webkit-match-parent;
-}
+
+
+/*
 .jobs-list {
     list-style:none;
     margin:0;
@@ -57,11 +53,9 @@ text-align: -webkit-match-parent;
     font-size:16px;
     color:#4b5a76
 }
-.jobs-list .job-item .job-tags {
-    clear:both;
-    padding-top:7px
-}
-.jobs-list .job-item .job-tags .tag {
+*/
+
+.tag {
     padding:0 9px;
     position:relative;
     background:#f1f1f7;
@@ -88,10 +82,10 @@ text-align: -webkit-match-parent;
     *vertical-align:auto;
     cursor:pointer
 }
-.jobs-list .job-item .job-tags .tag {
+ .tag {
     *display:inline
 }
-.jobs-list .job-item .job-tags .tag:hover {
+ .tag:hover {
     text-decoration:none;
     cursor:pointer;
     background-image:-webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#f7f7f9),color-stop(100%,#e8e8ed));
@@ -105,12 +99,13 @@ text-align: -webkit-match-parent;
 .jobs-list .job-item.highlight {
     background:#fff6ef
 }
-.jobs-list .job-item.highlight .job-tags .tag {
+ .tag {
     background:#fffffe;
     -webkit-box-shadow:0 1px 0 #d0d0d9;
     -moz-box-shadow:0 1px 0 #d0d0d9;
     box-shadow:0 1px 0 #d0d0d9
 }
+/*
 .jobs-list .job-item.soldout {
     filter:alpha(opacity=80);
     opacity:.8
@@ -123,7 +118,7 @@ text-align: -webkit-match-parent;
 }
 .jobs-list .job-item .job-details {
     clear:both;
-    /* line-height:11px; */
+    /* line-height:11px; 
     line-height:14px;
     font-size:12px;
     font-weight:bold
@@ -154,17 +149,19 @@ text-align: -webkit-match-parent;
 .jobs-list .heart {
     margin-top:3px; 
 }
+
 /* Infinite scroll */
 #more{
-        background: none repeat scroll 0 0 #EEEEEE;
+    background: none repeat scroll 0 0 #EEEEEE;
     border: 1px solid #CFCFCF;
     color: #000000;
     display: none;
     font-weight: bold;
     left: 1100px;
     padding: 5px;
-    position: fixed;
+    /* position: fixed;
     top: 100px;
+    */
         }
 #no-more{
     background: none repeat scroll 0 0 #EEEEEE;
@@ -174,12 +171,27 @@ text-align: -webkit-match-parent;
     font-weight: bold;
     left: 1100px;
     padding: 5px;
+    /*
     position: fixed;
     top: 100px;
+    */
 }
+
+#scrolling_date{
+    background: none repeat scroll 0 0 yellow;
+    border: 1px solid #CFCFCF;
+    color: #000000;
+    display: none;
+    font-weight: bold;
+    left: 100px;
+    padding: 5px;
+    position: fixed;
+    top: 100px;
+        }
+
 /* id_search styling */
 #id_search{
-    background-color: #336699;
+    background-color: #4c5966;
     padding-top:20px;
     padding-bottom:2px;
     padding-right:5px;
@@ -191,11 +203,48 @@ text-align: -webkit-match-parent;
 }
 #id_filter{
     margin-top:5px;
-    background-color: #000;
+    background-color: #eaeef2;
     padding:10px;
-    color:#fff;
+    /*color:#fff; */
+}
+.job-details{
+    border-top:1px solid #d9d9e1;
+    padding:2px;
+}
+#search-message{
+    display:none;
+    background-color:#fefdb9;
+    padding:8px;
+}
+/*Job Types */
+.full-time{
+    color:#e68a20;
+}
+.contract{
+    color:#2a7ca5;
+}
+.freelance{
+    color:#9aa902;
+}
+.internship{
+    color:#b8559a;
+}
+/*Job Styling */
+.media-heading a{
+    color:#0290b3;
+    text-decoration: none;
+}
+.media-heading a:hover{
+    text-decoration: underline;
+}
+.media a{
+    margin-top:10px;
+}
+.skill{
+    text-decoration: none;
 }
 </style>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -220,17 +269,46 @@ $(document).ready(function(){
            }
     });
     */
+    $("#id_search input[type='text']").bind('keydown keypress',function(){
+        setTimeout(function() {
+            find_jobs(method = 'GET', page = 1, search = true);
+        }, 1000);
+    });
     $("#id_filter input").click(function(){
         console.log($(this).val() + 'is clicked');
         find_jobs(method = 'GET', page = 1, search = true);
     });
+    
+    $("a[id^='location_']").live('click', function(e){
+        e.preventDefault();
+        //console.log($(this).text() + 'is clicked');
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $("#id_location").val(jQuery.trim($(this).text()));
+        find_jobs(method = 'GET', page = 1, search = true);
+    });
+    $("a[id^='gig_type_']").live('click',function(e){
+        e.preventDefault();
+        var clicked = $(this).text().toLowerCase() ;
+
+        $("#id_filter input").each(function(){
+            var checkbox_name = $(this).attr('name').toLowerCase();
+
+            if( checkbox_name != clicked){
+                $(this).attr('checked', false);
+            }
+        });
+        find_jobs(method = 'GET', page = 1, search = true);
+    });
+
 });
 function find_jobs(method, page, search){
     var gig_types = '';
         $("#id_filter input").each(function(){
-            if(this.checked){
-
-                gig_types += $(this).val() + ':'; 
+            if(!this.checked && $(this).val() != 'remote'){
+                gig_types += $(this).val() + ' ';
+            }
+            if(this.checked && $(this).val() == 'remote'){
+                gig_types += '0';
             }
         });
     console.log(gig_types);
@@ -239,44 +317,104 @@ function find_jobs(method, page, search){
         url : "{% url find_jobs %}",
         data : {
             csrfmiddlewaretoken : $("input[name=csrfmiddlewaretoken]").val(),
+            {% ifinstalled searchapp %}
             what : $("#id_what").val(),
             location : $("#id_location").val(),
+            {% endifinstalled %}
             gig_types : gig_types,
             page : page,
         },
         dataType : 'json',
     }).done(function( msg ) {
-        $("#what").html(msg.what);
-        $("#location").html(msg.location);
-        
-
-        var html_string = '';
-        for(var i = 0; i < msg.results.length; i++){
-            html_string += "<li class='job-item clearfix'>\
-            <h3 class='job-title'><a href='"+ msg.results[i].gig_link +"'>"+ msg.results[i].gig_title+"</a></h3>";
-            html_string += "<a class='contract clearfix'>"+ msg.results[i].gig_job_type +"</a>";
-            html_string += "<div class='job-details'> \
-                        <span class='job-details-left'> \
-                            <span>"+ msg.results[i].gig_company +"</span>";
-            html_string += "<span class='muted'>"+ msg.results[i].gig_company_elevator_pitch +"</span></span>";
-            html_string += "<span class='muted span4'><i class='icon-map-marker'></i>"+ msg.results[i].gig_location +"</span>";
-            html_string += "<span class='job-details-right'> \
-                            <span class='text-center date'>"+ msg.results[i].gig_publish_date +"\
-                                <span class='month'>{{ gig.public_date|date:'M' }}</span>\
-                                <span class='day'>{{ gig.public_date|date:'d' }}</span> \
-                            </span>\
-                        </span>\
-                    </div><!-- end .job-details -->\
-            </div>\
-        </li>";     
+        {% ifinstalled searchapp %}
+        if(msg.what){
+            $("#what").html('matching  <i class="icon-search"></i>&nbsp;&nbsp;"'+msg.what+'"');
+        }else{
+            $("#what").html('');
         }
-        console.log(html_string);
-        $(".jobs-list").css('border-bottom', '1px dotted solid');
+        if(msg.location){
+            $("#location").html('near <i class="icon-map-marker"></i>&nbsp;&nbsp;' +msg.location);
+        }else{
+            $("#location").html('');
+        }
+        {% endifinstalled %}
+        
+        if(msg.results){
+            var html_string = '';
+            var scrolling_date = '';
+            for(var i = 0; i < msg.results.length; i++){
+                    
+                html_string +="<div class='row job-details' style='margin-left:5px;{% comment %}{% if forloop.first %}background-color:#fff6ef{% endif %}{% endcomment %}'>";
+                html_string +="<div class='span11'>\
+            <ul class='media-list'>\
+                <li class='media'>\
+                    <a class='pull-left' href='"+ msg.results[i].gig_company_profile+"'>\
+                        <img class='img-polaroid media-object' alt='' src='{{ MEDIA_URL }}{% thumbnail '"+msg.results[i].gig_company_logo+"' 63 63 %}' height='63' width='63'>\
+                    </a>";
+                html_string +="<div class='media-body'>\
+                      <h3 class='media-heading'><a href='"+msg.results[i].gig_link+"'>"+msg.results[i].gig_title+"</a>";
+                    if(msg.results[i].gig_is_new){
+                        html_string +="<span class='label label-warning'>New</span>";   
+                      }
+                html_string +="</h3>";
+                html_string +="<div class='row' style='margin-left:1px'>\
+                        <div class='span6'>\
+                            <a href='"+ msg.results[i].gig_company_profile+"'>"+msg.results[i].gig_company+"</a>\
+                            <span class='muted'>"+ msg.results[i].gig_company_elevator_pitch+"</span>\
+                        </div><!-- end .span4 -->\
+                        <div class='span6'><span class='muted'><i class='icon-map-marker'></i>\
+                        <a id='location_"+msg.results[i].gig_id+"'href='#'>\
+                        "+msg.results[i].gig_location+"</a></span></div><!-- end .span4 --></div><!-- end .row -->";
+
+                html_string +="<div class='row' style='margin-left:1px'>\
+                            <a class='btn-small btn-info skill' href='#'>Django</a>&nbsp;\
+                            <a class='btn-small btn-info skill' href='#'>Python</a>&nbsp;\
+                            <a class='btn-small btn-info skill' href='#'>Java</a>&nbsp;\
+                            <a class='btn-small btn-info skill' href='#'>Hadoop</a>&nbsp;\
+                      </div>";
+
+                      
+                html_string +="</div><!-- end .media-body --></li></ul></div><!-- end .span10 -->";
+                html_string +="<div class='span1'>\
+            <div class='row'>\
+                <div class='#'>\
+                    <a href='#' id='gig_type_"+msg.results[i].gig_id+"' class='"+ msg.results[i].gig_job_type+"'>"+msg.results[i].gig_job_type+"</a>\
+                </div>\
+                <div class='text-center'>"+ msg.results[i].gig_publish_date+"</div>\
+            </div>\
+        </div><!-- end .span2 --></div><!-- end .row -->";
+
+                scrolling_date = msg.results[i].gig_publish_date;
+                console.log(scrolling_date);
+            }
+                
+            $("#gig_types").html('');
+            $("#gig_types").append("(");
+            $("#id_filter input").each(function(){
+            //alert($(this).attr('name'));    
+            if($(this).attr('checked')){
+
+                $("#gig_types").append($(this).attr('name')+" ");
+            }
+
+        });
+        $("#gig_types").append(")");
+        }else{
+            $("#search-message").html("No Jobs found matching your query");
+        }
+        
         if(search){
+            //$("#scrolling_date").text(scrolling_date);
+            console.log("Search True");
             $(".jobs-list").html(html_string);}
         else{
+            //$("#scrolling_date").text(scrolling_date);
+            
             $(".jobs-list").append(html_string);
+            //$(".jobs-list").css("border-top","2px dotted #336699");
+            //$(".jobs-list").css('border-bottom', '5px dotted solid');
         }
+        $("#search-message").show();
 
     });
 }// end find_jobs()
@@ -285,12 +423,14 @@ function find_jobs(method, page, search){
             var page = 1;
 
             $(window).scroll(function () {
+                //$("#scrolling_date").hide();
                 $('#more').hide();
                 $('#no-more').hide();
 
                 if($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
-                    $('#more').css("top","400");
+                    //$('#more').css("top", $(window).height());
                     $('#more').show();
+                    //$("#scrolling_date").show();
                 }
                 if($(window).scrollTop() + $(window).height() == $(document).height()) {
 
@@ -302,10 +442,10 @@ function find_jobs(method, page, search){
                     var actual_count = "102";
 
                     if((page-1)* 12 > actual_count){
-                        $('#no-more').css("top","400");
+                        //$('#no-more').css("top","400");
                         $('#no-more').show();
                     }else{
-                        console.log('hey');
+                        //console.log('hey');
                         find_jobs(method = 'GET', page = page, search = false);
                     }
                 }
@@ -318,8 +458,19 @@ function find_jobs(method, page, search){
 
 {% block title_bread %}{% endblock %}
 
-{% block main %}
+{% block post_header %}
+<div class="hero-unit center no-border no-padding-bottom">
+        <div class="container"> 
+            <!--note the home class on the h1 tag-->
+            <h1>{% trans settings.SITE_HERO_UNIT|safe %}</h1>
+        </div>
+        <!--close container--> 
+    </div>
+    <!--close hero-unit--> 
+{% endblock %}
 
+{% block main %}
+    
     {% ifinstalled searchapp %}
 	 <!-- Search and Filter
     ================================================== -->
@@ -332,16 +483,29 @@ function find_jobs(method, page, search){
         </div><!-- .controls .controls-row-->
         <div id="id_filter">
             {% for gig_type in gig_types %}
-            <label class="checkbox inline">
+            <label class="checkbox inline {{ gig_type.type|lower }}">
               <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" checked> {{ gig_type.type }}
             </label>
             {% endfor %}
             <label class="checkbox pull-right">
-              <input type="checkbox" id="inlineCheckbox1" value="remote" class=""> {% trans 'Remote' %}
+              <input type="checkbox" id="inlineCheckbox1" value="remote" class="" name="remote"> {% trans 'Remote' %}
             </label>
+        </div>
+        <div id='search-message' class='row' style="margin-left:0px">
+            <div class="span8">
+                {% trans 'Showing all jobs' %}
+                <span id="gig_types"></span>
+                <span id="location"></span>
+                <span id="what"></span>
+                <a id="reset" class="btn btn-info btn-small" href="{% url home %}"><i class="icon-refresh"></i>&nbsp;&nbsp;Reset</a>   
+            </div>
+            <div class="span4">
+                <button class="btn pull-right btn-small">Email / RSS Notifications</button>
+            </div>
         </div>
 
     </form>
+    
     
     {% endblock %}
     {% endifinstalled %}
@@ -383,71 +547,132 @@ function find_jobs(method, page, search){
         </form>
     </section>
 -->
-    <div id='more' >Loading More Content</div>
-    <div id='no-more' >No More Content</div>
-    <div id='page-header'><h3>Showing all jobs matching <span id="what"></span> at <span id="location"></span></h3></div>
-	<ul class="jobs-list">
+    <div class="jobs-list">
+    {% for gig in gigs %}
+    <div id="results"></div>
+    <div class="row job-details" style="margin-left:5px;{% comment %}{% if forloop.first %}background-color:#fff6ef{% endif %}{% endcomment %}">
+        <div class="span11">
+            <ul class="media-list">
+                <li class="media">
+                    <a class="pull-left" href="{% url company_profile slug=gig.company.slug %}">
+                        {% if company.twitter_username %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
+                        {% elif gig.company.profile_picture %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 63 63 %}">
+                        {% else %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
+                        {% endif %}
+                    </a>
+                    <div class="media-body">
+                      <h3 class="media-heading"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a> 
+                        {% if 'today' in gig.publish_date|naturalday %}<span class="label label-warning">{% trans 'New' %}</span>{% endif %}
+                      </h3>
+                      
+                      <div class="row" style="margin-left:1px">
+                        <div class="span6">
+                            <a href="{% url company_profile slug=gig.company.slug %}">{{ gig.company.company_name|capfirst }}</a>
+                            <span class="muted">{{ gig.company.elevator_pitch }}</span>
+                        </div><!-- end .span4 -->
+                        <div class="span6"><span class="muted"><i class="icon-map-marker"></i><a id="location_{{ gig.id }}" href="#">{{ gig.location }}</a></span></div><!-- end .span4 -->
+
+                      </div><!-- end .row -->
+                      <div class="row" style="margin-left:1px">
+                            <a class="btn-small btn-info skill" href="#">Django</a>&nbsp;<a class="btn-small btn-info skill" href="#">Python</a>&nbsp;<a class="btn-small btn-info skill" href="#">Java</a>&nbsp;<a class="btn-small btn-info skill" href="#">Hadoop</a>&nbsp;
+                      </div>
+
+                      
+                    </div><!-- end .media-body -->
+                </li>
+            </ul>
+        </div><!-- end .span10 -->
+        <div class="span1">
+            <div class="row">
+                <div class="#">
+                    <a href="#" class="{{ gig.job_type.title|lower }}" id="gig_type_{{gig.id}}">{{ gig.job_type.type|upper }}</a>
+                </div>
+                <div class="text-center">{{ gig.publish_date|date:'M d' }}</div>
+            </div>
+        </div><!-- end .span2 -->
+        
+        
+    </div><!-- end .row -->
+    
+    {% endfor %}
+    </div>
+
+    <div id='scrolling_date'></div>
+    <div id='more'>{% trans 'Loading More Jobs ...' %}</div>
+    <div id='no-more'>{% trans 'No More Content' %}</div>
+
+    
+    <!--
+	<ul class="media-list">
 	{% for gig in gigs %}
         <div id="results"></div>
-		<li class="job-item clearfix">
-<!--
-            <a class="pull-left heart" href="#">
-                    {% if gig.company.profile_picture %}
-                    <img class="media-object" src="{{STATIC_URL}}media/{% thumbnail gig.company.profile_picture 64 64 %}">
-                    {% else %}
-                    <img class="media-object" src="{{STATIC_URL}}media/company_logos/.thumbnails/employer_default.png" width="64" height="64">
-                    {% endif %}
-                </a>
--->
-            <div class="job-infos">
-                    <h3 class="job-title"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a></h3>
-                    <a class="contract clearfix">{{ gig.job_type.type }}</a>
-                    <div class="job-details">
-        				<span class="job-details-left">
-                            <span>{{ gig.company.company_name|capfirst }}</span>
-        					<span class="muted">{{ gig.company.elevator_pitch }}</span>
-        				</span> 
-        				<span class="muted span4"><i class="icon-map-marker"></i>{{ gig.location }}</span>
-        				<span class="job-details-right">
-        					<span class="text-center date">{{ gig.publish_date|date:'M d' }}
-                                <span class="month">{{ gig.public_date|date:'M' }}</span>
-                                <span class="day">{{ gig.public_date|date:'d' }}</span> 
-                            </span>
-        				</span>
-                    </div><!-- end .job-details -->
+		<li class="media">
 
-            </div>
+                    <a href="{% url company_profile slug=gig.company.slug %}" class='pull-left'>
+                        {% if company.twitter_username %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
+                        {% else %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 43 43 %}">
+                        {% endif %}
+                    </a>
+                    <div class='media-body'>
+                        <h3 class="media-heading"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a></h3>
+                        <div class="row clearfix">
+                            <div class="span6">
+                            <a href="{% url company_profile slug=gig.company.slug %}">{{ gig.company.company_name|capfirst }}</a>
+                            <span class="muted">{{ gig.company.elevator_pitch }}</span>
+                            </div>
+                            <div class="span4">
+                        <a class="#">{{ gig.job_type.type }}</a>
+                        
+            				
+            				<span class="muted"><i class="icon-map-marker"></i>{{ gig.location }}</span>
+            				<span class="job-details-right">
+            					<span class="text-center date">{{ gig.publish_date|date:'M d' }}
+                                    <span class="month">{{ gig.public_date|date:'M' }}</span>
+                                    <span class="day">{{ gig.public_date|date:'d' }}</span> 
+                                </span>
+            				</span>
+                        </div>
+                    </div>
+                    </div>
+                    
 		</li>
 	{% endfor %}
 	</ul>
+    
+    <div id='scrolling_date'></div>
+    <div id='more'>{% trans 'Loading More Jobs ...' %}</div>
+    <div id='no-more'>{% trans 'No More Content' %}</div>
+    -->
 
 {% endblock %}
 
 {% block right_panel %}
 	{% include 'gigs/right_panel.html' %}
 
+    
     <aside class="well">
-        <h3>The job board for IT professionals.</h3>
-            <p> <img class="alignleft" src="../demo/80x80-Diego_Velazquez_028.png" alt="Velazquez" /> Authentic Jobs is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small. </p>
+
+        <h3>{{ settings.SITE_TAGLINE }}</h3>
+            <p class="muted"> <img class="alignleft" src="http://images.authenticjobs.com/hiring.v1373466610.png" alt="Velazquez" />  {{ settings.SITE_TITLE }}{% blocktrans %} is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small. {% endblocktrans %}</p>
             <p class="right">
-                <a href="#" class="btn-primary btn">Go for it &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
+                <a href="/about/" class="btn-primary btn">{% trans 'Learn more' %} &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
+
+
     </aside>
-    <!--close .well --> 
+    <!--close .well -->
+    <aside class="well small-well">
+              {% include 'gigs/includes/social.html' %}
+    </aside>
+    <!--close section--> 
+    
     <aside class="widget">
-        <img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">
+        {% comment %}<img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">{% endcomment %}
     </aside>            
-	<aside class="widget">
-		<h3 class="short_headline">
-            <span>{% trans 'Follow' %}</span> {{ settings.SITE_TITLE }}
-        </h3>
-		<ul class="social">
-			<li><a class="socicon rss" href="#" title="RSS"></a></li>
-            <li><a class="socicon facebook" href="#" title="Facebook"></a></li>
-			<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
-			<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
-			<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
-			<li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
-		</ul>
-	</aside>
+	
 
 {% endblock %}

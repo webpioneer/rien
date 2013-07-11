@@ -1,11 +1,13 @@
 from itertools import chain
 
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import date
+from django.contrib.humanize.templatetags.humanize import naturalday
 
 from mezzanine.utils.sites import current_site_id
 
-from gigs.models import Gig
+from gigs.models import Gig, GigType
 from searchapp.models import GigSearch
 
 STRIP_WORDS = ['a', 'an', 'and', 'by', 'for', 'from', 'in', 'no', 'not',
@@ -39,7 +41,7 @@ def store(request, what, location, gig_types):
 	
 
 
-def get_results(what, location, page):
+def get_results(what, location, page, gig_types):
 	terms = _prepare_words(what)
 	#results = Gig.objects.all()
 	results = []
@@ -54,16 +56,34 @@ def get_results(what, location, page):
 			start = end - GIGS_TO_DISPLAY
 	except:
 		pass
-	gigs = Gig.objects.filter(site_id=current_site_id()).filter(title__icontains = what).filter(site_id=current_site_id()).filter(location__icontains = location).order_by('-publish_date')[start : end]
-	for gig in gigs:
+
+	gigs = Gig.objects.filter(site_id=current_site_id()).filter(title__icontains = what).filter(site_id=current_site_id()).filter(location__icontains = location)
+
+	gig_types_list = gig_types.split()
+	# Any remote jobs
+	if '0' in gig_types_list:
+		print 'remote'
+		gigs = gigs.filter(is_remote = True) # Remote gigs
+		gig_types_list.pop(gig_types_list.index('0'))
+
+	# Exclude all unchecked gig types
+	for gig_type in gig_types_list:
+		gigs = gigs.exclude(job_type = GigType.objects.get(pk = gig_type))
+
+	for gig in gigs.order_by('-publish_date')[start:end]:
 		results.append({
+			'gig_id' : gig.id,
 			'gig_title' : gig.title,
 			'gig_link' : gig.get_absolute_url(),
 			'gig_job_type' : gig.job_type.type,
 			'gig_publish_date' : date(gig.publish_date),
 			'gig_company' : gig.company.company_name,
 			'gig_company_elevator_pitch' : gig.company.elevator_pitch,
+			'gig_company_logo' : gig.company.profile_picture.name\
+				 if gig.company.profile_picture.name else 'company_logos/employer_default.png',
+			'gig_company_profile' : reverse('company_profile', args = (gig.company.slug,)),
 			'gig_location' : gig.location,
+			'gig_is_new' : 'today' in naturalday(gig.publish_date),
 		})
 	# the results are either resumes or gigs or a company
 	return results
@@ -75,6 +95,7 @@ def _prepare_words(what):
 	"""
 	# Should implement filter based on common words based on 
 	# site language
-	query_terms = what.split()
-	search_terms = [ term for term in query_terms if term not in STRIP_WORDS]
-	return search_terms[0:5]
+	if what:
+		query_terms = what.split()
+		search_terms = [ term for term in query_terms if term not in STRIP_WORDS]
+		return search_terms[0:5]

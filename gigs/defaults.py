@@ -15,6 +15,14 @@ from django.utils.translation import ugettext_lazy as _
 from mezzanine.conf import register_setting
 
 register_setting(
+    name="SITE_HERO_UNIT",
+    label=_("Site Hero unit *"),
+    description=_("site hero unit"),
+    editable=True,
+    default= '',
+)
+
+register_setting(
     name="LANGUAGE",
     label=_("Site Language *"),
     description=_("The site language"),
@@ -70,13 +78,37 @@ register_setting(
     editable=True,
     default= 'AR6gDcq86QpriE9SFyYUOIjn4mByANdDCi9Tmu.OemEkbdE6g-dDyWVO',
 )
+register_setting(
+    name="SITE_TWITTER_ACCOUNT",
+    label=_("Site twitter account *"),
+    description=_("Twitter account link"),
+    editable=True,
+    default= 'http://twitter.com',
+)
+
+register_setting(
+    name="SITE_FACEBOOK_ACCOUNT",
+    label=_("Site facebook account *"),
+    description=_("Facebook account link"),
+    editable=True,
+    default= 'http://facebook.com',
+)
+
+register_setting(
+    name="SITE_LINKEDIN_ACCOUNT",
+    label=_("Site linkedin account *"),
+    description=_("Linkedin account link"),
+    editable=True,
+    default= 'http://linkedin.com',
+)
 
 register_setting(
     name="TEMPLATE_ACCESSIBLE_SETTINGS",
     description=_("Sequence of setting names available within templates."),
     editable=False,
-    default=("ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED",
-        "PAYPAL_USER", "PAYPAL_PASSWORD", "PAYPAL_SIGNATURE"),
+    default=("SITE_HERO_UNIT", "ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED",
+        "PAYPAL_USER", "PAYPAL_PASSWORD", "PAYPAL_SIGNATURE", "SITE_TWITTER_ACCOUNT", "SITE_FACEBOOK_ACCOUNT",
+        "SITE_LINKEDIN_ACCOUNT"),
     append=True,
 )
 

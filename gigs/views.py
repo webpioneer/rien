@@ -141,7 +141,7 @@ def post_job(request, template_name = 'gigs/post_job.html'):
 
                 gig.image = company.profile_picture
                 # updating the status to draft (needs review)
-                #gig.status = 1
+                # gig.status = 1
                 gig.save()
                 
                 gig_variation = ProductVariation(product = gig, default = True,
@@ -232,7 +232,8 @@ def company_infos(request, template_name ='gigs/company/company_infos.html'):
 def company_profile(request, slug, template_name = 'gigs/company/company_profile.html'):
     """ returns the public company profile """
     company = get_object_or_404(Company, slug = slug)
-    context = {'company' : company, }
+    context = {'company' : company,
+                'hey' : True }
     return render(request, template_name, context)
 
 def view_listing(request, slug, template_name = 'gigs/company/view_listing.html'):

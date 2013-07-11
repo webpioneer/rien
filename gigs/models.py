@@ -160,6 +160,9 @@ class Company(Displayable):
     def company_gigs(self):
         return self.gig_set.all().order_by('-publish_date')
 
+    def gigs(self):
+        return self.gig_set.all()
+
 class Applier(Displayable):
     # title
     PROFILE_PICTURE_SOURCE = (
@@ -228,7 +231,7 @@ class Gig(Product):
     area_level2 = models.CharField(max_length = 20, blank = True, null = True)
     is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
                 for this opposition"))
-    is_onsite = models.BooleanField(verbose_name = _("Work can be done from anywhere \
+    is_remote = models.BooleanField(verbose_name = _("Work can be done from anywhere \
         (i.e. telecommuting)"))
     perks = models.TextField(verbose_name = _("Job Perks"), blank = True, 
         null = True, help_text = _("Sell your position! If you're willing \

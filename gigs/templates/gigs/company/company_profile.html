@@ -1,4 +1,4 @@
-{% extends 'base2.html' %}
+{% extends 'base.html' %}
 {% load mezzanine_tags i18n pages_tags %}
 
 {% block meta_title %}{% trans "All Jobs" %}{% endblock %}
@@ -319,133 +319,70 @@ function find_jobs(method, page, search){
 {% block title_bread %}{% endblock %}
 
 {% block main %}
-
-	 <!-- Search and Filter
-    ================================================== -->
-    {% block search_form %}
-    <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}
-        <div class="controls controls-row">
-            {{ gig_search_form.what }}
-            {{ gig_search_form.location }}
-            <button id="id_find_jobs" type="submit" class="btn btn-primary span2">{% trans 'Find Jobs' %}</button>
-        </div><!-- .controls .controls-row-->
-        <div id="id_filter">
-            {% for gig_type in gig_types %}
-            <label class="checkbox inline">
-              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" checked> {{ gig_type.type }}
-            </label>
-            {% endfor %}
-            <label class="checkbox pull-right">
-              <input type="checkbox" id="inlineCheckbox1" value="remote" class=""> {% trans 'Remote' %}
-            </label>
+    <div class="well">
+        <div id=''>
+            <a href="{% url company_profile slug=company.slug %}">
+                        {% if company.twitter_username %}
+                        <img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ company.twitter_username }}.png?size=bigger">
+                        {% else %}
+                    <img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail company.profile_picture 173 173 %}">
+                        {% endif %}
+                    </a>
+            {{ company.elevator_pitch|capfirst }}
         </div>
-
-    </form>
-    
-    {% endblock %}
-    <!-- 
-    <section class="">
-        <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}
-            <div class="control-group">
-                <div class="controls">
-                <div class="input-prepend">
-                  <span class="add-on"><i class="icon-search"></i></span>
-                  <input type="text" name="what" id="id_what" placeholder="Job Title, Keyword, Company Name ...">
-                </div>
-                <div class="input-prepend">
-                  <span class="add-on"><i class="icon-map-marker"></i></span>
-                  <input class="" type="text" name="where" id="where" placeholder="City, State or Zip code">
-                </div>
-                <button id="id_find_jobs" type="submit" class="btn btn-primary">{% trans 'Find Jobs' %}</button>
-              </div>   
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <ul class="inline">
-                        {% for gig_type in gig_types %}
-                        <li>
-                            <label class="checkbox">
-                                <input type="checkbox" checked> {{ gig_type.type }}
-                            </label>
-                        </li>
-                        {% endfor %}
-                        <li class="pull-right span2">
-                            <label class="checkbox">
-                                <input type="checkbox" checked>Remote
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div id="">
+            <span class="icon-globe"><a href="{{ company.url }}">{{ company.url }}</a></span>
             
-        </form>
-    </section>
--->
-    <div id='more' >Loading More Content</div>
-    <div id='no-more' >No More Content</div>
-    <div id='page-header'><h3>Showing all jobs matching <span id="what"></span> at <span id="location"></span></h3></div>
-	<ul class="jobs-list">
-	{% for gig in gigs %}
-        <div id="results"></div>
-		<li class="job-item clearfix">
-<!--
-            <a class="pull-left heart" href="#">
-                    {% if gig.company.profile_picture %}
-                    <img class="media-object" src="{{STATIC_URL}}media/{% thumbnail gig.company.profile_picture 64 64 %}">
-                    {% else %}
-                    <img class="media-object" src="{{STATIC_URL}}media/company_logos/.thumbnails/employer_default.png" width="64" height="64">
-                    {% endif %}
-                </a>
--->
-            <div class="job-infos">
-                    <h3 class="job-title"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a></h3>
-                    <a class="contract clearfix">{{ gig.job_type.type }}</a>
-                    <div class="job-details">
-        				<span class="job-details-left">
-                            <span>{{ gig.company.company_name|capfirst }}</span>
-        					<span class="muted">{{ gig.company.elevator_pitch }}</span>
-        				</span> 
-        				<span class="muted span4"><i class="icon-map-marker"></i>{{ gig.location }}</span>
-        				<span class="job-details-right">
-        					<span class="text-center date">{{ gig.publish_date|date:'M d' }}
-                                <span class="month">{{ gig.public_date|date:'M' }}</span>
-                                <span class="day">{{ gig.public_date|date:'d' }}</span> 
-                            </span>
-        				</span>
-                    </div><!-- end .job-details -->
-
-            </div>
-		</li>
-	{% endfor %}
-	</ul>
+        </div>
+        <div id="">
+            {% comment %}
+            <h4><span>{% trans 'Description' %}</span></h4>
+            {{ company.description|capfirst }}
+            <p class="right">
+                <a href="about.html" class="btn btn-primary btn-medium">{% trans 'Read more' %}→</a>
+            </p>
+            {% endcomment %}
+        </div>
+    </div><!-- end .well --> 
 
 {% endblock %}
 
 {% block right_panel %}
-	{% include 'gigs/right_panel.html' %}
+    
+        <h1>{{ company.company_name|capfirst }}</h1>
+        <ul class="jobs-list">
+        {% for gig in company.gigs %}
+            <div id="results"></div>
+            <li class="job-item clearfix">
+    <!--
+                <a class="pull-left heart" href="#">
+                        {% if gig.company.profile_picture %}
+                        <img class="media-object" src="{{STATIC_URL}}media/{% thumbnail gig.company.profile_picture 64 64 %}">
+                        {% else %}
+                        <img class="media-object" src="{{STATIC_URL}}media/company_logos/.thumbnails/employer_default.png" width="64" height="64">
+                        {% endif %}
+                    </a>
+    -->
+                <div class="job-infos">
+                        <h3 class="job-title"><a href="{{ gig.get_absolute_url }}">{{ gig.title|capfirst }}</a></h3>
+                        <a class="contract clearfix">{{ gig.job_type.type }}</a>
+                        <div class="job-details">
+                            <span class="job-details-left">
+                                <span>{{ gig.company.company_name|capfirst }}</span>
+                                <span class="muted">{{ gig.company.elevator_pitch }}</span>
+                            </span> 
+                            <span class="muted span4"><i class="icon-map-marker"></i>{{ gig.location }}</span>
+                            <span class="job-details-right">
+                                <span class="text-center date">{{ gig.publish_date|date:'M d' }}
+                                    <span class="month">{{ gig.public_date|date:'M' }}</span>
+                                    <span class="day">{{ gig.public_date|date:'d' }}</span> 
+                                </span>
+                            </span>
+                        </div><!-- end .job-details -->
 
-    <aside class="well">
-        <h3>The job board for IT professionals.</h3>
-            <p> <img class="alignleft" src="../demo/80x80-Diego_Velazquez_028.png" alt="Velazquez" /> Authentic Jobs is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small. </p>
-            <p class="right">
-                <a href="#" class="btn-primary btn">Go for it &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
-    </aside>
-    <!--close .well --> 
-    <aside class="widget">
-        <img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">
-    </aside>            
-	<aside class="widget">
-		<h3 class="short_headline">
-            <span>{% trans 'Follow' %}</span> {{ settings.SITE_TITLE }}
-        </h3>
-		<ul class="social">
-			<li><a class="socicon rss" href="#" title="RSS"></a></li>
-            <li><a class="socicon facebook" href="#" title="Facebook"></a></li>
-			<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
-			<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
-			<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
-			<li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
-		</ul>
-	</aside>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
 
 {% endblock %}
