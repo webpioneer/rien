@@ -205,9 +205,9 @@ tinyMCE.init({
             {% if not request.user.is_authenticated and not request.user.company%}
             <div class="page-header">
                 <p class="control-group">
-                    <label class="span2" for="">Have an account?</label>
-                    <a class="btn btn-success">Sign in</a> 
-                    Don't have one? No worries, you'll create one in a minute.
+                    <label class="span2" for="">{% trans 'Have an account?' %}</label>
+                    <a class="btn btn-success" href="{% url 'login' %}">{%trans 'Sign in' %}</a> 
+                    {% trans "Don't have one? No worries, you'll create one in a minute." %}
                 </p>
             </div>
             {% endif %}
