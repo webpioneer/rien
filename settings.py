@@ -316,7 +316,9 @@ INSTALLED_APPS = (
     'searchapp',
     'notification',
     'django_messages',
-    
+    'contact',
+    'faqs',
+    'marketing',
 )
 # Company Settings
 COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
