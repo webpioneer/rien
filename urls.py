@@ -24,6 +24,8 @@ urlpatterns = patterns("",
     ('^', include("gigs.urls")),
     ('^search', include("searchapp.urls")),
     (r'^profile/messages/', include('django_messages.urls')),
+    ('^contact', include("contact.urls")),
+    ('^', include("marketing.urls")),
      # We don't want to presume how your homepage works, so here are a
     # few patterns you can use to set it up.
 
