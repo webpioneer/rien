@@ -34,7 +34,7 @@ class LocaleSelectorMiddleware(object):
         #else:
         #    logger.error("Couldn't get language for site id: %s" % sid)
         #    return 'en'
-        return getattr(settings, 'LANGUAGE', 'en')
+        return getattr(settings, 'SITE_LANGUAGE', 'en')
 
     def localize_request(self, req):
         for no_rewrite_path in ['^/admin/*']:
