@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block page_class %}about{% endblock %}
+
+{% block main_content %}
+<div class="hero-unit">
+	<div class="container">
+		<h2>{% trans 'About Us' %}</h2>
+	</div>
+</div>
+<div class="container clearfix" id="main-content"> 
+		
+		<!--begin main content-->
+		<p class="big">The web services factor can be summed up in one word: clicks-and-mortar, 24/7/365. Without appropriate biometrics, returns-on-investment are forced to become B2C.</p>
+		<div class="row-fluid">
+			<div class="span4"> <img class="aligncenter" src="../demo/about-me.png" alt="Christina Arasmo" />
+				<h5>Christina Arasmo</h5>
+				<h6><em>Designer</em></h6>
+				<p>Crisp is the industry leader of open-source user communities. We will enlarge our ability to synergize without lessening our aptitude to do something else.</p>
+				<ul class="social">
+					<li><a class="socicon facebook" href="#" title="Facebook"></a></li>
+					<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
+					<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
+					<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
+				</ul>
+			</div>
+			<!--close span4-->
+			
+			<div class="span4"> <img class="aligncenter" src="../demo/about-3.png" alt="" />
+				<h5>Maureen Granger</h5>
+				<h6><em>Writer</em></h6>
+				<p>Image by <a href="http://fotogrph.com">fotogrph.</a> Nulla facilisi. Curabitur quis ligula est. In a sem eget ipsum blandit condimentum. Vestibulum lacinia accumsan dolor, sagittis venenatis nunc hendrerit quis.</p>
+				<ul class="social">
+					<li><a class="socicon facebook" href="#" title="Facebook"></a></li>
+					<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
+					<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
+					<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
+				</ul>
+			</div>
+			<!--close span4-->
+			
+			<div class="span4"> <img class="aligncenter" src="../demo/about-2.png" alt="Christina Arasmo" />
+				<h5>Bradley Badass</h5>
+				<h6><em>Programmer</em></h6>
+				<p>Image by <a href="http://fotogrph.com">fotogrph.</a> Fusce nunc lacus, tempor et aliquet lacinia, volutpat ut justo. Aenean sodales lacinia dignissim. Sed vel lorem ut augue pretium luctus. Sed semper purus sed erat placerat dapibus.</p>
+				<ul class="social">
+					<li><a class="socicon facebook" href="#" title="Facebook"></a></li>
+					<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
+					<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
+					<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
+				</ul>
+			</div>
+			<!--close span4 --> 
+			
+		</div>
+		<!--close row-fluid -->
+		
+		<div class="row-fluid clientlogos">
+			<h3 class="short_headline margin-top"><span>Some of Our Clients</span></h3>
+			<ul class="slides">
+				<li><img src="../demo/fakelogo-1.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-2.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-3.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-4.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-5.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-6.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-1.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-2.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-3.png" alt="" /></li>
+				<li><img src="../demo/fakelogo-4.png" alt="" /></li>
+			</ul>
+		</div>
+		<!--close row-fluid clientlogos--> 
+		
+	</div>
+	<!--close .container id="main-content" --> 
+{% endblock %}
