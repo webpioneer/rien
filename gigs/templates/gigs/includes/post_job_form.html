@@ -30,7 +30,7 @@
             {% else %}
                     <p class="control-group">
                         <label class="span2" for="id_gig_categories">{% trans 'Categories' %}</label>
-                            <select class="selectpicker" multiple name="gig_categories" id="id_gig_categories" ``multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}...">
+                            <select class="selectpicker {% if post_job_form.gig_categories.errors %}error{% endif %}" name="gig_categories" id="id_gig_categories" multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}..." width="auto">
                                  {% for category in gig_categories %}
                                     <option value="{{ category.id }}" data-subtext="{{ category.description }}">{{ category.title }}</option>
                                  {% endfor %}
@@ -39,7 +39,7 @@
                             <br /><label class="span2"></label>
                             <span class="help-block error">
                             {% for e in post_job_form.gig_categories.errors %}
-                                {{e}}
+                                {% trans 'Please select at least one job category.' %}
                             {% endfor %}
                             </span>
                             {% endif %}
@@ -80,6 +80,8 @@
                         <input type="hidden" name="longitude" id="id_longitude" value="{{ post_job_form.longitude.value }}" />
                         <input type="hidden" name="area_level1" id="id_area_level1" value="{{ post_job_form.area_level1.value }}">
                         <input type="hidden" name="area_level2" id="id_area_level2" value="{{ post_job_form.area_level2.value }}">
+                        <input type="hidden" name="area_level3" id="id_area_level3" value="{{ post_job_form.area_level3.value }}">
+                        <input type="hidden" name="area_level4" id="id_area_level4" value="{{ post_job_form.area_level4.value }}">
                     </p>
             </div>
             <div class="page-header">
