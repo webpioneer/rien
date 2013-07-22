@@ -15,6 +15,22 @@ from django.utils.translation import ugettext_lazy as _
 from mezzanine.conf import register_setting
 
 register_setting(
+    name="SITE_ADDRESS",
+    label=_("Address *"),
+    description=_("Site address"),
+    editable=True,
+    default= '836 Sierra Vista Mountain View Ca',
+)
+
+register_setting(
+    name="SITE_EMAIL",
+    label=_("A dedicated email address to the side"),
+    description=_("eg. hello@jobconnector.com"),
+    editable=True,
+    default= 'hello@jobconnector.com',
+)
+
+register_setting(
     name="SITE_HERO_UNIT",
     label=_("Site Hero unit *"),
     description=_("site hero unit"),
@@ -23,7 +39,7 @@ register_setting(
 )
 
 register_setting(
-    name="LANGUAGE",
+    name="SITE_LANGUAGE",
     label=_("Site Language *"),
     description=_("The site language"),
     editable=True,
@@ -31,7 +47,7 @@ register_setting(
 )
 
 register_setting(
-    name="COUNTRY",
+    name="SITE_COUNTRY",
     label=_("Site Country *"),
     description=_("country matches a country name or a two letter ISO 3166-1 country code \
         refer to : https://developers.google.com/maps/documentation/geocoding/ and http://en.wikipedia.org/wiki/CcTLD"),
@@ -40,17 +56,25 @@ register_setting(
 )
 
 register_setting(
-    name="ADDRESS",
-    label=_("Address *"),
-    description=_("Site address"),
+    name="SITE_OPERATOR",
+    label=_("Site Operator"),
+    description=_("Responsible for customer service"),
     editable=True,
-    default= '836 Sierra Vista Mountain View Ca',
+    default= 'Mike',
 )
 
 register_setting(
-    name="PHONE",
+    name="SITE_PHONE",
     label=_("Phone *"),
     description=_("Site phone"),
+    editable=True,
+    default= '',
+)
+
+register_setting(
+    name="SITE_STATE",
+    label=_("SITE STATE"),
+    description=_("eg. Florida / Eastern Time"),
     editable=True,
     default= '',
 )
@@ -106,8 +130,10 @@ register_setting(
     name="TEMPLATE_ACCESSIBLE_SETTINGS",
     description=_("Sequence of setting names available within templates."),
     editable=False,
-    default=("SITE_HERO_UNIT", "ADDRESS", "PHONE", "LANGUAGE", "COUNTRY", "SHOP_PAYMENT_STEP_ENABLED",
-        "PAYPAL_USER", "PAYPAL_PASSWORD", "PAYPAL_SIGNATURE", "SITE_TWITTER_ACCOUNT", "SITE_FACEBOOK_ACCOUNT",
+    default=("SITE_ADDRESS", "SITE_COUNTRY", "SITE_EMAIL", "SITE_HERO_UNIT", "SITE_LANGUAGE", "SITE_OPERATOR",
+        "SITE_PHONE", "SITE_STATE",   
+        "SHOP_PAYMENT_STEP_ENABLED","PAYPAL_USER", "PAYPAL_PASSWORD", "PAYPAL_SIGNATURE", 
+        "SITE_TWITTER_ACCOUNT", "SITE_FACEBOOK_ACCOUNT",
         "SITE_LINKEDIN_ACCOUNT"),
     append=True,
 )
