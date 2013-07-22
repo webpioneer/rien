@@ -227,8 +227,10 @@ class Gig(Product):
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 25)
     longitude = models.CharField(max_length = 25)
-    area_level1 = models.CharField(max_length = 20, blank = True, null = True)
-    area_level2 = models.CharField(max_length = 20, blank = True, null = True)
+    area_level1 = models.CharField(max_length = 25, blank = True, null = True)
+    area_level2 = models.CharField(max_length = 25, blank = True, null = True)
+    area_level3 = models.CharField(max_length = 25, blank = True, null = True)
+    area_level4 = models.CharField(max_length = 25, blank = True, null = True)
     is_relocation = models.BooleanField(verbose_name = _("Relocation assistance offered\
                 for this opposition"))
     is_remote = models.BooleanField(verbose_name = _("Work can be done from anywhere \
