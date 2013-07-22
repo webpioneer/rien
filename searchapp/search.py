@@ -1,9 +1,11 @@
 from itertools import chain
 
+from django.contrib.humanize.templatetags.humanize import naturalday
 from django.core import serializers
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.template.defaultfilters import date
-from django.contrib.humanize.templatetags.humanize import naturalday
+
 
 from mezzanine.utils.sites import current_site_id
 
@@ -57,7 +59,9 @@ def get_results(what, location, page, gig_types):
 	except:
 		pass
 
-	gigs = Gig.objects.filter(site_id=current_site_id()).filter(title__icontains = what).filter(site_id=current_site_id()).filter(location__icontains = location)
+	gigs = Gig.objects.filter(site_id=current_site_id())\
+			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what ))\
+			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
 
 	gig_types_list = gig_types.split()
 	# Any remote jobs
