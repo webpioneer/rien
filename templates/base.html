@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load pages_tags mezzanine_tags i18n future %}
-<html class="js multiplebgs backgroundsize csstransitions svg" dir="ltr">
+<html class="js multiplebgs backgroundsize csstransitions svg" dir="ltr" lang="{{ settings.SITE_COUNTRY }}">
 <head>
 
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -22,8 +22,20 @@
 <!-- CSS ================ -->
 <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" type="text/css"/>
+
+
 <link rel="stylesheet" href="{{ STATIC_URL }}css/header-1.css" type="text/css"/>
+<link href='http://fonts.googleapis.com/css?family=Sofia' rel='stylesheet' type='text/css'>
 <style type="text/css">
+.sofia{
+  font-family: 'Sofia';
+  font-size: 48px;
+  text-shadow: 4px 4px 4px #aaa;
+  color:#ececec;
+}
+a:hover .sofia {
+  color:#fff;
+}
 #logo{
     background-image:none;
 }
@@ -33,10 +45,11 @@
 .error{
   color:#b30000;
 }
-input.error{
+input.error, select.error{
   border:2px solid #b30000;
 
 }
+
 </style>
 
 {% ifinstalled cartridge.shop %}
@@ -63,7 +76,7 @@ $(function() {
 {% block extra_head %}{% endblock %}
 
 </head>
-<body id="{% block body_id %}body{% endblock %}" class="index">
+<body id="{% block body_id %}body{% endblock %}" class="{% block page_class %}index{% endblock %}">
   {% if request.user.is_authenticated %}
   <div class="navbar navbar-inverse">
               <div class="navbar-inner">
@@ -244,7 +257,7 @@ $(function() {
         <!-- <a href="index.html"><img alt="" src="assets/images/trans.gif" /><em>Crisp Responsive HTML Retina Ready Bootstrap Goodness</em></a>
         -->
         <!-- <img src="http://www.basicoh.com/demo/flat/agency/img/logo.png" class="print logo" alt="{{ settings.SITE_TITLE }}" /> -->
-        <h1>{% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}</h1>
+        <h1>{% if settings.SITE_TITLE %}<a class="brand sofia" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}</h1>
           
           {% if settings.SITE_TAGLINE %}<a class="">{{ settings.SITE_TAGLINE }}</a>{% endif %}
         </div>
@@ -264,7 +277,7 @@ $(function() {
 {% nevercache %}
 {% for message in messages %}
 <div class="alert alert-{{ message.tags }}" data-alert="alert">
-<a class="close" href="#" onclick="$(this).parent().fadeOut('fast'); return false;">×</a>{{ message }}
+<a class="close" href="#" onclick="$(this).parent().fadeOut('fast'); return false;">×</a>{{ message|safe }}
 </div>
 {% endfor %}
 {% endnevercache %}
@@ -281,6 +294,7 @@ $(function() {
 {% endblock %}
 </div>
 
+{% block main_content %}
 <div class="container clearfix" id="main-content">
   <!--begin main content-->
   <div class="row-fluid sidebar-right">
@@ -298,6 +312,7 @@ $(function() {
   </div>
 </div>
 <!--close .container id="main-content" --> 
+{% endblock %}
 
 <footer id="footer" class="clearfix">
   {% block toolbar %}{% endblock %}
@@ -318,7 +333,6 @@ $(function() {
           </div>
           <div class="span4">
             <section>
-              <h4>{% trans 'Follow Us' %}</h4>
               {% include 'gigs/includes/social.html' %}
             </section>
             <!--close section--> 
@@ -327,11 +341,11 @@ $(function() {
             <section>
               <h4>{% trans 'Contact Us' %}</h4>
               <p><strong>{{ settings.SITE_TITLE }}</strong><br>
-                {{ settings.ADDRESS|safe }}<br />
-                {% if settings.PHONE %}
-                  <strong>phone :</strong> <a href="tel:{{ settings.PHONE }}" class="tele">{{ settings.PHONE }}</a><br>
+                {{ settings.SITE_ADDRESS|safe }}<br />
+                {% if settings.SITE_PHONE %}
+                  <strong>phone :</strong> <a href="tel:{{ settings.SITE_PHONE }}" class="tele">{{ settings.SITE_PHONE }}</a><br>
                 {% endif %}
-                <strong>email :</strong> <a href="mailto:email@domain.com">crisp@companydomain.com</a> </p>
+                <strong>email :</strong> <a href="mailto:{{ settings.SITE_EMAIL }}">{{ settings.SITE_EMAIL }}</a></p>
                 <a href="#">{% trans 'Contact form' %}</a>
             </section>
             <!--close section-->
