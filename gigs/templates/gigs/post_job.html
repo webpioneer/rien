@@ -91,12 +91,12 @@ form input, form textarea{
 <script type="text/javascript" src="{{STATIC_URL}}js/upload_file.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
 <script type="text/javascript"  
-                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language={{ LANGUAGE_CODE }}"></script>
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&language={{ LANGUAGE_CODE }}&sensor=false"></script>
 <script src="{{ STATIC_URL }}js/location.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     init();
-
+    console.log('{{settings.SITE_COUNTRY}}');
     function init(){
         // for categories
         $('.selectpicker').selectpicker();
@@ -176,6 +176,14 @@ $(document).ready(function(){
             });
         });
     }// end show_optional
+
+    // Remove class 'error' from each corrected field 
+    $('input,input.error,select.error,textarea.error').keypress(function(){
+            if($(this).val()){
+                $(this).removeClass("error");
+                $(this).parent().find('span').remove();
+            }
+        });
 }); // end document.ready
 
 tinyMCE.init({
@@ -225,12 +233,15 @@ tinyMCE.init({
 {% endblock %}
 
 {% block right_panel %}
-100% Satisfaction Guaranteed.
-If you're not 100% satisfied with the results from your listing, request a full refund within 30 days after your listing expires. No hassle. Easy peasy.
 
-See also our frequently asked questions.
-<div class="page-header">
-<img src="{{STATIC_URL}}img/test" />
-</div>
+    {% if settings.SHOP_PAYMENT_STEP_ENABLED %}
+            {% include 'gigs/includes/guarentee.html'%}
+            {% include 'gigs/includes/payment_info.html' %}
+    {% endif %}
+
+    {% ifinstalled 'testimonials' %}
+        {% comment %} One testimonial goes here {% endcomment %}
+    {% endifinstalled %}
+
 {% endblock %}
 {% block title_bread %}{% endblock %}

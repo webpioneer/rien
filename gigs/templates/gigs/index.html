@@ -658,7 +658,7 @@ function find_jobs(method, page, search){
     <aside class="well">
 
         <h3>{{ settings.SITE_TAGLINE }}</h3>
-            <p class="muted"> <img class="alignleft" src="http://images.authenticjobs.com/hiring.v1373466610.png" alt="Velazquez" />  {{ settings.SITE_TITLE }}{% blocktrans %} is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small. {% endblocktrans %}</p>
+            <p> <img class="alignleft" src="http://images.authenticjobs.com/hiring.v1373466610.png" alt="Velazquez" />{{ settings.SITE_TITLE }}{% blocktrans %} <span class="muted">is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small.</span> {% endblocktrans %}</p>
             <p class="right">
                 <a href="/about/" class="btn-primary btn">{% trans 'Learn more' %} &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
 
@@ -667,8 +667,12 @@ function find_jobs(method, page, search){
     <!--close .well -->
     <aside class="well small-well">
               {% include 'gigs/includes/social.html' %}
+              
     </aside>
-    <!--close section--> 
+    <!--close section-->
+    <aside class="well small-well">
+            {% include 'gigs/includes/contact.html' %}
+    </aside> 
     
     <aside class="widget">
         {% comment %}<img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">{% endcomment %}
