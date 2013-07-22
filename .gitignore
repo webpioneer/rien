@@ -6,4 +6,6 @@
 .DS_Store
 .coverage
 #local_settings.py
-/static
+#/static
+/static/media/company_logos/
+/static/media/resumes/
