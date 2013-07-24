@@ -22,9 +22,9 @@ class PostJobForm(forms.ModelForm):
         
         fields = [
             'job_type', 'gig_categories', 'title', 'location', 'latitude', 
-            'longitude', 'is_relocation', 'area_level1', 'area_level2',
-            'area_level3', 'area_level4', 'is_remote', 'content', 'perks',
-            'how_to_apply', 'via_email', 'via_url', 'apply_instructions', 'job_type', 
+            'longitude', 'is_relocation', 'area_level1', 'area_level2', 
+            'area_level3', 'area_level4', 'is_remote', 'content', 'tags', 'hidden_tags',
+            'perks', 'how_to_apply', 'via_email', 'via_url', 'apply_instructions', 'job_type', 
             #'gig_categories',
         ]
  
@@ -64,6 +64,7 @@ class PostJobForm(forms.ModelForm):
             is_relocation = self.cleaned_data['is_relocation'],
             is_remote = self.cleaned_data.get('is_remote', True),
             content = self.cleaned_data['content'],
+            hidden_tags = self.cleaned_data['hidden_tags'],
             perks = self.cleaned_data.get('perks',''),
             how_to_apply = self.cleaned_data['how_to_apply'],
             via_email = self.cleaned_data.get('via_email', ''),
