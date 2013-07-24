@@ -83,6 +83,7 @@ form input, form textarea{
 */
 </style>
 <link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}tagmanager/bootstrap-tagmanager.css" />
 {% endblock %}
 {% block extra_js %}
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
@@ -93,6 +94,8 @@ form input, form textarea{
 <script type="text/javascript"  
                 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&language={{ LANGUAGE_CODE }}&sensor=false"></script>
 <script src="{{ STATIC_URL }}js/location.js"></script>
+<script src="{{ STATIC_URL }}tagmanager/bootstrap-tagmanager.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function(){
     init();
@@ -127,6 +130,14 @@ $(document).ready(function(){
         // Get twitter picture
         get_twitter_picture();
     }
+    $(".tm-input").tagsManager({
+        typeahead: true,
+        CapitalizeFirstLetter: true,
+        preventSubmitOnEnter: true,
+        delimiters: [9, 13, 44],
+        tagClass: 'tm-tag-success',
+    });
+        
     
     $("#id_profile_picture_choice").change(function(){
         var profile_picture_choice = $(this).val();
@@ -177,13 +188,14 @@ $(document).ready(function(){
         });
     }// end show_optional
 
-    // Remove class 'error' from each corrected field 
+    /* Remove class 'error' from each corrected field 
     $('input,input.error,select.error,textarea.error').keypress(function(){
             if($(this).val()){
                 $(this).removeClass("error");
                 $(this).parent().find('span').remove();
             }
         });
+    */
 }); // end document.ready
 
 tinyMCE.init({
