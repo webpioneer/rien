@@ -241,6 +241,8 @@ class Gig(Product):
         , paid trips to conferences, free food, discounts, etc., talk it up."))
     how_to_apply = models.CharField(max_length = 15, choices = HOW_TO_APPLY_CHOICES,
                     default = HOW_TO_APPLY_CHOICES[0][0], verbose_name = _('How to apply'))
+    tags = models.CharField(max_length = 100, null = True, blank = True)
+    hidden_tags = models.CharField(max_length = 100, null = True, blank = True)
     via_email = models.EmailField(blank = True, null = True)
     via_url = models.URLField(blank = True, null = True)
     apply_instructions = models.TextField(null = True, blank = True,
@@ -273,8 +275,8 @@ class Gig(Product):
     def num_applications(self):
         return self.application_set.count()
 
-
-
+    def get_tags(self):
+        return self.hidden_tags.split(',') if self.hidden_tags else False
 
 class GigStat(models.Model):
     """ 
