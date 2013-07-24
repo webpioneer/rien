@@ -99,6 +99,34 @@
                         {% endif %}
                     </p>                                                   
             </div>
+            <div class='page-header'>
+                <p class="control-group">
+                        <label class="span2" for="id_tags">{% trans 'Skills' %}</label>
+                        <input id="id_title" class="span6 tm-input{% if post_job_form.tags.errors %}error{% endif %}" type="text" name="tags" placeholder="{% trans '5 skills maximum' %}" maxlength="255" value="{% if post_job_form.tags.value %} {{ post_job_form.tags.value }}{% else%}{% endif %}"  />
+                        <br /><label class="span2"></label>
+                        {% if post_job_form.tags.errors %}
+                            <span class="help-block error">
+                            {% for e in post_job_form.tags.errors %}
+                                {{e}}
+                            {% endfor %}
+                            </span>
+                        {% endif %}
+                        <span class="help_text">
+                            {% trans 'Examples' %}:
+                            {% if gig_categories|length == 1 %}
+                                {% for category in gig_categories %}
+                                    {{ category.description|capfirst }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for category in gig_categories %}
+                                    {{ category.description|capfirst }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </span>
+                    </p>
+            </div>
             <div class="page-header">
                     <p>
                         <label class="span2" for="id_perks">{% trans 'Job Perks' %}</label>
