@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib.messages import info
+from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.db.models import Min
 from django.dispatch import receiver
@@ -9,6 +10,7 @@ from django.template import Context, RequestContext, loader
 from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -264,6 +266,7 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
     if request.method == 'POST':
         signup_form = ProfileForm2(request.POST)
         apply_form = ApplyForm(request.POST, request.FILES)
+
         if request.user.is_authenticated():
             if apply_form.is_valid():
                 user = request.user
@@ -279,12 +282,13 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 resume = Resume(file = request.FILES['resume'], user = user)
                 resume.save()
                 message = _('You applied successfully')
-                info(request, message)
+                info(request, message, extra_tags='success')
                 if notification:
                     notification.send([application.recipient], "applications_received", {'message': message,})
+
+                return redirect(gig.get_absolute_url())
         else:
             if signup_form.is_valid() and apply_form.is_valid():
-                print 'both forms are valid'
                 user, password = signup_form.save()
                 # send signal user_added_to_group
                 user_added_to_group.send(sender = apply.func_name,
@@ -305,18 +309,20 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 login(request, user)
                 message = _('You applied successfully')
                 # an email is sent to the user with his new password
-                info(request, message)
+                info(request, message, extra_tags='success')
                 if notification:
                     notification.send([user], "applications_received", {'message': message,})
+                
+                return redirect(gig.get_absolute_url())
     else:
         signup_form = ProfileForm2()
         apply_form = ApplyForm()
+
     context = {
         'signup_form' : signup_form,
         'apply_form': apply_form,
         'gig' : gig,
     }
-
     return render(request, template_name, context)
 
 def reply_to_apply(request, application_id, template_name = 'gigs/applier/application_detail.html'):
