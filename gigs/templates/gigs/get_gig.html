@@ -1,6 +1,24 @@
 {% extends 'base.html' %}
 {% load mezzanine_tags i18n %}
 
+{% block extra_js %}
+{% comment %}
+<script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "7ab66bb2-bdeb-45bb-94d0-8a47c38cc0fd", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+{% endcomment %}
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		
+		$("#send_application").click(function(){
+			var btn = $(this);
+        	btn.button('loading');
+		});
+	});
+</script>
+{% endblock %}
+
 {% block extra_css %}
 <style type="text/css">
 div.important { 
@@ -31,27 +49,30 @@ div.important * {
 	<article class="entry-post row-fuild">
 		<div class="company row-fuild clearfix">
 			<div class="span2">
-				<a href="{% url company_profile slug=gig.company.slug %}">
-					{% if gig.company.twitter_username %}
-					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
-					{% else %}
-				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 73 73 %}">
-					{% endif %}
-				</a>
+				<a class="pull-left" href="{% url company_profile slug=gig.company.slug %}">
+                        {% if company.twitter_username %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
+                        {% elif gig.company.profile_picture %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 73 73 %}">
+                        {% else %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 73 73 %}">
+                        {% endif %}
+                    </a>
 			</div>
-			<div class="span5" id="company_title">
-				<a href="#"><h2>{{ gig.company.company_name|capfirst }}</h2>
-				<span class="">{{ gig.company.elevator_pitch|capfirst }}</span></a>
+			<div class="span5" id="company_title" style="margin-left:-20px">
+				<a href="{% url company_profile slug=gig.company.slug %}"><h2>{{ gig.company.company_name|capfirst }}</h2>
+				<span class="{% url company_profile slug=gig.company.slug %}">{{ gig.company.elevator_pitch|capfirst }}</span></a>
 			</div>
 		</div>
 		<header class="entry-post page-header">
 			<h1><strong>{% editable gig.title %}{{ gig.title|capfirst }}{% endeditable %}</strong></h1>
 			<div class="">
-				<span class="span3">
+				<span class="span3 {{gig.job_type.type|lower}}">
 					<i class="icon-folder-open"></i>&nbsp;&nbsp;{{ gig.job_type.type }}
 				</span>
-				<span class="span4">
-					<i class="icon-map-marker"></i>&nbsp;{{ gig.location }}
+				<span class="span5">
+					<i class="icon-map-marker"></i>&nbsp;&nbsp;{{ gig.location }}
+					{% if gig.is_remote %}<span class="muted small">{% trans 'Telecommute Opportunity' %}</span>&nbsp;&nbsp;<i class="icon-signal" style="color:#2a7ca5"></i>{% endif %}
 				</span>
 				<span class="pull-right">
 					<i class="icon-time"></i>
@@ -60,24 +81,51 @@ div.important * {
 			</div>
 		</header>
 		<div class="">
-			{% editable gig.content %}{{ gig.content|safe}}
+			{% editable gig.content %}{{ gig.content|safe|capfirst}}
 			{% endeditable %}
-			{% if gig.perks or gig.apply_instructions %}
-			<div class="important">
-				{% if gig.perks %}
-				<h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
-				<p>{{ gig.perks|capfirst}}</p>
-				{% endif %}
-				{% if gig.apply_instructions %}
-				<h4 class="short_headline">How to apply</h4><p>{{ gig.apply_instructions|capfirst }}</p>
-				{% endif %}
-			</div>
+
+			{% if gig.perks %}
+				<div class="important">
+					<h4 class="short_headline"><span><i class="icon-star"></i>&nbsp;{% trans 'JOB PERKS' %}</span></h4>
+					<p>{{ gig.perks|capfirst}}</p>
+				</div>
 			{% endif %}
-			<a href="{% url apply gig_slug=gig.slug %}">hello</a>
+
+			
 			<section>
-				<!-- in case it's remote href="{% url apply gig_slug=gig.slug %}" -->
-				<a href="{% url apply gig_slug=gig.slug %}" data-target="#myModal" class="btn btn-large btn-success" data-toggle="modal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+				<a href="#" data-target="#myModal" class="btn btn-large btn-success" data-toggle="modal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 			</section>
+
+			{% if signup_form.errors or apply_form.erros %}
+				<script type="text/javascript">
+					$(document).ready(function(){
+						console.log('hey');
+						$("#myModal").modal({
+							show : true,
+						});
+					});
+				</script>
+			{% endif %}
+			{% include 'gigs/apply.html' %}
+			{% if gig.apply_instructions %}
+				<section>
+					<p><strong>{% trans 'Note' %}</strong> : <span class="muted">{{ gig.apply_instructions|capfirst }}</span></p>
+				</section>
+			{% endif %}
+
+
+			
+			{% if gig.hidden_tags %}
+			<section>
+				<p>{% trans 'Tags' %}:
+                                {% for tag in gig.get_tags %}
+                                    <a class="btn-small btn-info skill" href="#" data-tag-name="{{ tag }}" id="tag_{{ tag}}">
+                                    	<i class="icon-tag"></i>&nbsp;{{ tag|capfirst }}
+                                    </a>&nbsp;
+                    {% endfor %}
+                </p>
+            </section>
+            {% endif %}	
 
 		</div>
 		{% comment %}
@@ -99,10 +147,16 @@ div.important * {
 {% block right_panel %}
 	<aside class="widget clearfix">
 		<section>
-		<a href="#" class="btn btn-success btn-block btn-large">Apply for this Job&nbsp;<i class="icon-circle-arrow-right icon-white"></i></a>
-	</section>
-		
+		<a href="#" data-target="#myModal" class="btn btn-large btn-success" data-toggle="modal">Apply for this Job&nbsp;<i class="icon-circle-arrow-right icon-white"></i></a>
+		</section>
+	</aside>
+	{% comment %}
+    <aside class="widget">
+        {% include 'gigs/includes/share.html' %}             
     </aside>
+    {% endcomment %}
+
+    {% comment %}
     <aside class="widget clearfix">
 	        <ul class="unstyled">
 	        	<li><a href="#" class="btn btn-block"><i class="icon-share icon-white"></i>&nbsp;Share this listing</a></li>
@@ -111,6 +165,7 @@ div.important * {
 	        </ul>
 
     </aside>
+    
     <aside class="widget">
 		<h3 class="">
             <span>{% trans 'Recommended Jobs' %}</span>
@@ -124,18 +179,10 @@ div.important * {
 			<li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
 		</ul>
 	</aside>
-    <aside class="widget">
-		<h3 class="short_headline">
-            <span>{% trans 'Follow' %}</span> {{ settings.SITE_TITLE }}
-        </h3>
-		<ul class="social">
-			<li><a class="socicon rss" href="#" title="RSS"></a></li>
-            <li><a class="socicon facebook" href="#" title="Facebook"></a></li>
-			<li><a class="socicon twitterbird" href="#" title="Twitter"></a></li>
-			<li><a class="socicon linkedin" href="#" title="LinkedIn"></a></li>
-			<li><a class="socicon dribbble" href="#" title="dribble"></a></li>
-			<li><a class="socicon vimeo" href="#" title="Vimeo"></a></li>
-		</ul>
-	</aside>
+	{% endcomment %}
+    
+	<aside class="widget">
+              {% include 'gigs/includes/social.html' %}             
+    </aside>
 
 {% endblock %}
