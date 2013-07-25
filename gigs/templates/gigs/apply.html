@@ -1,4 +1,5 @@
 {% load mezzanine_tags i18n %}
+
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -15,17 +16,18 @@
                 </p>
             </div>
     {% endif %}
-    <form method="post" action="" enctype="multipart/form-data">
+    <form method="post" action="{% url apply gig_slug=gig.slug %}" enctype="multipart/form-data">
     {% if not request.user.is_authenticated %}
     {% fields_for signup_form %}
     {% endif %}
     {% fields_for apply_form %}
-    <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button>
-    </form>
+    <!-- <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button> -->
+    
     
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button>
+    <button input="submit" id="send_application" class="btn btn-primary" data-loading-text="{% trans 'Sending Application' %} ...">{% trans 'Send Application' %}</button>
   </div>
+  </form>
 </div>
