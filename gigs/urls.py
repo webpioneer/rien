@@ -16,7 +16,8 @@ urlpatterns = patterns('gigs.views',
     url('application/accept/$', 'application_accept', name = 'application_accept'),
     # Apply
     url('profile/applications/$', 'applier_applications', {'template_name':'gigs/applier/applier_applications.html'}, name = 'applier_applications'),
-    url('apply/(?P<gig_slug>[-\w]+)/$','apply',{'template_name':'gigs/apply.html'}, name = 'apply'),
+    #url('apply/(?P<gig_slug>[-\w]+)/$','apply',{'template_name':'gigs/apply.html'}, name = 'apply'),
+    url('apply/(?P<gig_slug>[-\w]+)/$','apply',{'template_name':'gigs/get_gig.html'}, name = 'apply'),
     url('application/reply/(?P<application_id>[-\w]+)$', 'reply_to_apply', {'template_name':'gigs/company/application_detail.html'}, name = 'reply_to_apply'),
     # Profile
     #url('profile/account/password_reset$', django.contrib.auth.views.password_reset, {'template_name':'gigs/account.html'}, name = 'password_reset'),
