@@ -11,6 +11,7 @@ from cartridge.shop.models import Product, OrderItem
 from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField, RichTextField
 from mezzanine.utils.models import upload_to
+from mezzanine.utils.timezone import now
 
 from django_messages.models import Message
 from djmoney.models.fields import MoneyField
@@ -23,6 +24,18 @@ def get_app_mother(message):
         return message
     get_app_mother(message.parent_msg)
 
+class Resume(models.Model):
+    file = models.FileField(upload_to = 'resumes')
+    user = models.ForeignKey(User)
+    created_at = now()
+    is_enabled = models.BooleanField(default = True)
+
+    def __unicode__(self):
+        return ('{0} {1} {2}').format(self.file, self.user, self.created_at)
+
+    def get_filename(self):
+        return self.file.file.name.split('/')[-1].capitalize()
+
 class Application(Message):
     """Reprsents an application from an applier regarding a gig """
     #message = models.OneToOneField(Message)
@@ -30,9 +43,10 @@ class Application(Message):
     favorited_at = models.DateTimeField(null = True, blank = True)
     rejected_at = models.DateTimeField(null = True, blank = True)
     printed_at = models.DateTimeField(null = True, blank = True)
+    resume = models.ForeignKey(Resume)
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(self.sender, self.recipient, self.body)
+        return "{0} {1} {2}".format(self.sender, self.recipient, self.resume)
 
     @models.permalink
     def get_absolute_url(self):
@@ -52,12 +66,12 @@ class Application(Message):
         self.get_mother_app(**kwargs)
 
     @property
-    def resume(self):
-        return self.sender.resume_set.all()[0].file
+    def get_resume(self):
+        return self.resume.file
 
     @property
-    def resume_name(self):
-        return self.sender.resume_set.all()[0].file.name.split('/')[1]
+    def get_resume_name(self):
+        return self.resume.file.name.split('/')[1]
 
 
 
@@ -67,13 +81,6 @@ def inbox_count_for(user):
     mark them seen and the message IS NOT an application
     """
     return Message.objects.filter(recipient=user, read_at__isnull=True, recipient_deleted_at__isnull=True, application__isnull=True).count()
-
-class Resume(models.Model):
-    file = models.FileField(upload_to = 'resumes')
-    user = models.ForeignKey(User)
-
-    def __unicode__(self):
-        return ('{0} {1}').format(self.file, self.user)
 
 
 class Category(Slugged):
