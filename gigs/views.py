@@ -268,7 +268,7 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
         apply_form = ApplyForm(request.POST, request.FILES)
 
         if request.user.is_authenticated():
-            if apply_form.is_valid():
+            #if apply_form.is_valid():
                 user = request.user
                 #apply_form.save()
                 application = Application()
@@ -276,11 +276,27 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 application.sender = user
                 application.recipient = gig.company.user
                 application.gig = gig
-                application.body = apply_form.cleaned_data['motivation']
-                application.save()
+                if not apply_form.fields['motivation'].clean(request.POST.get('motivation')):
+                    return redirect(gig.get_absolute_url())
+                application.body = request.POST.get('motivation')
+                print 'select_resume: %s'  % request.POST.get('select_resume')
+
                 # upload file
-                resume = Resume(file = request.FILES['resume'], user = user)
-                resume.save()
+                if request.POST.get('select_resume'):
+                    resume_id = request.POST.get('select_resume')
+                    resume = Resume.objects.get( pk = resume_id)
+                    print resume
+                    print 'here %s' % resume
+                    application.resume = resume
+                else:
+                    if not apply_form.resume.clean():
+                        return redirect(gig.get_absolute_url())
+                    resume = Resume(file = request.FILES['resume'], user = user)
+                    resume.save()
+                    application.resume = resume
+                
+                application.save()
+                print application
                 message = _('You applied successfully')
                 info(request, message, extra_tags='success')
                 if notification:
@@ -289,6 +305,7 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 return redirect(gig.get_absolute_url())
         else:
             if signup_form.is_valid() and apply_form.is_valid():
+                print 'both forms are valid'
                 user, password = signup_form.save()
                 # send signal user_added_to_group
                 user_added_to_group.send(sender = apply.func_name,
@@ -300,10 +317,12 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 application.recipient = gig.company.user
                 application.gig = gig
                 application.body = apply_form.cleaned_data['motivation']
-                application.save()
                 # upload file
                 resume = Resume(file = request.FILES['resume'], user = user)
                 resume.save()
+                application.resume = resume
+                application.save()
+                
                 user = authenticate(username = user.username,
                                     password = password)
                 login(request, user)
