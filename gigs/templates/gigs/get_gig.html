@@ -7,6 +7,7 @@
 <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "7ab66bb2-bdeb-45bb-94d0-8a47c38cc0fd", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 {% endcomment %}
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -15,11 +16,15 @@
 			var btn = $(this);
         	btn.button('loading');
 		});
+		// style the select resume
+		$('.selectpicker').selectpicker();
+		
 	});
 </script>
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
 <style type="text/css">
 div.important { 
 	background:#333;
