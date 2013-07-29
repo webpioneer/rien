@@ -8,11 +8,11 @@
 {% else %}
     {{ block.super }}
     {% url "signup" as signup_url %}
-    <p>{% blocktrans with request.GET.next as next %}If you don't have an account you can <a href="{{ signup_url }}?next={{ next }}">sign up</a> for one now.{% endblocktrans %}</p>
+    <p>{% blocktrans with request.GET.next as next %}If you don't have an account you can <a href="{{ signup_url }}?next={{ next }}">Sign up</a> for one now.{% endblocktrans %}</p>
     {% url "mezzanine_password_reset" as password_reset_url %}
     {% url "profile_update" as profile_update_url %}
-    {% blocktrans %}<p>You can also <a href="{{ password_reset_url }}?next={{ profile_update_url }}">reset your password</a> if you've forgotten it.</p>{% endblocktrans %}</p>
-
+    {% blocktrans %}<p>You can also <a href="{{ password_reset_url }}?next={{ profile_update_url }}">Reset your password</a> if you've forgotten it.</p>{% endblocktrans %}</p>
+    {% comment %}
     <!--begin login-box-->
 				<div class="login-box clearfix">
 					<header>
@@ -81,6 +81,7 @@
 					<!--end .login-wrapper clearfix--> 
 				</div>
 				<!--end .login-box--> 
+				{% endcomment %}
 {% endif %}
 
 {% endblock %}
