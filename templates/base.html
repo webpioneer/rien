@@ -26,6 +26,7 @@
 
 <link rel="stylesheet" href="{{ STATIC_URL }}css/header-1.css" type="text/css"/>
 <link href='http://fonts.googleapis.com/css?family=Sofia' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 <style type="text/css">
 .sofia{
   font-family: 'Sofia';
@@ -47,9 +48,20 @@ a:hover .sofia {
 }
 input.error, select.error{
   border:2px solid #b30000;
-
 }
-
+/*Job Types */
+.full-time{
+    color:#e68a20;
+}
+.contract{
+    color:#2a7ca5;
+}
+.freelance{
+    color:#9aa902;
+}
+.internship{
+    color:#b8559a;
+}
 </style>
 
 {% ifinstalled cartridge.shop %}
@@ -328,7 +340,7 @@ $(function() {
             <section>
               <h4>{% trans 'About Us' %}</h4>
                 <a href="#">{% trans 'About'%}</a><br />
-                <a href="#">{% trans 'FAQ'%}</a>
+                <a href="{% url 'faqs' %}">{% trans 'FAQs'%}</a>
             </section>
           </div>
           <div class="span4">
@@ -346,7 +358,7 @@ $(function() {
                   <strong>phone :</strong> <a href="tel:{{ settings.SITE_PHONE }}" class="tele">{{ settings.SITE_PHONE }}</a><br>
                 {% endif %}
                 <strong>email :</strong> <a href="mailto:{{ settings.SITE_EMAIL }}">{{ settings.SITE_EMAIL }}</a></p>
-                <a href="#">{% trans 'Contact form' %}</a>
+                <a href="{% url 'contact' %}">{% trans 'Contact form' %}</a>
             </section>
             <!--close section-->
             
