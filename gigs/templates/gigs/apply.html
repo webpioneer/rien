@@ -22,12 +22,24 @@
     {% endif %}
     {% fields_for apply_form %}
     <!-- <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button> -->
-    
-    
+    {% if request.user.is_authenticated %}
+      {% if request.user.resume_set %}
+      <p class="control-group row-fluid">
+        <label class="span2" for="id_select_resume">{% trans 'Resume' %}</label>
+          <select class="selectpicker" name="select_resume" id="id_select_resume" title="{% trans 'Choose your resume' %}..." data-width="auto">
+            {% for resume in request.user.resume_set.all reversed %}
+              <option value="{{ resume.id }}" data-subtext="{% trans 'added' %} {{ resume.created_at|date:'m-d-Y' }}">{{ resume.get_filename }}</option>
+            {% endfor %}
+          </select>
+      </p>
+      {% endif %}
+    {% endif %}
+
+      
   </div>
   <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button input="submit" id="send_application" class="btn btn-primary" data-loading-text="{% trans 'Sending Application' %} ...">{% trans 'Send Application' %}</button>
+    <!-- <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button> -->
+    <button input="submit" id="send_application" class="btn btn-primary btn-large" data-loading-text="{% trans 'Sending Application' %} ...">{% trans 'Send Application' %}</button>
   </div>
   </form>
 </div>

@@ -3,7 +3,6 @@
 
 {% block meta_title %}{% trans "All Jobs" %}{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 <style type="text/css">
 
 
@@ -216,19 +215,7 @@
     background-color:#fefdb9;
     padding:8px;
 }
-/*Job Types */
-.full-time{
-    color:#e68a20;
-}
-.contract{
-    color:#2a7ca5;
-}
-.freelance{
-    color:#9aa902;
-}
-.internship{
-    color:#b8559a;
-}
+
 /*Job Styling */
 .media-heading a{
     color:#0290b3;
@@ -242,6 +229,7 @@
 }
 .skill{
     text-decoration: none;
+    border-bottom:1px solid #336699;
 }
 </style>
 
@@ -299,6 +287,11 @@ $(document).ready(function(){
         });
         find_jobs(method = 'GET', page = 1, search = true);
     });
+    $("a[id^='tag_']").live('click', function(e){
+        e.preventDefault();
+        $('#id_what').val($(this).attr('data-tag-name'));
+        find_jobs(method = 'GET', page = 1, search = true);
+    });
 
 });
 function find_jobs(method, page, search){
@@ -340,6 +333,7 @@ function find_jobs(method, page, search){
         {% endifinstalled %}
         
         if(msg.results){
+            console.log(msg.results.length);
             var html_string = '';
             var scrolling_date = '';
             for(var i = 0; i < msg.results.length; i++){
@@ -366,12 +360,14 @@ function find_jobs(method, page, search){
                         <a id='location_"+msg.results[i].gig_id+"'href='#'>\
                         "+msg.results[i].gig_location+"</a></span></div><!-- end .span4 --></div><!-- end .row -->";
 
-                html_string +="<div class='row' style='margin-left:1px'>\
-                            <a class='btn-small btn-info skill' href='#'>Django</a>&nbsp;\
-                            <a class='btn-small btn-info skill' href='#'>Python</a>&nbsp;\
-                            <a class='btn-small btn-info skill' href='#'>Java</a>&nbsp;\
-                            <a class='btn-small btn-info skill' href='#'>Hadoop</a>&nbsp;\
-                      </div>";
+                html_string +="<div class='row' style='margin-left:1px'>";
+                if(msg.results[i].gig_tags){
+                    console.log(msg.results[i])
+                    for(var i = 0;i<msg.results[i].gig_tags.length; i++){
+                        html_string +="<a class='btn-small btn-info skill' href='#' data-tag-name='"+msg.results[i].gig_tags[i]+"' id='tag_"+msg.results[i].gig_tags[i]+"'>"+msg.results[i].gig_tags[i]+"</a>&nbsp;"
+                            }//end for
+                }// end if 
+                html_string +="</div>";
 
                       
                 html_string +="</div><!-- end .media-body --></li></ul></div><!-- end .span10 -->";
@@ -384,8 +380,9 @@ function find_jobs(method, page, search){
             </div>\
         </div><!-- end .span2 --></div><!-- end .row -->";
 
-                scrolling_date = msg.results[i].gig_publish_date;
-                console.log(scrolling_date);
+                //scrolling_date = msg.results[i].gig_publish_date;
+                //console.log(scrolling_date);
+                console.log(msg.results[i].gig_id);
             }
                 
             $("#gig_types").html('');
@@ -577,7 +574,13 @@ function find_jobs(method, page, search){
 
                       </div><!-- end .row -->
                       <div class="row" style="margin-left:1px">
-                            <a class="btn-small btn-info skill" href="#">Django</a>&nbsp;<a class="btn-small btn-info skill" href="#">Python</a>&nbsp;<a class="btn-small btn-info skill" href="#">Java</a>&nbsp;<a class="btn-small btn-info skill" href="#">Hadoop</a>&nbsp;
+                            {% if gig.hidden_tags %}
+                                {% for tag in gig.get_tags %}
+                                    <a class="btn-small btn-info skill" href="#" data-tag-name="{{ tag }}" id="tag_{{ tag}}">{{ tag|capfirst }}</a>&nbsp;
+                                {% endfor %}
+                            {% endif %}
+                            {% comment %}
+                            <a class="btn-small btn-info skill" href="#">Django</a>&nbsp;<a class="btn-small btn-info skill" href="#">Python</a>&nbsp;<a class="btn-small btn-info skill" href="#">Java</a>&nbsp;<a class="btn-small btn-info skill" href="#">Hadoop</a>&nbsp;{% endcomment %}
                       </div>
 
                       
@@ -653,21 +656,13 @@ function find_jobs(method, page, search){
 
 {% block right_panel %}
 	{% include 'gigs/right_panel.html' %}
-
     
     <aside class="well">
-
-        <h3>{{ settings.SITE_TAGLINE }}</h3>
-            <p> <img class="alignleft" src="http://images.authenticjobs.com/hiring.v1373466610.png" alt="Velazquez" />{{ settings.SITE_TITLE }}{% blocktrans %} <span class="muted">is where companies and creative professionals meet to make a better web. Since 2005, qualified candidates have been applying for great opportunities at Apple, Facebook, ESPN, Sony, The New York Times, and many other companies big and small.</span> {% endblocktrans %}</p>
-            <p class="right">
-                <a href="/about/" class="btn-primary btn">{% trans 'Learn more' %} &nbsp;<i class="icon-circle-arrow-right icon-white"></i></a></p>
-
-
+        {% include 'gigs/includes/sell_point.html' %}
     </aside>
     <!--close .well -->
     <aside class="well small-well">
               {% include 'gigs/includes/social.html' %}
-              
     </aside>
     <!--close section-->
     <aside class="well small-well">
@@ -676,7 +671,5 @@ function find_jobs(method, page, search){
     
     <aside class="widget">
         {% comment %}<img src="http://images.authenticjobs.com/company_logos.v1364926967.gif">{% endcomment %}
-    </aside>            
-	
-
+    </aside>
 {% endblock %}
