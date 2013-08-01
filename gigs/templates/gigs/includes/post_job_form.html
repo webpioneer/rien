@@ -28,9 +28,9 @@
             {% if gig_categories|length == 1 %}
                 <input type='hidden' id="gig_categories" name="gig_categories" value="{% for category in gig_categories %}{{ category.id }}{% endfor %}">
             {% else %}
-                    <p class="control-group">
+                    <p class="control-group row-fluid">
                         <label class="span2" for="id_gig_categories">{% trans 'Categories' %}</label>
-                            <select class="selectpicker {% if post_job_form.gig_categories.errors %}error{% endif %}" name="gig_categories" id="id_gig_categories" multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}..." width="auto">
+                            <select class="selectpicker {% if post_job_form.gig_categories.errors %}error{% endif %}" name="gig_categories" id="id_gig_categories" multiple data-selected-text-format="count>3" title="{% trans 'Choose one or more category' %}..." data-width="auto">
                                  {% for category in gig_categories %}
                                     <option value="{{ category.id }}" data-subtext="{{ category.description }}">{{ category.title }}</option>
                                  {% endfor %}
