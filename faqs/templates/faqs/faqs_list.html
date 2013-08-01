@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load mezzanine_tags i18n pages_tags %}
+
+{% block extra_js %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('label').addClass('span2');
+		$('input, textarea').addClass('span10');
+	});
+</script>
+{% endblock %}
+
+
+{% block page_class %}faq{% endblock %}
+
+{% block title_bread %}{% endblock %}
+
+{% block main_content %}
+<div class="hero-unit">
+	<div class="container">
+		<h1>{% trans 'Frequently Asked Questions' %}</h1>
+	</div>
+</div>
+<div class="container clearfix" id="main-content"> 
+		<!--begin main content-->
+		
+		<div class="row-fluid sidebar-right"> 
+			<!--begin row-fluid-->
+			<div class="span9 primary-column">
+				<p>{% trans 'hello there' %}</p>
+				<ul class="s-accordion faq fancy">
+					{% for faq in faqs %}
+					<li class="s-wrap"><h4 class="trigger"><a href="#"> {{ faq.title }}<i class="icon-plus-sign"></i></a></h4>
+						<div class="s-content">
+							<p>{{ faq.content|safe|capfirst }}</p>
+						</div><!--close s-content-->
+					</li>
+					<!--close s-wrap-->
+					{% endfor %}
+				</ul>
+				<!--close s-accordion.faq --> 
+				
+			</div>
+			<!--close span9 primary-column-->
+			<section class="span3 sidebar secondary-column" id="secondary-nav">
+				<script src="assets/js/jquery.dcjqaccordion.2.7.min.js"></script>
+				<aside class="widget well">
+        			{% include 'gigs/includes/sell_point.html' %}
+    			</aside>
+    			<aside class="widget well">
+    				<a href="{% url post_job %}" class="btn btn-medium btn-success">{% trans 'Post a Job' %}</a>
+    				<a href="{% url home %}" class="btn btn-info">{% trans 'Find a Job' %}</a>
+    			</aside>
+    			<aside class="well small-well">
+              		{% include 'gigs/includes/social.html' %}
+    			</aside>
+				{% comment %}
+				<aside class="widget">
+					<h5 class="short_headline"><span>Blog</span></h5>
+					<div class="sidebar-tabs">
+						<ul class="tabs">
+							<li class="tab"><a href="#tab-latest">Latest</a></li>
+							<li class="tab"><a href="#tab-popular">Popular</a></li>
+							<li class="tab"><a href="#tab-tags">Tags</a></li>
+						</ul>
+						<div class="panels">
+							<div id="tab-latest">
+								<ul class="blogposts clearfix">
+									<!--required class-->
+									<li> <span class="date"> <span class="month">Jan</span> <span class="day">13</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">We frequently maximize turn-key infrastructures</a></h3>
+										<a href="blog-single.html">
+										<p> Your budget for unleashing should be at least twice...</p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Nov</span> <span class="day">28</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Split of a Second</a></h3>
+										<a href="blog-single.html">
+										<p> Wingsuit World Champion Espen Fadnes and...</p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Sep</span> <span class="day">18</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Latte Art</a></h3>
+										<a href="blog-single.html">
+										<p> Creating art with latte coffee. 
+											Lorem ipsum dolor sit amet... </p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Mar</span> <span class="day">3</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Lorem ipsum dolor sit amet</a></h3>
+										<a href="blog-single.html">
+										<p>senectus et netus et malesuada fames ac turpis egestas...</p>
+										</a> </li>
+								</ul>
+							</div>
+							<!-- close #tab-latest-->
+							<div id="tab-popular"> 
+								<!--begin tab-popular-->
+								<ul class="blogposts clearfix">
+									<!--required class-->
+									<li> <span class="date"> <span class="month">Jan</span> <span class="day">13</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">We frequently maximize turn-key infrastructures</a></h3>
+										<a href="blog-single.html">
+										<p> Your budget for unleashing should be at least twice...</p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Nov</span> <span class="day">28</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Split of a Second</a></h3>
+										<a href="blog-single.html">
+										<p> Wingsuit World Champion Espen Fadnes and...</p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Sep</span> <span class="day">18</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Latte Art</a></h3>
+										<a href="blog-single.html">
+										<p> Creating art with latte coffee. 
+											Lorem ipsum dolor sit amet... </p>
+										</a> </li>
+									<li> <span class="date"> <span class="month">Mar</span> <span class="day">3</span> <span class="year">2012</span> </span>
+										<h3><a href="blog-single.html">Lorem ipsum dolor sit amet</a></h3>
+										<a href="blog-single.html">
+										<p>senectus et netus et malesuada fames ac turpis egestas...</p>
+										</a> </li>
+								</ul>
+							</div>
+							<!-- close #tab-popular-->
+							<div id="tab-tags" class="tag-wrapper"> <a href="#" class="tag">business</a> <a href="#" class="tag">fun</a> <a href="#" class="tag">food</a> <a href="#" class="tag">design</a> <a href="#" class="tag">old</a> <a href="#" class="tag">recent</a> <a href="#" class="tag">junk</a> <a href="#" class="tag">important</a> <a href="#" class="tag">fonts</a> <a href="#" class="tag">css3</a> <a href="#" class="tag">php</a> <a href="#" class="tag">seamless</a> <a href="#" class="tag">complicated</a> </div>
+							<!-- close #tab-tags .tag-wrapper--> 
+						</div>
+						<!--close .panels (all of them)--> 
+					</div>
+					<!--close .sidebar-tabs--> 
+				</aside>
+				<!-- close .widget containing blog tabs-->
+				<aside class="widget">
+					<h5 class="short_headline"><span>Stay Updated</span></h5>
+					<p>Sign up for our crispy newsletter. We won't share your email address.</p>
+					<div class="input-append">
+						<input type="email" placeholder="Email Address" class="span8" name="email" />
+						<button class="btn btn-primary">Sign Up</button>
+					</div>
+				</aside>
+				<!--close aside .widget -->
+				
+				<aside class="widget">
+					<h5 class="short_headline"><span>Search</span></h5>
+					<form class="searchform" method="get">
+						<input type="search" class="span12" value="type and hit enter" onFocus="this.value=''" onBlur="this.value='type and hit enter'" />
+					</form>
+				</aside>
+				<!--close aside widget-->
+				{% endcomment %}
+			</section>
+			<!--close section sidebar span3-->
+			</div>
+		<!--close row-fluid--> 
+	</div>
+	<!--close .container id="main-content" --> 
+
+{% endblock %}
