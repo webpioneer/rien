@@ -280,19 +280,22 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                     return redirect(gig.get_absolute_url())
                 application.body = request.POST.get('motivation')
                 print 'select_resume: %s'  % request.POST.get('select_resume')
+                print request.FILES.get('resume')
 
                 # upload file
-                if request.POST.get('select_resume'):
+                if request.FILES.get('resume'):
+                    print 'resume'
+                    if not apply_form.fields['resume']:
+                        apply_form.clean_resume()
+                        return redirect(gig.get_absolute_url())
+                    resume = Resume(file = request.FILES['resume'], user = user)
+                    resume.save()
+                    application.resume = resume
+                else:
                     resume_id = request.POST.get('select_resume')
                     resume = Resume.objects.get( pk = resume_id)
                     print resume
                     print 'here %s' % resume
-                    application.resume = resume
-                else:
-                    if not apply_form.resume.clean():
-                        return redirect(gig.get_absolute_url())
-                    resume = Resume(file = request.FILES['resume'], user = user)
-                    resume.save()
                     application.resume = resume
                 
                 application.save()
