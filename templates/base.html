@@ -89,6 +89,7 @@ $(function() {
 
 </head>
 <body id="{% block body_id %}body{% endblock %}" class="{% block page_class %}index{% endblock %}">
+  {% block toolbar_top %}{% endblock %}
   {% if request.user.is_authenticated %}
   <div class="navbar navbar-inverse">
               <div class="navbar-inner">
@@ -327,7 +328,7 @@ $(function() {
 {% endblock %}
 
 <footer id="footer" class="clearfix">
-  {% block toolbar %}{% endblock %}
+  {% block toolbar_bottom %}{% endblock %}
   <div class="container">
     <div class="row-fluid">
           <div class="span4">
