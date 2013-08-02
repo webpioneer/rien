@@ -38,5 +38,6 @@ urlpatterns += patterns('',
     url(r'^account/password_change/done/$', 'django.contrib.auth.views.password_change_done', {'template_name':'gigs/company/account_password_change_done.html'}, name='password_change_done'),
     # Update profile
     url(r'^account/update-profile/$', 'mezzanine.accounts.views.profile_update', {'template':'gigs/company/account_personal.html'} ,name='profile_update'),
-
+    # Account notifications
+    url(r'^account/notifications$', 'gigs.views.set_notifications', {'template_name':'gigs/company/account_notifications.html'} ,name='account_notifications'),
 )
