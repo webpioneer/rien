@@ -27,6 +27,7 @@ from mezzanine.utils.timezone import now
 from mezzanine.utils.urls import slugify
 
 from django_messages.models import Message
+from notification.models import NoticeSetting
 
 
 from gigs.forms import CompanyForm, PostJobForm, ApplyForm, ReplyForm, ProfileForm2
@@ -429,6 +430,37 @@ def application_accept(request):
 #Account
 def account(request, template_name = 'gigs/account.html'):
     context = {}
+    return render(request, template_name, context)
+
+@login_required
+def set_notifications(request, template_name = 'gigs/company/account_notifications.html'):
+    """
+    Handle settings the notifications per user
+    logic followed : We set the new notice_setting based on
+    the notice_setting's in the request post,if it is found or not 
+    in the default notice_settings of the user
+    """
+    # returning notice_settings except welcome_user
+    notice_settings = request.user.noticesetting_set.all().exclude(notice_type__label__exact = 'welcome_user')
+
+    if request.method == 'POST':
+        post_keys = request.POST.keys()
+
+        for notice_setting in notice_settings:
+            notice_setting_object = NoticeSetting.objects.filter(user = request.user)\
+                .filter(notice_type = notice_setting.notice_type)[0]
+            if notice_setting.notice_type.label in post_keys:
+                notice_setting_object.send = True
+            else:
+                notice_setting_object.send = False
+            notice_setting_object.save()
+        notice_settings = request.user.noticesetting_set.all().exclude(notice_type__label__exact = 'welcome_user')
+        message = _('Your changes are saved')
+        info(request, message, extra_tags='success')
+
+    context = {
+        'notice_settings' : notice_settings,
+    }
     return render(request, template_name, context)
 
 
