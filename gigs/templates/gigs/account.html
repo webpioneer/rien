@@ -7,7 +7,7 @@
               <div class="btn-group">
                 <a class="btn {% if 'personal' in request.META.PATH_INFO %}active{% endif %}" href="{% url profile_update %}">{% trans 'Personal Info' %}</a>
                 <a class="btn {% if 'password' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Password' %}</a>
-                <a class="btn {% if 'trash' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Notifications' %}</a>
+                <a class="btn {% if 'notifications' in request.META.PATH_INFO %}active{% endif %}" href="{% url account_notifications %}">{% trans 'Notifications' %}</a>
               </div>
             </div>
 {% endblock %}
