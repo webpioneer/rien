@@ -58,9 +58,10 @@ def get_results(what, location, page, gig_types):
 			start = end - GIGS_TO_DISPLAY
 	except:
 		pass
-
+	#| Q(tags__icontains = what )
 	gigs = Gig.objects.filter(site_id=current_site_id())\
-			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what ))\
+			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what )
+				)\
 			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
 
 	gig_types_list = gig_types.split()
@@ -88,6 +89,7 @@ def get_results(what, location, page, gig_types):
 			'gig_company_profile' : reverse('company_profile', args = (gig.company.slug,)),
 			'gig_location' : gig.location,
 			'gig_is_new' : 'today' in naturalday(gig.publish_date),
+			'gig_tags' : gig.get_tags() if gig.hidden_tags else False,
 		})
 	# the results are either resumes or gigs or a company
 	return results
