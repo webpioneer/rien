@@ -22,7 +22,7 @@
 	{% endblock %}
 	<h2>{{ gig.title|capfirst }} <div class="btn-group">
                 <a class="btn {% if 'inbox' in request.META.PATH_INFO %}active{% endif %}" href="{{ gig.get_absolute_url }}" target="_blank">{% trans 'See online' %}</a>
-                <a class="btn {% if 'outbox' in request.META.PATH_INFO %}active{% endif %}" href="{% url messages_outbox %}">{% trans 'Edit' %}</a>
+                <a class="btn {% if 'edit' in request.META.PATH_INFO %}active{% endif %}" href="{% url edit_gig slug=gig.slug %}">{% trans 'Edit' %}</a>
               </div></h2>
 	{% with logged_company=request.user.company %}  
 	<ul class="unstyled">

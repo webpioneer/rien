@@ -1,0 +1,22 @@
+{% load i18n mezzanine_tags %}
+<div class="toolbar-top transparent">
+    <div class="container">
+      <div class="row-fluid">
+        <div class="span6">
+          <h1>{% trans 'This is a Preview' %}</h1>
+        </div>
+        <div class="span6">
+        {% if settings.SHOP_PAYMENT_STEP_ENABLED %}
+          <form method="post" id="add-cart" class="form-horizontal form-shop fixed">
+            {% csrf_token %}
+            <span style="display:none">{% fields_for add_product_form %} </span>
+            <input type="submit" class="btn btn-large" name="add_wishlist" value="{% trans "Save for later" %}">
+            <input type="submit" class="btn btn-success btn-large" name="add_cart" value="{% trans "Continue (add to cart)" %}">
+          </form>
+        {% else %}
+            <a class="btn btn-success btn-large" href="{% url gigs.views.get_gig slug=product.gig.slug %}">{% trans 'Publish your Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i></a>
+        {% endif %}
+        </div>
+      </div>
+    </div><!-- end .container -->
+  </div>

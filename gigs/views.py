@@ -91,11 +91,94 @@ def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
     }   
     return render(request, template_name, context)
 
-def post_job(request, template_name = 'gigs/post_job.html'):
+def edit_gig(request, slug = None, template_name = 'gigs/edit_gig.html'):
+    site_id = current_site_id()
+    gig = get_object_or_404(Gig, slug = slug)
+    post_job_form = PostJobForm(instance = gig)
+    company_form = CompanyForm(instance = gig.company)
+    gig_types = GigType.objects.all()
+    categories = Category.objects.all().filter(site_id = site_id)
+    request.session['edit'] = True
+    if request.method == 'POST':
+        print 'request post'
+        company_form = CompanyForm(request.POST, request.FILES)
+        post_job_form = PostJobForm(request.POST)
+        if company_form.is_valid() and post_job_form.is_valid():
+            print 'company_form is valid'
+            company = company_form.get_company_object()
+            print company
+            company.slug = slugify(company.company_name)
+            company.ip_address = request.META['REMOTE_ADDR']
+            company.id = gig.company.id
+            company.site_id = site_id
+            company.user = gig.company.user
+            #print company_form.get_company_create_data()
+            #company, created = Company.objects.get_or_create(email = company.email)
+            #print company, company.id, created
+            #company.save()
+            company.save(force_update = True)
+        #if post_job_form.is_valid():
+            print 'post_job_form is valid'
+            print 'post_job_form %s' % post_job_form.get_gig_create_data()
+
+            #gig_variation = ProductVariation(product = gig, default = True,
+            #     unit_price = gig.job_type.price.amount, sale_price = gig.job_type.price.amount)
+            #gig_variation.save()
+
+            #product_image = ProductImage(file = company.profile_picture, product = gig)
+            #product_image.save()
+            print gig.variations.all()
+            new_gig = post_job_form.get_gig_object()
+            new_gig.id = gig.id
+            new_gig.site_id = site_id
+            new_gig.company = company
+            new_gig.save()
+            print new_gig
+            #gig.save(post_job_form.get_gig_create_data())
+
+            #gig.save(**post_job_form.get_gig_create_data())
+            #new_gig = post_job_form.get_gig_object()
+            #new_gig.available = True
+            #new_gig.unit_price = 100
+            #print new_gig
+            #new_gig.company = company
+            #new_gig.image = company.profile_picture
+            #new_gig.id = gig.id
+            #new_gig.product = gig.product
+            #new_gig.save()
+
+            
+        
+            #return redirect('gigs/get_gig.html')
+        else:
+            print 'post_job_form is NOT valid'
+            context = {
+                'gig' : gig,
+                'post_job_form' : post_job_form,
+                'company_form' : company_form,
+                'gig_types' : gig_types,
+                'gig_categories' : categories,
+            }   
+            return render(request, template_name, context)
+
+        if 'Preview your listing' == request.POST['submit']:
+            print 'preview'
+            return redirect("shop_product", slug = new_gig.slug)
+
+    context = {
+        'gig' : gig,
+        'post_job_form' : post_job_form,
+        'company_form' : company_form,
+        'gig_types' : gig_types,
+        'gig_categories' : categories,
+    }   
+    return render(request, template_name, context)
+
+def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
     """ 
     Post Job Form 
     """
-    gig_types = GigType.objects.all()
+
     if request.method == 'POST':
         post_job_form = PostJobForm(request.POST)
         company_form = CompanyForm(request.POST, request.FILES)
@@ -139,6 +222,7 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                 request.session['company'] = company
                 request.session['gig'] = gig
                 request.session['gig_categories'] = gig_categories
+
                 gig.available = True
                 gig.unit_price = 100
 
@@ -155,13 +239,23 @@ def post_job(request, template_name = 'gigs/post_job.html'):
                 product_image.save()
                 for category in gig_categories:
                     gig.gig_categories.add(category)
+
+
                 
                 return redirect("shop_product", slug = gig.slug)
                 #template = 'gigs/gig_product.html'
                 #product_view(slug = gig.slug, template = template)
     else:
-        post_job_form = PostJobForm()
-        company_form = CompanyForm()
+        if slug:
+            gig = get_object_or_404(Gig, slug = slug)
+            print 'gig %s' % gig
+            post_job_form = PostJobForm(instance = gig)
+            company_form = CompanyForm(instance = gig.company)
+
+        else:
+            post_job_form = PostJobForm()
+            company_form = CompanyForm()
+    gig_types = GigType.objects.all()
     context = {
         'gig_categories' : Category.objects.all(),
         'post_job_form': post_job_form, 'company_form': company_form,
@@ -467,6 +561,7 @@ def set_notifications(request, template_name = 'gigs/company/account_notificatio
 # Set DEFAULT USER SETTINGS
 
 def set_user_settings(notification_settings, user):
+    print notification_settings
     for notice_type in notification_settings:
         print notice_type
         notice_type_obj = notification.NoticeType.objects.get(label = notice_type)
@@ -477,6 +572,7 @@ def set_user_settings(notification_settings, user):
         except:
             pass
 
+# when user signup @receiver(post_save, sender = 'signup')
 @receiver(user_added_to_group, sender = 'apply')
 @receiver(user_added_to_group, sender = 'post_job')
 def set_user_default_settings(sender, **kwargs):
@@ -487,12 +583,14 @@ def set_user_default_settings(sender, **kwargs):
     set_user_settings(settings.USER_NOTIFICATION_SETTINGS, user)
     print user
     print user.groups.all()
+    print 'the group is %s' % group
 
     # set specific USER_NOTIFICATION_SETTINGS
     if group == 'JobSeeker':
     #if not user.company:
         set_user_settings(settings.JOB_SEEKER_NOTIFICATION_SETTINGS, user)
     if group == 'Company':
+        print 'hello'
     #else:
         set_user_settings(settings.COMPANY_NOTIFICATION_SETTINGS, user)
 

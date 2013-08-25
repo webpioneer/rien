@@ -1,4 +1,5 @@
-<div id='company-information'> 
+{% load mezzanine_tags %}
+<div id='company-information'>
             <h3 class="short_headline margin-top"><span>{{ company_information }}</span></h3>
             <div class="page-header">
                 <p class="control-group">
@@ -59,7 +60,10 @@
                     {% endif %}
                 </p>
             </div>
-            <div class="page-header">
+            {% if 'edit' in request.META.PATH_INFO %}
+                <input type="hidden" id="id_email" name="email" value="{{ company_form.email.value }}" />
+            {% else %}
+                <div class="page-header">
                 <p class="control-group">
                 <label class="span2" for="id_email">{{ company_form.email.label}}</label>
                 <div class="input-prepend">
@@ -76,6 +80,8 @@
                 {% endif %}
                 </p>
             </div>
+            {% endif %}
+            
             <div class="page-header">
                 <p class="control-group">
                     <label class="span2" for="id_elevator_pitch">{{ company_form.elevator_pitch.label}}</label>
@@ -103,7 +109,7 @@
                         <input type="file" name="profile_picture" id="id_profile_picture"/>
                     </span>
 
-                    <span id="list" class="pull-right"><img id="employer_picture" src="{% if company_form.profile_picture.value %}{{STATIC_URL}}media/company_logos/{{ company_form.profile_picture.value }}{% elif company_form.twitter_username.value %}http://api.twitter.com/1/users/profile_image/{{ company_form.twitter_username.value }}.png?size=bigger 
+                    <span id="list" class="pull-right"><img id="employer_picture" src="{% if request.user.company.profile_picture %}{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 73 73 %}{% elif company_form.twitter_username.value %}http://api.twitter.com/1/users/profile_image/{{ company_form.twitter_username.value }}.png?size=bigger 
                     {% else %}{{STATIC_URL}}media/company_logos/employer_default.png{% endif %}"  style="margin-top:-25px" height="60" width="80" /></span>
                 </p>
                     <!--

@@ -4,8 +4,11 @@ from django.conf.urls.defaults import patterns, url
 urlpatterns = patterns('gigs.views',
 	url("^$", 'all_gigs', {"template_name": "gigs/index.html"}, name = "home"),
 	#url("^find_jobs/$", 'find_jobs', name = "find_jobs"),
-	url("^job/(?P<slug>[-\w]+)/$", 'get_gig', {"template_name": "gigs/get_gig.html"}, name="get_gig"),
     url('post_job/$','post_job',{'template_name':'gigs/post_job.html'}, name = 'post_job'),
+    url('post_job/(?P<slug>[-\w]+)/$','post_job',{'template_name':'gigs/post_job.html'}, name = 'post_job'),
+    url("^job/(?P<slug>[-\w]+)/$", 'get_gig', {"template_name": "gigs/get_gig.html"}, name="get_gig"),
+    url("^job_edit/(?P<slug>[-\w]+)/$", 'edit_gig', {"template_name": "gigs/edit_gig.html"}, name="edit_gig"),
+
     # Company urls
     url('company/profile/(?P<slug>[-\w]+)/$', 'company_profile', {'template_name':'gigs/company/company_profile.html'}, name = 'company_profile'),
     url('profile/listings/$', 'company_listings', {'template_name':'gigs/company/company_listings.html'}, name = 'company_listings'),

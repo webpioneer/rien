@@ -8,14 +8,16 @@
     <h4>{% trans 'You can change your notifications using this form' %}</h4>
     {% with company=request.user.company %}
     <form method="post" action="{% url gigs.views.set_notifications %}">{% csrf_token %}
+    	<fieldset>
       	{% for notice_setting in notice_settings %}
       	<label class="checkbox">
       		<input type="checkbox" name ="{{ notice_setting.notice_type }}" value="{{ notice_setting.id }}" {% if notice_setting.send %}checked{% endif %}>
       		{{ notice_setting.notice_type.description|safe }}
       	</label>
       	{% endfor %}
-        <div class="submit-row">
-			<input class="btn btn-success btn-large" type="submit" value="Save" class="default" />
+      	</fieldset>
+        <div class="form-actions">
+			<button type="submit" class="btn btn-success">{%trans 'Save changes' %}</button>
 		</div>
 </form>
         

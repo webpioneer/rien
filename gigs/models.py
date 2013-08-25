@@ -146,15 +146,20 @@ class Company(Displayable):
         verbose_name_plural = _("Companies")
 
     def save(self, *args, **kwargs):
+        if 'force_update' in kwargs.keys():
+            print 'update force %s ' % kwargs['force_update']
         company_password = User.objects.make_random_password()
-        print company_password
-                    #User.objects.get_or_create(username = self.email, email = self.email,
-                    # password = company_password)
-        self.user = User.objects.create_user(username = self.email, email = self.email,
-                     password = company_password)
-
-
+        print 'company password : %s' % company_password
+        if 'force_update' not in kwargs.keys():
+                        #User.objects.get_or_create(username = self.email, email = self.email,
+                        # password = company_password)
+            #self.user = User.objects.get_or_create(username = self.email, email = self.email,
+            #             password = company_password)
+            
+            self.user = User.objects.create_user(username = self.email, email = self.email,
+                         password = company_password)
         super(Company, self).save(*args, **kwargs)
+        
         return company_password
 
 
