@@ -371,8 +371,16 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 application.sender = user
                 application.recipient = gig.company.user
                 application.gig = gig
-                if not apply_form.fields['motivation'].clean(request.POST.get('motivation')):
-                    return redirect(gig.get_absolute_url())
+                try:
+                    apply_form.fields['motivation'].clean(request.POST.get('motivation'))
+                except:
+                    print 'error'
+                    context = {
+                        'signup_form' : signup_form,
+                        'apply_form': apply_form,
+                        'gig' : gig,
+                        }
+                    return render(request, template_name, context)
                 application.body = request.POST.get('motivation')
                 print 'select_resume: %s'  % request.POST.get('select_resume')
                 print request.FILES.get('resume')
@@ -395,7 +403,7 @@ def apply(request, gig_slug, template_name = 'gigs/apply.html'):
                 
                 application.save()
                 print application
-                message = _('You applied successfully')
+                message = _('You applied successfully. View your <a href="%s">Application</a>' % application.get_absolute_url() )
                 info(request, message, extra_tags='success')
                 if notification:
                     notification.send([application.recipient], "applications_received", {'message': message,})
