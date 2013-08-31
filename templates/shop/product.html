@@ -70,7 +70,9 @@ $(document).ready(function(){
         <div class="company row-fuild clearfix">
             <div class="span2">
                 <a href="#" class="pull-left">
-                    {% if product.gig.company.twitter_username %}
+                    {% if gig.company.title_is_confidential %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
+                        {% elif product.gig.company.twitter_username %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ product.gig.company.twitter_username }}.png?size=bigger">
                         {% elif product.gig.company.profile_picture %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail product.gig.company.profile_picture 73 73 %}">
@@ -80,8 +82,12 @@ $(document).ready(function(){
                 </a>
             </div>
             <div class="span5" id="company_title" style="margin-left:-20px">
+                {% if not product.gig.company.title_is_confidential %}
                 <a href="#"><h2>{{ product.gig.company.company_name|capfirst }}</h2>
                 <span class="">{{ product.gig.company.elevator_pitch|capfirst }}</span></a>
+                {% else %}
+                <a href="#"><h2>{% trans 'Company Confidential' %}</h2>
+                {% endif %}
             </div>
         </div>
         <header class="entry-post page-header">
