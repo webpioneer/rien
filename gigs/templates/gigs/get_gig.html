@@ -66,7 +66,9 @@ div.important * {
 		<div class="company row-fuild clearfix">
 			<div class="span2">
 				<a class="pull-left" href="{% url company_profile slug=gig.company.slug %}">
-                        {% if company.twitter_username %}
+						{% if gig.company.title_is_confidential %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
+                        {% elif company.twitter_username %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
                         {% elif gig.company.profile_picture %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 73 73 %}">
@@ -76,8 +78,12 @@ div.important * {
                     </a>
 			</div>
 			<div class="span5" id="company_title" style="margin-left:-20px">
+				{% if not gig.company.title_is_confidential %}
 				<a href="{% url company_profile slug=gig.company.slug %}"><h2>{{ gig.company.company_name|capfirst }}</h2>
 				<span class="{% url company_profile slug=gig.company.slug %}">{{ gig.company.elevator_pitch|capfirst }}</span></a>
+				{% else %}
+				<a href="{% url company_profile slug=gig.company.slug %}"><h2>{% trans 'Confidential Company' %}</h2>
+				{% endif %}
 			</div>
 		</div>
 		<header class="entry-post page-header">

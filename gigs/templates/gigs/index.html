@@ -552,7 +552,9 @@ function find_jobs(method, page, search){
             <ul class="media-list">
                 <li class="media">
                     <a class="pull-left" href="{% url company_profile slug=gig.company.slug %}">
-                        {% if company.twitter_username %}
+                        {% if gig.company.title_is_confidential %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
+                        {% elif company.twitter_username %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
                         {% elif gig.company.profile_picture %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 63 63 %}">
@@ -567,8 +569,13 @@ function find_jobs(method, page, search){
                       
                       <div class="row" style="margin-left:1px">
                         <div class="span6">
+                            {% if not gig.company.title_is_confidential %}
                             <a href="{% url company_profile slug=gig.company.slug %}">{{ gig.company.company_name|capfirst }}</a>
                             <span class="muted">{{ gig.company.elevator_pitch }}</span>
+                            {% else %}
+                            <a href="{% url company_profile slug=gig.company.slug %}">{% trans '(Confidential)' %}</a>
+                            <span class="muted">{% trans 'Company name withheld' %}</span>
+                            {% endif %}
                         </div><!-- end .span4 -->
                         <div class="span6"><span class="muted"><i class="icon-map-marker"></i><a id="location_{{ gig.id }}" href="#">{{ gig.location }}</a></span></div><!-- end .span4 -->
 
