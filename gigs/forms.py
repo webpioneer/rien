@@ -120,8 +120,8 @@ class CompanyForm(forms.ModelForm):
         return new
 
 class ApplyForm(forms.Form):
-    motivation = forms.CharField(widget= forms.Textarea)
     resume = forms.FileField()
+    motivation = forms.CharField(widget= forms.Textarea)
 
     def clean_resume(self):
         file = self.cleaned_data['resume']
