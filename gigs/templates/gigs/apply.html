@@ -16,26 +16,96 @@
                 </p>
             </div>
     {% endif %}
-    <form method="post" action="{% url apply gig_slug=gig.slug %}" enctype="multipart/form-data">
+    <form id="application-form" class="form-horizontal" method="post" action="{% url apply gig_slug=gig.slug %}" enctype="multipart/form-data">{% csrf_token %}
     {% if not request.user.is_authenticated %}
-    {% fields_for signup_form %}
+    {% comment %}{% fields_for signup_form %}{% endcomment %}
+      <div class="control-group input_id_email">
+      <label for="id_email" class="control-label">{% trans 'E-mail address' %}</label>
+        <div class="controls">
+            <input id="id_email" class="span11" type="text" name="email" maxlength="75" value="{% if signup_form.email.value %}{{ signup_form.email.value }}{% endif %}" />
+            {% if signup_form.email.errors %}
+              <span class="help-block error">
+                {% for e in signup_form.email.errors %}
+                  {{e}}
+                {% endfor %}
+              </span>
+            {% endif %}
+            <span class="help-inline"></span>
+        </div>
+      </div>
+      
+      <label for="id_last_name" class="control-label">{% trans 'Last name' %}</label>
+        <div class="controls span3">
+            <input id="id_last_name" type="text" name="last_name" maxlength="30" value="{% if signup_form.last_name.value %}{{ signup_form.last_name.value }}{% endif %}" />
+            {% if signup_form.last_name.errors %}
+              <span class="help-block error">
+                {% for e in signup_form.last_name.errors %}
+                  {{e}}
+                {% endfor %}
+              </span>
+            {% endif %}
+            <span class="help-inline"></span>
+        </div>
+      <label for="id_first_name" class="control-label">{% trans 'First name' %}</label>
+        <div class="controls span3">
+            <input id="id_first_name" type="text" name="first_name" maxlength="30" value="{% if signup_form.first_name.value %}{{ signup_form.first_name.value }}{% endif %}" />
+            {% if signup_form.first_name.errors %}
+              <span class="help-block error">
+                {% for e in signup_form.first_name.errors %}
+                  {{e}}
+                {% endfor %}
+              </span>
+            {% endif %}
+            <span class="help-inline"></span>
+        </div>
+      
     {% endif %}
-    {% fields_for apply_form %}
-    <!-- <button input="submit" class="btn btn-primary">{% trans 'Send Application' %}</button> -->
+    {% comment %}{% fields_for apply_form %}{% endcomment %}
+    {{ apply_form.csrf}}
+
     {% if request.user.is_authenticated %}
       {% if request.user.resume_set %}
-      <p class="control-group row-fluid">
-        <label class="span2" for="id_select_resume">{% trans 'Resume' %}</label>
-          <select class="selectpicker" name="select_resume" id="id_select_resume" title="{% trans 'Choose your resume' %}..." data-width="auto">
+      <div class="control-group row-fluid">
+        <label class="span2 control-label" for="id_select_resume">{% trans 'Choose a Resume' %}</label>
+        <div class="controls row-fluid">
+          <select class="selectpicker show-tick" name="select_resume" id="id_select_resume" title="Choose your resume" data-width="auto" data-style="btn-info">
             {% for resume in request.user.resume_set.all reversed %}
-              <option value="{{ resume.id }}" data-subtext="{% trans 'added' %} {{ resume.created_at|date:'m-d-Y' }}">{{ resume.get_filename }}</option>
+              <option value="{{ resume.id }}" data-subtext="{% trans ' uploaded' %} {{ resume.created_at|date:'m-d-Y' }}">{{ resume.get_filename }}</option>
             {% endfor %}
           </select>
-      </p>
+        </div>
+      </div>
       {% endif %}
     {% endif %}
+    <div class="control-group">
+    <label for="id_resume">{% if request.user.resume_set %}{% trans 'Upload a new Resume' %}{% else %}{% trans 'Resume' %}{% endif %}</label>
+      <div class="controls">
+          <input type="file" title="{% trans 'choose Resume' %}" name="resume" id="id_resume" />
+          {% if apply_form.resume.errors %}
+              <span class="help-block error">
+                {% for e in apply_form.resume.errors %}
+                  {{e}}
+                {% endfor %}
+              </span>
+            {% endif %}
+          <span class="help-inline"></span>
+      </div>
+    </div>
+    <div class="control-group input_id_motivation">
+    <label for="id_motivation">{% trans 'Motivation' %}</label>
+      <div class="controls">
+          <textarea id="id_motivation" class="span11" rows="5" cols="40" name="motivation">{% if apply_form.motivation.value %}{{ apply_form.motivation.value }}{% endif %}</textarea>
+          {% if apply_form.motivation.errors %}
+              <span class="help-block error">
+                {% for e in apply_form.motivation.errors %}
+                  {{e}}
+                {% endfor %}
+              </span>
+            {% endif %}
+          <span class="help-inline"></span>    
+      </div>
+    </div>
 
-      
   </div>
   <div class="modal-footer">
     <!-- <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button> -->

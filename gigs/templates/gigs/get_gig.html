@@ -8,7 +8,7 @@
 <script type="text/javascript">stLight.options({publisher: "7ab66bb2-bdeb-45bb-94d0-8a47c38cc0fd", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 {% endcomment %}
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
-
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.file-input.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		
@@ -18,12 +18,20 @@
 		});
 		// style the select resume
 		$('.selectpicker').selectpicker();
+
+		// extend height of motivation textarea
+		$('#id_motivation').focus(function(){
+			$(this).attr('rows','10').show('slow');
+			});
+
+		// File upload styling
+		$('input[type=file]').bootstrapFileInput();
 	});
 </script>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
+
 <style type="text/css">
 div.important { 
 	background:#333;
@@ -104,10 +112,11 @@ div.important * {
 				<a href="#" data-target="#myModal" class="btn btn-large btn-success" data-toggle="modal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans 'Apply for this Job' %}&nbsp;<i class="icon-circle-arrow-right icon-white"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 			</section>
 
-			{% if signup_form.errors or apply_form.erros %}
+			{% if signup_form.errors or apply_form.resume.errors or apply_form.motivation_errors %}
 				<script type="text/javascript">
 					$(document).ready(function(){
 						console.log('hey');
+						console.log('{{apply_form.motivation_errors}}');
 						$("#myModal").modal({
 							show : true,
 						});
