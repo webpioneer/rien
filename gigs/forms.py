@@ -103,6 +103,7 @@ class CompanyForm(forms.ModelForm):
         return dict(
             type = self.cleaned_data['type'],
             company_name = self.cleaned_data['company_name'],
+            title_is_confidential = self.cleaned_data['title_is_confidential'],
             url = self.cleaned_data['url'],
             email = self.cleaned_data['email'],
             elevator_pitch = self.cleaned_data['elevator_pitch'],
