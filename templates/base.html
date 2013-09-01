@@ -61,6 +61,7 @@ input.error, select.error{
 .internship{
     color:#b8559a;
 }
+
 </style>
 
 {% ifinstalled cartridge.shop %}
@@ -333,8 +334,8 @@ $(function() {
           <div class="span4">
             <section>
               <h4>{% trans 'Services' %}</h4>
-                <a href="{% url 'post_job' %}">{% trans 'Post a Job'%}</a><br />
-                <a href="{% url 'home' %}">{% trans 'Find a Job'%}</a>
+                <a href="{% url 'home' %}">{% trans 'All Jobs'%}</a><br />
+                <a href="{% url 'post_job' %}">{% trans 'Post a Job'%}</a>
             </section>
             <!--close section-->
             <section>
@@ -383,6 +384,7 @@ $(function() {
   </div> 
 </footer>
 <!--/.footer--> 
+
 <span class="backToTop"><a href="#top">back to top</a></span> </div>
 <!-- close #page--> 
 
