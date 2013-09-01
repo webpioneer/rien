@@ -3,9 +3,8 @@
 
 {% block meta_title %}{% trans "All Jobs" %}{% endblock %}
 {% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}webcreate/css/jquery.ias.css" />
 <style type="text/css">
-
-
 /*
 .jobs-list {
     list-style:none;
@@ -237,19 +236,31 @@
 
 {% block extra_js %}
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-
 <script type="text/javascript"  
                 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language={{ LANGUAGE_CODE }}&components=country:{{ settings.COUNTRY }}"></script>
 <!--
 <script type="text/javascript"  
                 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&libraries=geometry&sensor=false&language={{ LANGUAGE_CODE }}&components=country:fr"></script>-->
 <script src="{{ STATIC_URL }}js/location.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}webcreate/jquery-ias.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     $("#id_find_jobs").click(function(e){
         e.preventDefault();
-        find_jobs(method = 'POST', page = 1, search = true);
+        find_jobs(method = 'POST', page = 1, search = true);   
     });
+    jQuery.ias({
+                container : '.jobs-list', // or .media-list
+                item: '.job-details',
+                pagination: '.navigation',
+                next: '.next a',
+                loader: '<img src="{{ STATIC_URL }}webcreate/images/loader.gif"/>',
+                triggerPageThreshold: 300,
+                noneleft: 'No more Jobs',
+                onPageChange: function(pageNum, pageUrl, scrollOffset){
+                    $('.next a').attr('href','?page='+pageNum+1);
+                }
+            });// end jquery ias
     /*
     $('#id_filter input[type=checkbox]').each(function () {
            if (this.checked) {
@@ -416,38 +427,6 @@ function find_jobs(method, page, search){
     });
 }// end find_jobs()
 
-// Infinite scroll implementation
-            var page = 1;
-
-            $(window).scroll(function () {
-                //$("#scrolling_date").hide();
-                $('#more').hide();
-                $('#no-more').hide();
-
-                if($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
-                    //$('#more').css("top", $(window).height());
-                    $('#more').show();
-                    //$("#scrolling_date").show();
-                }
-                if($(window).scrollTop() + $(window).height() == $(document).height()) {
-
-                    $('#more').hide();
-                    $('#no-more').hide();
-
-                    page++;
-
-                    var actual_count = "102";
-
-                    if((page-1)* 12 > actual_count){
-                        //$('#no-more').css("top","400");
-                        $('#no-more').show();
-                    }else{
-                        //console.log('hey');
-                        find_jobs(method = 'GET', page = page, search = false);
-                    }
-                }
-            }); // end scroll()
-    
 </script>
 {% endblock %}
 
@@ -545,7 +524,7 @@ function find_jobs(method, page, search){
     </section>
 -->
     <div class="jobs-list">
-    {% for gig in gigs %}
+    {% for gig in gigs.object_list %}
     <div id="results"></div>
     <div class="row job-details" style="margin-left:5px;{% comment %}{% if forloop.first %}background-color:#fff6ef{% endif %}{% endcomment %}">
         <div class="span11">
@@ -608,6 +587,8 @@ function find_jobs(method, page, search){
     </div><!-- end .row -->
     
     {% endfor %}
+
+    {% pagination_for gigs %}
     </div>
 
     <div id='scrolling_date'></div>
