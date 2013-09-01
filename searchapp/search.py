@@ -1,5 +1,6 @@
 from itertools import chain
 
+from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturalday
 from django.core import serializers
 from django.core.urlresolvers import reverse
@@ -47,22 +48,22 @@ def get_results(what, location, page, gig_types):
 	terms = _prepare_words(what)
 	#results = Gig.objects.all()
 	results = []
-	GIGS_TO_DISPLAY = 5
+	
 	try:
 		page = int(page)
 		if page == 1:
 			start = 0
-			end = GIGS_TO_DISPLAY
+			end = settings.GIGS_PER_PAGE
 		else :
-			end = page * GIGS_TO_DISPLAY
-			start = end - GIGS_TO_DISPLAY
+			end = page * settings.GIGS_PER_PAGE
+			start = end - settings.GIGS_PER_PAGE
 	except:
 		pass
 	#| Q(tags__icontains = what )
 	gigs = Gig.objects.filter(site_id=current_site_id())\
 			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what )
 				)\
-			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
+			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location)).order_by('-publish_date')[start:end]
 
 	gig_types_list = gig_types.split()
 	# Any remote jobs
@@ -75,7 +76,7 @@ def get_results(what, location, page, gig_types):
 	for gig_type in gig_types_list:
 		gigs = gigs.exclude(job_type = GigType.objects.get(pk = gig_type))
 
-	for gig in gigs.order_by('-publish_date')[start:end]:
+	for gig in gigs:
 		results.append({
 			'gig_id' : gig.id,
 			'gig_title' : gig.title,
