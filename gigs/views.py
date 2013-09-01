@@ -51,7 +51,7 @@ def all_gigs(request, template_name = 'gigs/index.html'):
 
     settings.use_editable()
     site_id = current_site_id()
-    gigs = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')[0:5]
+    gigs = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')
     categories = Category.objects.all().filter(site_id = site_id)
     #starting_price = GigType.get_starting_price()
     starting_price = GigType.objects.all().aggregate(Min('price'))['price__min']
@@ -59,6 +59,9 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     gig_types = GigType.objects.all()
     # search form
     gig_search_form = GigSearchForm()
+    gigs = paginate(gigs, request.GET.get("page", 1),
+                          settings.GIGS_PER_PAGE,
+                          settings.MAX_PAGING_LINKS)
     context = {
         'gigs' : gigs,
         'categories' : categories,
