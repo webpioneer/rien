@@ -396,6 +396,12 @@ OPTIONAL_APPS = (
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
 # CUSTOM SETTINGS
+
+# INDEX PAGE SETTINGS
+GIGS_PER_PAGE = 50
+MAX_PAGING_LINKS = 5
+
+# GOOGLE MAPS KEY
 GOOGLE_MAPS_KEY = 'AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM'
 
 #TASK_UPLOAD_FILE_TYPES = ['pdf', 'vnd.oasis.opendocument.text','vnd.ms-excel','msword','application',]
