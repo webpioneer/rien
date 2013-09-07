@@ -4,20 +4,55 @@
 {% block extra_css %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <!-- <link rel="stylesheet" href="{{STATIC_URL}}js/pdfjs/build/generic/web/viewer.css" /> -->
+<style type="text/css">
+.dark-header{
+	background-color: #566675;
+	color:#fff;
+	padding:3px 3px 3px 15px;
+}
+.dark-header .btn-group{
+	margin-right:10px;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<!-- Use latest PDF.js build from Github -->
-<!-- <script type="text/javascript" src="https://raw.github.com/mozilla/pdf.js/gh-pages/build/pdf.js"></script> -->
-<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/pdf.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/generic/web/compatibility.js"></script> 
-<script type="text/javascript" src="{{STATIC_URL}}js/pdfjs/build/generic/web/viewer.js"></script>
 
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#my-listings").addClass('active');
+	$("#favorite, #reject").click(function(e){
+		e.preventDefault();
+		var action = $(this).attr('id');
+		console.log(action);
+
+		$.ajax({
+	        type: 'GET',
+	        url : "{% url application_accept %}",
+	        data : {
+	            'id': '{{ application.id }}',
+	            //'action': 'Favorite' ? $(this).val('id', 'favorite') : 'Reject',
+	            'action' : action,
+	        },
+	        dataType : 'json',
+	    	}).done(function( msg ) {
+	    		console.log(msg.message);
+
+	    		$('#message').text(msg.message);
+	    		$('#message').parent().show();
+	    	}); //end done
+
+	}); // end click
+        
+}); //end document.ready
+</script>
 {% endblock %}
 
 {% block company_toolbar %}
-
+		<div class="alert alert-success" data-alert="alert" style="display:none">
+		<a class="close" href="#" onclick="$(this).parent().fadeOut('fast'); return false;">×</a><span id="message"></span>
+		</div>
 		{% block bread_crumb %}
 			<ul class="breadcrumb">
 		  <li><a href="{% url company_listings %}">{% trans 'my Listings' %}</a> <span class="divider">/</span></li>
@@ -106,9 +141,19 @@
 	
 	
 	<div id="resume">
+		<div class="row-fluid dark-header">
+			<div class="span4">{% trans 'Resume' %}</div>
+			<div class="span8">
+				<div class="btn-group pull-right">
+	             <a class="btn btn-small" href="{{ STATIC_URL }}media/{{ application.get_resume }}"><i class="icon-download-alt"></i>&nbsp;{% trans 'Download' %}</a>
+	             <a class="btn btn-small" href="#"><i class="icon-envelope"></i>&nbsp;{% trans 'Email' %}</a>
+	             <a class="btn btn-small" href="#"><i class="icon-print"></i>&nbsp;{% trans 'Print' %}</a>
+	            </div>
+			</div>
+		</div>
 		<iframe src="http://127.0.0.1:8000{{STATIC_URL}}media/{{ application.get_resume }}#view=fitH" 
 style="width:830px; height:600px;" frameborder="0"></iframe>
-  </div>
+  	</div>
   
 
 
@@ -189,4 +234,32 @@ style="width:830px; height:600px;" frameborder="0"></iframe>
 
 {% block company_toolbar_bottom %}
         {% include 'gigs/company/includes/app_toolbar.html' %}
+{% endblock %}
+
+{% block right_panel %}
+
+	{% load log %}
+    {% get_admin_log 10 as admin_log %}{{user}}
+    {% if not admin_log %}
+            <p>{% trans 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+    {% endif %}
+
 {% endblock %}

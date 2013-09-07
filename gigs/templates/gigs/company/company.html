@@ -8,7 +8,12 @@
 	padding:2px;
 	margin-bottom:2px;
 }
-
+a.fill-div {
+    display: block;
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+}
 </style>
 {% endblock %}
 
@@ -68,7 +73,7 @@
 
 	{% block company_toolbar %}{% endblock %}
 	{% block company_block%}
-		
+		<ul class="nav nav-tabs">{% block listing_nav %}{% endblock %}</ul>
 	{% endblock %}
 	{% block company_toolbar_bottom %}{% endblock %}
 {% endblock %}

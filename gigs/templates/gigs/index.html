@@ -245,10 +245,12 @@
 <script type="text/javascript" src="{{ STATIC_URL}}webcreate/jquery-ias.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
+    /*
     $("#id_find_jobs").click(function(e){
         e.preventDefault();
         find_jobs(method = 'POST', page = 1, search = true);   
     });
+    */
     jQuery.ias({
                 container : '.jobs-list', // or .media-list
                 item: '.job-details',
@@ -268,14 +270,23 @@ $(document).ready(function(){
            }
     });
     */
-    $("#id_search input[type='text']").bind('keydown keypress',function(){
+    /*
+    $("#id_search input[type='text']").bind('keydown keyup',function(){
         setTimeout(function() {
             find_jobs(method = 'GET', page = 1, search = true);
-        }, 1000);
+        }, 2000);
+    });
+    */
+    $("#id_search input[type='text']").bind('keydown keyup',function(){
+        //form submit
+        setTimeout(function() {
+            $('#id_search').submit();
+        }, 2000);
     });
     $("#id_filter input").click(function(){
         console.log($(this).val() + 'is clicked');
-        find_jobs(method = 'GET', page = 1, search = true);
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $('#id_search').submit();
     });
     
     $("a[id^='location_']").live('click', function(e){
@@ -283,7 +294,8 @@ $(document).ready(function(){
         //console.log($(this).text() + 'is clicked');
         //find_jobs(method = 'GET', page = 1, search = true);
         $("#id_location").val(jQuery.trim($(this).text()));
-        find_jobs(method = 'GET', page = 1, search = true);
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $('#id_search').submit();
     });
     $("a[id^='gig_type_']").live('click',function(e){
         e.preventDefault();
@@ -296,12 +308,14 @@ $(document).ready(function(){
                 $(this).attr('checked', false);
             }
         });
-        find_jobs(method = 'GET', page = 1, search = true);
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $('#id_search').submit();
     });
     $("a[id^='tag_']").live('click', function(e){
         e.preventDefault();
         $('#id_what').val($(this).attr('data-tag-name'));
-        find_jobs(method = 'GET', page = 1, search = true);
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $('#id_search').submit();
     });
 
 });
@@ -451,16 +465,21 @@ function find_jobs(method, page, search){
 	 <!-- Search and Filter
     ================================================== -->
     {% block search_form %}
-    <form class="form-inline" name="search" id="id_search" method="post" action="">{% csrf_token %}
+    <form class="form-inline" name="search" id="id_search" method="post" action="{% url find_jobs %}">{% csrf_token %}
         <div class="controls controls-row">
+            {% comment %}
             {{ gig_search_form.what }}
             {{ gig_search_form.location }}
+            {% endcomment %}
+            <input name="what" maxlength="100" placeholder="Job title, Keywords, Company name, ..." type="text" class="span5" id="id_what" value="{% if gig_search_form.what.value %}{{ gig_search_form.what.value }}{% else %}{% endif %}" />
+            <input name="location" maxlength="50" placeholder="City, State or Zip code" type="text" class="span5" id="id_location" value="{% if gig_search_form.location.value %}{{ gig_search_form.location.value }}{% else %}{% endif %}"/>
+            
             <button id="id_find_jobs" type="submit" class="btn btn-primary span2">{% trans 'Find Jobs' %}</button>
         </div><!-- .controls .controls-row-->
         <div id="id_filter">
             {% for gig_type in gig_types %}
             <label class="checkbox inline {{ gig_type.type|lower }}">
-              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" checked> {{ gig_type.type }}
+              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" {% comment %}{% if gig_type.id not  in gig_types_string %}checked{% else%}{% endif %}{% endcomment%}checked> {{ gig_type.type }}
             </label>
             {% endfor %}
             <label class="checkbox pull-right">
@@ -476,7 +495,7 @@ function find_jobs(method, page, search){
                 <a id="reset" class="btn btn-info btn-small" href="{% url home %}"><i class="icon-refresh"></i>&nbsp;&nbsp;Reset</a>   
             </div>
             <div class="span4">
-                <button class="btn pull-right btn-small">Email / RSS Notifications</button>
+                <button class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
             </div>
         </div>
 
