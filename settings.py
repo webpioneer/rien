@@ -311,6 +311,7 @@ INSTALLED_APPS = (
     #"mezzanine.twitter",
     "mezzanine.accounts",
     #"mezzanine.mobile",
+    'utils_app', # utils app
     'gigs',
     'fts',
     'searchapp',
@@ -398,8 +399,8 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 # CUSTOM SETTINGS
 
 # INDEX PAGE SETTINGS
-GIGS_PER_PAGE = 50
-MAX_PAGING_LINKS = 5
+GIGS_PER_PAGE = 10
+MAX_PAGING_LINKS = 10
 
 # GOOGLE MAPS KEY
 GOOGLE_MAPS_KEY = 'AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM'
