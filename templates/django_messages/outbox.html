@@ -1,29 +1,45 @@
 {% extends 'django_messages/inbox.html' %}
-{% load mezzanine_tags i18n pages_tags %}
+{% load mezzanine_tags i18n pages_tags humanize %}
 
 {% block company_block %}
     
-        <h1>{% trans "Sent Messages" %}</h1>
-    {% if message_list %} 
-    <table class="messages">
-        <thead>
-            <tr><th>{% trans "Recipient" %}</th><th>{% trans "Subject" %}</th><th>{% trans "Sent" %}</th><th>{% trans "Action" %}</th></tr>
-        </thead>
-        <tbody>
-    {% for message in message_list %} 
-        {% if not message.application %}
-        <tr>
-            <td>{{ message.recipient }}</td>
-            <td>
-            <a href="{{ message.get_absolute_url }}">{{ message.subject }}</a>
-            </td>
+        {% comment %}
             <td>{{ message.sent_at|date:_("DATETIME_FORMAT") }}</td>
             <td><a href="{% url messages_delete message.id %}?next={% url messages_outbox %}">{% trans "delete" %}</a></td>
-        </tr>
-        {% endif %}
-    {% endfor %}
-        </tbody>
-    </table>
+        {% endcomment %}
+        
+    {% if message_list %} 
+    <ul class='unstyled'>
+                {% for message in message_list %}
+                {% if not message.application %}
+                <li class='fluid-row message read'>
+                    <div class="media" style="">
+                        <a class="pull-left" href="#">
+                            <img class="media-object" src="/static/media/profiles/profile.jpg">
+                        </a>
+                        
+                        <div class="media-body">
+                            <a class="fill-div" href="{{ message.get_absolute_url }}">
+                        <h4 class="media-heading">bouhram el mahdi
+                            <span class="pull-right"><small>{% if 'today' in message.sent_at|naturalday %}
+                            {{ message.sent_at|date:"h:m a" }}{% else %}{{ message.sent_at|date:"D d" }}{% endif %}</small></span>
+                        </h4>
+                        {% if message.read_at %}
+                        <span><small>
+                            <span class="label label-success">{% trans "read by" %} {{ message.recipient|capfirst }} {{ message.read_at}}</span>
+                            
+                        </small></span>
+                        {% endif %}
+                        <br />
+                            <p><strong>{{ message.subject|capfirst }}</strong> {{ message.body|truncatewords:10 }}</p>
+                        </a>      
+                      </div><!-- end .media-body -->
+                         
+                    </div><!-- end .media -->
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
     {% else %}
     <p>{% trans "No messages." %}</p>
     {% endif %}   

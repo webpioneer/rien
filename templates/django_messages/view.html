@@ -1,28 +1,92 @@
 {% extends 'django_messages/inbox.html' %}
-{% load mezzanine_tags i18n pages_tags %}
+{% load mezzanine_tags i18n pages_tags messages_tags humanize %}
 
 {% block company_block %}
 	
 	{% with company=request.user.company %}
-			<h1>{% trans "View Message" %}</h1>
-	<dl class="message-headers">
-	    <dt>{% trans "Subject" %}</dt>
-	    <dd><strong>{{ message.subject }}</strong></dd>
-	    <dt>{% trans "Sender" %}</dt>
-	    <dd>{{ message.sender }}</dd>
-	    <dt>{% trans "Date" %} </dt>
-	    <dd>{{ message.sent_at|date:_("DATETIME_FORMAT")}}</dd>
-	    <dt>{% trans "Recipient" %}</dt>
-	    <dd>{{ message.recipient }}</dd>
-	</dl>
-	{{ message.body|linebreaksbr }}<br /><br />
-
+	<ul class='unstyled'>
+	{% message_family message %}
+	<li>
+		<div class="media">      
+	                        <a class="pull-left" href="#">
+	                            <img class="media-object" src="/static/media/profiles/profile.jpg">
+	                        </a>
+	                        
+	                        <div class="media-body">
+	                            <a class="fill-div" href="{{ message.get_absolute_url }}">
+	                        <h4 class="media-heading">{{ message.sender }}
+	                            <span class="pull-right"><small>{% if 'today' in message.sent_at|naturalday %}
+	                            {{ message.sent_at|date:"h:m a" }} ({{ message.sent_at|timesince }}){% else %}{{ message.sent_at|date:"D d" }}{% endif %}</small></span>
+	                        </h4>
+	                        <span><small>
+	                            <span class="label label-info">read</span>    
+	                            
+	                        </small></span><br />
+	                            <p><strong>{{ message.subject|capfirst }}</strong> {{ message.body|linebreaksbr }}</p>
+	                        </a>      
+	                      </div><!-- end .media-body -->
+	                         
+	    </div><!-- end .media -->
+	</li>
+    {% for m in message.next_messages.all reversed %}
+    <li>
+    	<div class="media {% if m.sender = request.user %}read{% endif %}">     
+        <a class="pull-left" href="#">
+		{% if request.user.company.twitter_username %}
+                <img  data-toggle="dropdown" class="btn dropdown-toggle" src='http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger' width='30' height='30'>&nbsp;&nbsp;<span class="caret"></span></a>
+            {% elif request.user.company.profile_picture %}
+                <img src='{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 73 73 %}'>
+            {% else %} 
+                <i class="icon-user icon-white"></i>&nbsp;&nbsp;{{ request.user|capfirst }}&nbsp;&nbsp;<span class="caret"></span>
+            {% endif %}
+		
+        </a>    
+                        <div class="media-body">
+                            <a class="fill-div" href="{{ m.get_absolute_url }}">
+                        <h4 class="media-heading">{{ m.sender }}
+                            <span class="pull-right"><small>{% if 'today' in m.sent_at|naturalday %}
+                            {{ m.sent_at|date:"h:m a" }}({{ m.sent_at|timesince }} ago){% else %}{{ m.sent_at|date:"D d" }}{% endif %}</small></span>
+                        </h4>
+                        
+                          <p><strong>{{ m.subject|capfirst }}</strong> {{ m.body|linebreaksbr }}</p>
+                        </a>      
+                      </div><!-- end .media-body -->
+                         
+    	</div><!-- end .media -->
+	</li>
+    {% endfor %}
+    <li>
+	    <div class="media">      
+	        <a href="#" class="pull-left">
+	            {% if request.user.company.twitter_username %}
+	                <img  data-toggle="dropdown" class="btn dropdown-toggle" src='http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger' width='30' height='30'>&nbsp;&nbsp;<span class="caret"></span></a>
+	            {% elif request.user.company.profile_picture %}
+	                <img src='{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 73 73 %}'>
+	            {% else %} 
+	                <i class="icon-user icon-white"></i>&nbsp;&nbsp;{{ request.user|capfirst }}&nbsp;&nbsp;<span class="caret"></span>
+	            {% endif %}              
+	        </a>
+	                        
+	        <div class="media-body">
+	        <form action="{% url messages_reply message_id=message.id %}" method="post">{% csrf_token %}
+	        	<fieldset>
+				<input type="hidden" name="recipient" value="{{ message.sender }}" id="id_recipient" />
+				<input id="id_subject" type="hidden" name="subject" value="Reply to : {{ message.subject }}" maxlength="120" />
+				<textarea id="id_body" class="span12" rows="5" name="body" required autofocus="autofocus"></textarea>
+				<button type="submit" class="btn btn-large btn-success">Send</button>
+				<fieldset>
+			</form>     
+			</div><!-- end .media-body -->
+	                         
+	    </div><!-- end .media -->
+	</li>
+</ul>
 
 	{% ifequal message.recipient.pk user.pk %}
 	<a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>
 	{% endifequal %}
 	<a href="{% url messages_delete message.id %}">{% trans "Delete" %}</a>
-			
+
 		
 	{% endwith %}
 
