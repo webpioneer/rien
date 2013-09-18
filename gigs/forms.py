@@ -6,10 +6,11 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
+from mezzanine.accounts.forms import ProfileForm
 from mezzanine.core.forms import TinyMceWidget
 
-from gigs.models import Category, Company, Gig, GigType
-from mezzanine.accounts.forms import ProfileForm
+from gigs.models import Category, ChildStatus, Company, Gig, GigType
+
 
 class PostJobForm(forms.ModelForm):
     """ 
@@ -191,3 +192,9 @@ class ProfileForm2(forms.ModelForm):
 
 class ReplyForm(forms.Form):
     reply = forms.CharField()
+
+class ApplicationStatusForm(forms.ModelForm):
+    class Meta:
+        model = ChildStatus
+        fields = ['name',]
+
