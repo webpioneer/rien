@@ -1,8 +1,10 @@
 {% extends 'gigs/company/company.html' %}
-{% load mezzanine_tags i18n pages_tags %}
+{% load mezzanine_tags i18n pages_tags feedback_tags %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{STATIC_URL}}rateit/src/rateit.css">
 <!-- <link rel="stylesheet" href="{{STATIC_URL}}js/pdfjs/build/generic/web/viewer.css" /> -->
 <style type="text/css">
 .dark-header{
@@ -13,15 +15,40 @@
 .dark-header .btn-group{
 	margin-right:10px;
 }
+.modal.large {
+    width: 60%; /* respsonsive width */
+    margin-left:-30%; /* width/2) */
+}
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}rateit/src/jquery.rateit.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}rateit/src/jquery.rateit.min.js.map"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#my-listings").addClass('active');
+
+	// for application status
+	$('#id_name').addClass('selectpicker');
+	//$('#id_name [option={{application_status}}]').selected();
+	$("#id_name option[value='{{ application_status}}']").attr("selected","selected");
+	$("#id_name").attr('show-tick','true');
+
+    $('.selectpicker').selectpicker({
+    	style: 'btn-info',
+      	width : 'auto',
+      	title : 'hello',
+    	});
+
+	$("#send_email").click(function(){
+			var btn = $(this);
+        	btn.button('loading');
+		});
+
 	$("#favorite, #reject").click(function(e){
 		e.preventDefault();
 		var action = $(this).attr('id');
@@ -44,6 +71,28 @@ $(document).ready(function(){
 	    	}); //end done
 
 	}); // end click
+	// workflow status
+	$("#id_name").change(function(){
+		var application_status = $(this).val();
+		var application_status_text = $('#id_name [selected]').text();
+		console.log(application_status_text);
+
+		$.ajax({
+	        type: 'GET',
+	        url : "{% url set_application_status %}",
+	        data : {
+	        	'application_id': '{{ application.id }}',
+	            'application_status': application_status,
+	            'application_status_text' : application_status_text,
+	        },
+	        dataType : 'json',
+	    	}).done(function( msg ) {
+	    		$('#message').html(msg.message);
+	    		$('#message').parent().show();
+	    	}); //end done
+
+	}); // end click
+
         
 }); //end document.ready
 </script>
@@ -60,7 +109,7 @@ $(document).ready(function(){
 		  <li class="active"><a href='#'>{{ application.sender.get_full_name }} Application</a></li>
 			</ul>
 	{% endblock %}
-        <div class="btn-toolbar" style="margin: 2;">
+        {% comment %}<div class="btn-toolbar" style="margin: 2;">
         	<div class="btn-group">
         		<!--
               <a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary" href="{% url company_listings %}"><i class="icon-share-alt"></i>{% trans 'Reply' %}</a> -->
@@ -79,7 +128,37 @@ $(document).ready(function(){
               <a class="btn" href="{% url application_follower sign='previous' id=application.id %}"><i class="icon-arrow-left"></i>{% trans 'Previous' %}</a>
                 <a class="btn" href="{% url application_follower sign='next' id=application.id %}">{% trans 'Next' %}<i class="icon-arrow-right"></i></a>
               </div>
-</div>
+</div> {% endcomment %}
+		<div><!-- workflow status -->
+			{{application_status_form.name }}
+			{% comment %}{% feedbacks_for application %}{% endcomment %}
+		<div class="btn-group">
+			<a class="btn btn-success"  href="{% url submit_feedback app_name='gigs' model_name='Application' id=application.id %}" data-target="#feedbackModal" data-toggle="modal" role="button">{% trans 'Submit Feedback' %}</a>
+			<a class="btn btn-success" data-target="#viewFeedbackModal" data-toggle="modal" role="button">{% trans 'View Feedback' %}</a>
+			<a data-target="#requestFeedback" class="btn btn-success" data-toggle="modal" role="button">{% trans 'Request Feedback' %}</a>
+		</div>
+
+	<!-- View feedback modal -->
+	{% include 'feedb/view_feedback_modal.html' %}
+	<!-- Submit feedback Modal -->
+	{% include 'feedb/submit_feedback_modal.html' %}
+	<!-- Request Feedback -->
+	{% include 'feedb/request_feedback_modal.html' %}
+	{% if resume_form.errors %}
+		<script type="text/javascript">
+			$(document).ready(function(){
+				console.log('hey');
+				console.log('{{resume_form.errors}}');
+				$("#requestFeedback").modal({
+					show : true,
+					});
+				});
+		</script>
+	{% endif %}
+	
+	
+			{% comment %}{% rating_for application %}{% endcomment %}
+		</div>
 {% endblock %}
 
 {% block company_block %}
@@ -112,7 +191,7 @@ $(document).ready(function(){
 	  </div>
 	  <div class="modal-footer">
 	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	    <button type="submit" class="btn btn-primary">Save changes</button>
+	    <button type="submit" class="btn btn-primary btn-large">Save changes</button>
 	  </div>
 	  </form>
 	</div>
@@ -128,7 +207,7 @@ $(document).ready(function(){
 	    {% endif %}
 	  </a>
 	  <div class="media-body">
-	    <h4 class="media-heading">{{ application.sender.get_full_name }}
+	    <h4 class="media-heading">{{ application.sender.get_full_name|capfirst }} {{ application.sender.email }}
 	    	<span class="pull-right"></span>
 	    </h4>
 	    <small>{{ application.sent_at }} ({{ application.sent_at|timesince }})</small><br />
@@ -145,8 +224,8 @@ $(document).ready(function(){
 			<div class="span4">{% trans 'Resume' %}</div>
 			<div class="span8">
 				<div class="btn-group pull-right">
-	             <a class="btn btn-small" href="{{ STATIC_URL }}media/{{ application.get_resume }}"><i class="icon-download-alt"></i>&nbsp;{% trans 'Download' %}</a>
-	             <a class="btn btn-small" href="#"><i class="icon-envelope"></i>&nbsp;{% trans 'Email' %}</a>
+	             <a class="btn btn-small" href="{{ STATIC_URL }}media/{{ application.get_resume }}" target='_blank'><i class="icon-download-alt"></i>&nbsp;{% trans 'Download' %}</a>
+	             <a class="btn btn-small" href="#emailModal" data-toggle="modal" role="button"><i class="icon-envelope"></i>&nbsp;{% trans 'Email' %}</a>
 	             <a class="btn btn-small" href="#"><i class="icon-print"></i>&nbsp;{% trans 'Print' %}</a>
 	            </div>
 			</div>
@@ -154,14 +233,20 @@ $(document).ready(function(){
 		<iframe src="http://127.0.0.1:8000{{STATIC_URL}}media/{{ application.get_resume }}#view=fitH" 
 style="width:830px; height:600px;" frameborder="0"></iframe>
   	</div>
-  
-
-
-    
- 
-		  <div style="display:none"></div>
 
 	</div> <!-- end #resume -->
+	{% if resume_form.errors and attach %}
+		<script type="text/javascript">
+			$(document).ready(function(){
+				console.log('hey');
+				console.log('{{resume_form.errors}}');
+				$("#emailModal").modal({
+					show : true,
+					});
+				});
+		</script>
+	{% endif %}
+	{% include 'utils_app/email_resume.html' %}
 
 	{% if not application_followup %}
 
