@@ -17,6 +17,7 @@ urlpatterns = patterns('gigs.views',
     url('application/(?P<message_id>[\d]+)/$','application_detail', {'template_name':'gigs/company/application_detail.html'}, name = 'application_detail'),
     url('application/(?P<sign>[-\w]+)/(?P<id>[-\w]+)/$','application_follower', {'template_name':'gigs/company/application_detail.html'}, name = 'application_follower'),
     url('application/accept/$', 'application_accept', name = 'application_accept'),
+    url('application/status/$', 'set_application_status', name = 'set_application_status'),
     # Apply
     url('profile/applications/$', 'applier_applications', {'template_name':'gigs/applier/applier_applications.html'}, name = 'applier_applications'),
     #url('apply/(?P<gig_slug>[-\w]+)/$','apply',{'template_name':'gigs/apply.html'}, name = 'apply'),
@@ -35,7 +36,7 @@ urlpatterns += patterns('gigs.utils.views',
 
 urlpatterns += patterns('',
     #Profile
-    url(r'^account/$', 'gigs.views.account', {'template_name':'gigs/account.html'} ,name='account'),
+    url(r'^account/$', 'gigs.views.account', {'template_name':'gigs/account.html'} , name='account'),
     # profile password change
     url(r'^account/password_change/$', 'django.contrib.auth.views.password_change', {'template_name':'gigs/company/account_password_change.html'}, name='password_change'),
     url(r'^account/password_change/done/$', 'django.contrib.auth.views.password_change_done', {'template_name':'gigs/company/account_password_change_done.html'}, name='password_change_done'),
