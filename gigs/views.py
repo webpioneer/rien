@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib.messages import info
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
+from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.db.models import Min
@@ -9,7 +12,6 @@ from django.shortcuts import HttpResponse, get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.decorators import login_required
 
 
 
@@ -30,11 +32,14 @@ from django_messages.models import Message
 from notification.models import NoticeSetting
 
 
-from gigs.forms import CompanyForm, PostJobForm, ApplyForm, ReplyForm, ProfileForm2
+from gigs.forms import ApplicationStatusForm, ApplyForm, ChildStatus,\
+    CompanyForm, PostJobForm, ProfileForm2, ReplyForm
 from gigs.models import Category, Gig, GigType, Application, Resume
 from gigs.signals import user_added_to_group
 from gigs.utils.views import application_messages
 from searchapp.forms import GigSearchForm
+from searchapp.search import store, get_results
+from utils_app.forms import ResumeForm
 
 if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification
@@ -51,25 +56,49 @@ def all_gigs(request, template_name = 'gigs/index.html'):
 
     settings.use_editable()
     site_id = current_site_id()
-    gigs = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')
-    categories = Category.objects.all().filter(site_id = site_id)
-    #starting_price = GigType.get_starting_price()
-    starting_price = GigType.objects.all().aggregate(Min('price'))['price__min']
-    # for search and filtering
-    gig_types = GigType.objects.all()
     # search form
     gig_search_form = GigSearchForm()
-    gigs = paginate(gigs, request.GET.get("page", 1),
-                          settings.GIGS_PER_PAGE,
-                          settings.MAX_PAGING_LINKS)
-    context = {
+    categories = Category.objects.all().filter(site_id = site_id)
+    # for search and filtering
+    gig_types = GigType.objects.all()
+    results = []
+    #starting_price = GigType.get_starting_price()
+    starting_price = GigType.objects.all().aggregate(Min('price'))['price__min']
+
+    if request.method == 'GET':
+        results = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')
+        gigs = paginate(results, request.GET.get("page", 1),
+                              settings.GIGS_PER_PAGE,
+                              settings.MAX_PAGING_LINKS)
+        context = {
         'gigs' : gigs,
         'categories' : categories,
         'gig_types' : gig_types,
         'starting_price' : starting_price,
         'gig_search_form' : gig_search_form,
-    }
-    return render(request, template_name, context)
+        }
+        return render(request, template_name, context)
+
+    else:
+        if gig_search_form.is_valid():
+            print 'form is valid'
+            what = gig_search_form.cleaned_data['what']
+            location = gig_search_form.cleaned_data['location']
+            results = get_results(what, location, page, gig_types)
+            gigs = paginate(results, request.GET.get("page", 1),
+                              settings.GIGS_PER_PAGE,
+                              settings.MAX_PAGING_LINKS)
+            context = {
+                'gigs' : gigs,
+                'categories' : categories,
+                'gig_types' : gig_types,
+                'starting_price' : starting_price,
+                'gig_search_form' : gig_search_form,
+            }
+        return render(request, template_name, context)
+
+    
+    
 
 def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
     """
@@ -88,8 +117,8 @@ def get_gig(request, slug = None,template_name = 'gigs/get_gig.html'):
         pass
         
     context = {
-        'gig' : gig,
         'apply_form' : apply_form,
+        'gig' : gig,
         'signup_form' : signup_form,
     }   
     return render(request, template_name, context)
@@ -482,6 +511,8 @@ def reply_to_apply(request, application_id, template_name = 'gigs/applier/applic
 def application_detail(request, message_id, template_name = 'gigs/applier/application_detail.html'):
     """ returns application details """
     application = get_object_or_404(Application, id = message_id)
+    resume_form = ResumeForm()
+    application_status_form = ApplicationStatusForm()
     print application.body
     if (application.sender != request.user) and (application.recipient != request.user):
         raise Http404
@@ -494,9 +525,31 @@ def application_detail(request, message_id, template_name = 'gigs/applier/applic
 
     context ={
         'application' : application,
+        'application_status_form' : application_status_form,
+        'resume_form' : resume_form,
         'application_followup' : application_followup,
+        #'application_status' : application.status.select_related().reverse()[0].name or None,
     }
     return render(request, template_name, context)
+
+def set_application_status(request):
+
+    if request.is_ajax():
+        application_status = request.GET.get('application_status')
+        application_status_text = request.GET.get('application_status_text')
+        child_status = ChildStatus()
+        child_status.name = application_status
+        child_status.user = request.user
+        child_status.save()
+        application_id  = request.GET.get('application_id')
+        application =get_object_or_404(Application, id = application_id)
+        application.status.add(child_status)
+        message = 'The application status is <strong>%s</strong>' % application_status_text
+    response = simplejson.dumps({
+               'message' :  message,
+               })
+    return HttpResponse(response, content_type='application/javascript')
+
  
 def application_follower(request, sign, id, template_name = 'gigs/applier/application_detail.html'):
     """ Browse to the next/previous application"""
@@ -519,14 +572,21 @@ def application_accept(request):
     app = get_object_or_404(Application, id = int(request.GET['id']))
     if request.is_ajax():
         action = request.GET['action']
-        if action == 'Favorite' and not app.favorited_at:
+        #if action == 'favorite' and not app.favorited_at:
+        if action == 'favorite':
             app.favorited_at = now()
             app.save()
             message = 'Added to favorites'
-        if action == 'Reject':
+            LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(app).pk,
+            object_id=app.id,
+            object_repr=unicode(app.subject),
+            action_flag=ADDITION)
+        if action == 'reject':
             app.rejected_at = now()
             app.save()
-            message = 'Added to rejected'
+            message = _('Added to rejected')
     response = simplejson.dumps({
         'message' :  message,
                 })
