@@ -1,0 +1,34 @@
+<!-- Modal -->
+	<div id="feedbackModal" class="modal large hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Submit Feedback</h3>
+	  </div>
+	  <form name="app_reply_form" method="post" action="{% url messages_reply message_id=application.id %}">{% csrf_token %}
+	  <div class="modal-body row-fluid">
+	  		{% comment %}<input type="hidden" name="recipient" id="id_recipient" value="{{ application.sender }}" />
+	    	<input type="hidden" name="subject" id="id_subject" value="Re: Application to {{ application.title}} " />
+	    	<p class="fluid-row">
+	    		<label class="span2" for="id_body">
+	    			<a href="#">
+					{% if request.user.company.twitter_username %}
+					<img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger" width="48" height="48">
+					{% else %}
+				<img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail request.user.company.profile_picture 48 48 %}">
+					{% endif %}
+				</a> </label>
+	    		<textarea class="span10" rows="10" name="body" id="id_body"></textarea>
+	    	</p>
+	    	{% endcomment %}
+	    	<div class="span6">feedback message</div>
+	    	<div class="span6">rating stars</div>
+
+
+	    
+	  </div>
+	  <div class="modal-footer">
+	  	<button type="submit" class="btn btn-primary">Save changes</button>
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	  </div>
+	  </form>
+	</div>

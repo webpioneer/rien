@@ -1,0 +1,23 @@
+{% load i18n %}
+{% if feedbacks %}
+	<h5 class="well well-small">
+		{{ obj.rated_feedbacks|length }} rated out of {{ feedbacks|length }} total {% trans 'Feedback(s)' %}
+		<span class="rateit" data-rateit-value="{{ obj.average_rating }}" data-rateit-ispreset="true" data-rateit-readonly="true">Average rating score = {{ obj.average_rating }} </span>
+	</h5> 
+	{% for feedback in feedbacks %}
+	<div class="row-fluid">
+		<div class="span3">
+			<strong>{{ feedback.user }}</strong>
+			<br>{{ feedback.submit_date|date:"M d, Y" }}
+			<div class="rateit" data-rateit-value="{{ feedback.rating }}" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+		</div>
+		<div class="span8">{{ feedback.feedback|capfirst }}</div>
+	</div>
+	<hr>
+	{% endfor %}
+{% else %}
+	<h4 class="well well-small">
+		{{ feedbacks|length }} {% trans 'Feedback(s)' %}
+		<span class="rateit" data-rateit-value="{{ obj.average_rating }}" data-rateit-ispreset="true" data-rateit-readonly="true"></span>
+	</h4>
+{% endif %}

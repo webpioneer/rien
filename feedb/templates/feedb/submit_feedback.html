@@ -1,0 +1,40 @@
+{% load mezzanine_tags i18n %}
+<script src="/static/mezzanine/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}rateit/src/jquery.rateit.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}rateit/src/jquery.rateit.min.js.map"></script>
+<link rel="stylesheet" href="{{STATIC_URL}}rateit/src/rateit.css">
+<style type="text/css">
+#rating{
+	cursor:pointer;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#rating').click(function(e){
+		e.preventDefault();
+		$('#id_rating').val($(this).rateit('value'));
+	});
+	$('#id_feedback').focus();
+});
+</script>
+
+<div class="span6">
+	<div class="control-group input_id_feedback">
+		<label for="id_feedback">
+			<h4>{% blocktrans with name=obj.sender.last_name|capfirst %} Enter your feedback on <strong>{{ name }}</strong> for this job {% endblocktrans %}</h4>
+		</label>
+		<div class="controls">
+			<textarea class="span11" name="feedback" id="id_feedback" name="feedback" cols="2" rows="10"></textarea>
+		</div>
+	</div>
+	<input type="hidden" name="obj" value="{{ obj.id }}" />
+	<input type="hidden" name="model_name" value="{{ model_name }}" />
+	<input type="hidden" name="app_name" value="{{ app_name }}" />
+	<input type="hidden" name="rating" id="id_rating" />
+</div>
+<div class="span5 well">
+	<h4>{% trans 'My Rating for this Applicant' %}</h4>
+	<p class="center mute">{% trans 'You can change this anytime' %}</p>
+	<div id="rating" class="rateit bigstars offset2" data-rateit-resetable="false"></div>
+	
+</div>

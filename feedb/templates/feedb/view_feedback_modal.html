@@ -1,0 +1,17 @@
+{% load i18n feedback_tags %}
+<div id="viewFeedbackModal" class="modal large hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">
+	    	{% blocktrans with name=application.sender.last_name|capfirst%}Feedback on {{ name }} for this Job {% endblocktrans %}
+	    </h3>
+	  </div>
+	  <form name="app_reply_form" method="post" action="{% url submit_feedback %}">{% csrf_token %}
+	  <div class="modal-body">
+	  		{% feedbacks_for application %}
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans 'Close' %}</button>
+	  </div>
+	  </form>
+</div>

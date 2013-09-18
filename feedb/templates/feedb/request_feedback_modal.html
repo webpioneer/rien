@@ -1,0 +1,79 @@
+{% extends 'utils_app/email_base.html' %}
+{% load i18n %}
+
+<!-- email Modal -->
+	<div id="{% block modal_id %}requestFeedback{% endblock %}" class="modal large hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">{% block modal_label%}{% trans 'Request Feedback' %}{% endblock %}</h3>
+	  </div>
+	  <form class="form-horizontal" name="resume_form" method="post" action="{% block action %}{% url email_resume attach='False' %}{% endblock %}">{% csrf_token %}
+	  <div class="modal-body">
+	    <p>{% block modal_intro %}{% trans 'Send this feedback request to any recipients' %}{% endblock %}</p>    
+	    	{% comment %}{% fields_for resume_form %}{% endcomment %}
+	    	<input type="hidden" name="referrer" value="">
+	    <div class="control-group input_id_recipients">
+	    	<label for="id_recipients" class="span2">{% trans 'Recipients' %}</label>
+    		<div class="controls">
+		        <input id="id_recipients" class="span11" type="text" name="recipients" maxlength="1000" value="{% if resume_form.recipients.value %}{{ resume_form.recipients.value }}{% endif %}" />
+			    {% if resume_form.recipients.errors %}
+	              <span class="help-block error">
+	                {% for e in resume_form.recipients.errors %}
+	                  {{e}}
+	                {% endfor %}
+	              </span>
+	            {% endif %}
+		        <span class="help-inline small">{% trans "recipients' emails separated by commas" %}</span>
+    		</div>
+		</div>
+		<div class="control-group input_id_subject">
+		    <label for="id_subject" class="span2">{% trans 'Subject' %}</label>
+		    <div class="controls">
+		        <input id="id_subject" class="span11" type="text" name="subject" value="{% block modal_subject %}Please Review {{ application.sender.last_name }}'s Application and Resume{% endblock %}" maxlength="300" />
+		        {% if resume_form.subject.errors %}
+	              <span class="help-block error">
+	                {% for e in resume_form.subject.errors %}
+	                  {{e}}
+	                {% endfor %}
+	              </span>
+	            {% endif %}
+		        <span class="help-inline"></span>
+		    </div>
+		</div>
+		<div class="control-group input_id_body">
+			<label for="id_body" class="span2">{% trans 'Body' %}</label>
+		    <div class="controls">
+		        <textarea id="id_body" class="span11" rows="5" cols="40" name="body">
+		        	
+		        {% if resume_form.body.value %}{{ resume_form.body.value }}{% else %}
+		        	{% block modal_body %}Hello,
+
+We recently received a resume from <strong>{{ application.sender.last_name|capfirst }}</strong> and we are evaluating this person for a potential position. We'd like your honest and candid feedback on [applicant_first_name]. You can remain anonymous if you wish.
+
+<a href="{{ application.get_absolute_url }}">application</a>
+		        		        
+		        		        Thanks,
+		        		        [my_full_name]
+		        		        [company_name]
+
+		        	{% endblock %}
+		        {% endif %}
+		    </textarea>
+		        {% if resume_form.body.errors %}
+	              <span class="help-block error">
+	                {% for e in resume_form.body.errors %}
+	                  {{e}}
+	                {% endfor %}
+	              </span>
+	            {% endif %}
+		        <span class="help-inline"></span>
+		    </div>
+		</div>
+		{% block modal_attachement %}{% endblock %}
+	    <input type="hidden" name="application_id" value="{{ application.id }}" /> 
+	  </div>
+	  <div class="modal-footer">
+	  	<button id="send_email" type="submit" class="btn btn-primary btn-large offset3" data-loading-text="{% trans 'Sending Request of Feedback...' %}">{% block send_button_value %}{% trans 'Request Feedback' %}{% endblock %}</button>
+	  </div>
+	  </form>
+	</div><!-- end email Modal -->
