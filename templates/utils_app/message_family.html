@@ -1,0 +1,28 @@
+{% load humanize %}
+{% for m in messages reversed %}{% if m.sender = request.user %}true{% endif %}{{ m.sender }} =? {{ request.user.username }}
+	<div class="media {% if m.sender = request.user %}read{% endif %}">      
+        <a class="pull-left" href="#">
+		
+			{% if request.user.company.profile_picture %}
+                <img src='{{ MEDIA_URL }}'>
+			{% elif request.user.company.twitter_username %}
+                <img  data-toggle="dropdown" class="btn dropdown-toggle" src='http://api.twitter.com/1/users/profile_image/{{ request.user.company.twitter_username }}.png?size=bigger' width='30' height='30'>&nbsp;&nbsp;<span class="caret"></span></a>
+			{% else%} 
+                <i class="icon-user icon-white"></i>&nbsp;&nbsp;{{ request.user|capfirst }}&nbsp;&nbsp;<span class="caret"></span>
+            {% endif %} 
+		
+        </a>
+                        
+                        <div class="media-body">
+                            <a class="fill-div" href="{{ m.get_absolute_url }}">
+                        <h4 class="media-heading">{{ m.sender }}
+                            <span class="pull-right"><small>{% if 'today' in m.sent_at|naturalday %}
+                            {{ m.sent_at|date:"h:m a" }}({{ m.sent_at|timesince }} ago){% else %}{{ m.sent_at|date:"D d" }}{% endif %}</small></span>
+                        </h4>
+                        
+                          <p><strong>{{ m.subject|capfirst }}</strong> {{ m.body|linebreaksbr }}</p>
+                        </a>      
+                      </div><!-- end .media-body -->
+                         
+    </div><!-- end .media -->
+{% endfor %}
