@@ -5,6 +5,7 @@
 {% block company_toolbar %}
         <div class="btn-toolbar" style="margin: 2;">
               <div class="btn-group">
+              	{% comment %}<a class="btn {% if 'people' in request.META.PATH_INFO %}active{% endif %}" href="{% url people %}">{% trans 'People' %}</a>{% endcomment %}
                 <a class="btn {% if 'personal' in request.META.PATH_INFO %}active{% endif %}" href="{% url profile_update %}">{% trans 'Personal Info' %}</a>
                 <a class="btn {% if 'password' in request.META.PATH_INFO %}active{% endif %}" href="{% url password_change %}">{% trans 'Password' %}</a>
                 <a class="btn {% if 'notifications' in request.META.PATH_INFO %}active{% endif %}" href="{% url account_notifications %}">{% trans 'Notifications' %}</a>
