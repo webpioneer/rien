@@ -44,11 +44,12 @@ def store(request, what, location, gig_types):
 	
 
 
-def get_results(what, location, page, gig_types):
+def get_results(what, location, page, gig_types_list):
 	terms = _prepare_words(what)
 	#results = Gig.objects.all()
 	results = []
 	
+	#GIGS_PER_PAGE = 2
 	try:
 		page = int(page)
 		if page == 1:
@@ -60,12 +61,14 @@ def get_results(what, location, page, gig_types):
 	except:
 		pass
 	#| Q(tags__icontains = what )
+	print 'page %s' % page
 	gigs = Gig.objects.filter(site_id=current_site_id())\
 			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what )
-				)\
-			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location)).order_by('-publish_date')[start:end]
+				| Q(hidden_tags__icontains = what ))\
+			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
 
-	gig_types_list = gig_types.split()
+	#gig_types_list = gig_types.split()
+	print gig_types_list
 	# Any remote jobs
 	if '0' in gig_types_list:
 		print 'remote'
@@ -76,24 +79,26 @@ def get_results(what, location, page, gig_types):
 	for gig_type in gig_types_list:
 		gigs = gigs.exclude(job_type = GigType.objects.get(pk = gig_type))
 
-	for gig in gigs:
-		results.append({
-			'gig_id' : gig.id,
-			'gig_title' : gig.title,
-			'gig_link' : gig.get_absolute_url(),
-			'gig_job_type' : gig.job_type.type,
-			'gig_publish_date' : date(gig.publish_date),
-			'gig_company' : gig.company.company_name,
-			'gig_company_elevator_pitch' : gig.company.elevator_pitch,
-			'gig_company_logo' : gig.company.profile_picture.name\
-				 if gig.company.profile_picture.name else 'company_logos/employer_default.png',
-			'gig_company_profile' : reverse('company_profile', args = (gig.company.slug,)),
-			'gig_location' : gig.location,
-			'gig_is_new' : 'today' in naturalday(gig.publish_date),
-			'gig_tags' : gig.get_tags() if gig.hidden_tags else False,
-		})
+	#for gig in gigs.order_by('-publish_date')[start:end]:
+	#	results.append({
+	#		'gig_id' : gig.id,
+	#		'gig_title' : gig.title,
+	#		'gig_link' : gig.get_absolute_url(),
+	#		'gig_job_type' : gig.job_type.type,
+	#		'gig_publish_date' : date(gig.publish_date),
+	#		'gig_company' : gig.company.company_name,
+	#		'gig_company_elevator_pitch' : gig.company.elevator_pitch,
+	#		'gig_company_logo' : gig.company.profile_picture.name\
+	#			 if gig.company.profile_picture.name else 'company_logos/employer_default.png',
+	#		'gig_company_profile' : reverse('company_profile', args = (gig.company.slug,)),
+	#		'gig_location' : gig.location,
+	#		'gig_is_new' : 'today' in naturalday(gig.publish_date),
+	#		'gig_tags' : gig.get_tags() if gig.hidden_tags else False,
+	#	})
+	#print len(results)
 	# the results are either resumes or gigs or a company
-	return results
+	#return results
+	return gigs.order_by('-publish_date')[start:end]
 
 def _prepare_words(what):
 	"""
