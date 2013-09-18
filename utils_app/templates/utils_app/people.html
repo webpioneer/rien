@@ -1,0 +1,131 @@
+{% extends 'gigs/account.html' %}
+
+{% load mezzanine_tags i18n pages_tags %}
+
+
+
+{% block company_block %}
+    
+    <div>
+      <h4><strong>{% trans 'Users' %}</strong></h4>
+      <table class="table table-condensed">
+        <thead>
+        <tr>
+          <th>{% trans 'Name' %}</th>
+          <th>{% trans 'Account Type' %}</th>
+          <th>{% trans 'Email' %}</th>
+          <th>{% trans 'Last Login' %}</th>
+        </tr>
+      </thead>
+      <tr class="success">
+        <td>{{ request.user.get_full_name }}</td>
+          <td>{% trans 'Owner' %}</td>
+          <td>{{ request.user.email }}</td>
+          <td>{{ request.user.last_login }}</td>
+      </tr>
+      {% for person_group in people_groups %}
+        <tr>
+          <td>{{ person_group.0.get_full_name }}</td>
+          <td>{{ person_group.1|lower|capfirst }}</td>
+          <td>{{ person_group.0.email }}</td>
+          <td>{{ person_group.0.last_login }}</td>
+        </tr>
+
+      {% endfor %}
+      </table>
+
+      <h4><strong>{% trans 'Teams' %}</strong></h4>
+      <table class="table table-condensed">
+        <thead>
+        <tr>
+          <th>{% trans 'Name' %}</th>
+        </tr>
+      </thead>
+      {% if request.user.teams %}
+        {% for team in request.user.teams.all %}
+          <tr>
+            <td>{{ team.name }}</td>
+          </tr>
+
+        {% endfor %}
+      {% else %}
+        <tr><td>{% trans 'No teams have been created.' %}</td></tr>
+      {% endif %}
+      </table>
+
+    </div>
+    {% comment %}
+    <div class="well well-small">
+      <h4><strong>{% trans 'Create a User' %}</strong></h4>
+      <p>{% trans 'This person will receive an email with a temporary password for accessing' %}{{ settings.SITE_NAME }}</p>
+      {% with company=request.user.company %}
+      <form  method="post" action="{% url utils_app.views.people %}">{% csrf_token %}
+      	{% fields_for people_form %}
+      <div class="form-actions">
+  			<button type="submit" class="btn btn-success btn-large">{%trans 'Create User' %}</button>
+  		</div>
+      </form>
+      <h4><strong>{% trans 'Create a Team' %}</strong></h4>
+      <p>{% trans 'Give the new team a name. To add existing users to this team, you must edit each user.' %}{{ settings.SITE_NAME }}</p>
+
+      <form  method="post" action="{% url utils_app.views.people %}">{% csrf_token %}
+        {% fields_for team_form %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success btn-large">{%trans 'Create Team' %}</button>
+      </div>
+      </form>
+    </div>
+    {% endwith %}
+    {% endcomment %}
+
+        
+
+
+{% endblock %}
+
+{% block right_panel %}
+<div class="well well-small">
+      <h4><strong>{% trans 'Create a User' %}</strong></h4>
+      <p>{% trans 'This person will receive an email with a temporary password for accessing' %}{{ settings.SITE_NAME }}</p>
+      <form  method="post" action="{% url utils_app.views.people %}">{% csrf_token %}
+        {% fields_for people_form %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success btn-large">{%trans 'Create User' %}</button>
+      </div>
+      </form>
+      <h4><strong>{% trans 'Create a Team' %}</strong></h4>
+      <p>{% trans 'Give the new team a name. To add existing users to this team, you must edit each user.' %}{{ settings.SITE_NAME }}</p>
+
+      <form  method="post" action="{% url utils_app.views.people %}">{% csrf_token %}
+        {% fields_for team_form %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success btn-large">{%trans 'Create Team' %}</button>
+      </div>
+      </form>
+    </div>
+
+{% endblock %}
+
+{% comment %}
+{% block main_content %}
+<div class="container clearfix" id="main-content">
+  <!--begin main content-->
+  <div class="row-fluid sidebar-right">
+
+    <div class="{% if not hey %}span9{% else %}span3{% endif %} primary-column">
+        {% block main %}{% endblock %}
+    </div>
+    <!-- close span9 primary-column-->
+
+    <section class="{% if not hey %}span3 {% else %}span9{% endif %} sidebar secondary-column" id="secondary-nav">
+        {% block right_panel %}
+        {% endblock %}
+    </section>
+
+  </div>
+</div>
+<!--close .container id="main-content" --> 
+{% endblock %}
+
+{% endcomment %}
+
