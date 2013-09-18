@@ -1,20 +1,25 @@
 import moneyed
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
+
 import settings
 
 from cartridge.shop.models import Product, OrderItem
 
 from mezzanine.core.models import Slugged, Displayable, RichText
 from mezzanine.core.fields import FileField, RichTextField
+from mezzanine.generic.fields import CommentsField, RatingField
 from mezzanine.utils.models import upload_to
 from mezzanine.utils.timezone import now
 
 from django_messages.models import Message
 from djmoney.models.fields import MoneyField
+
+from feedb.models import Feedback
 
 def get_app_mother(message):
     """ returns the mother app if any """
@@ -36,6 +41,39 @@ class Resume(models.Model):
     def get_filename(self):
         return self.file.file.name.split('/')[-1].capitalize()
 
+class ChildStatus(models.Model):
+    STATUS_CHOICES = (
+        ('NEW', _('New')),
+        ('Active Statuses', (
+                ('REVIEWED', _('Reviewed')),
+                ('PHONE_SCREENED', _('Phone Screened')),
+                ('INTERVIEW_SCHEDULED', _('Interview Scheduled')),
+                ('INTERVIEWED', _('Interviewed')),
+                ('PUT_ON_HOLD', _('Put on Hold')),
+                ('MADE_OFFER', _('Made Offer')),
+            )
+        ),
+        ('Hired Statuses', (
+                ('HIRED_FULL_TIME', _('Hired Full-Time')),
+                ('CONTRACTED', _('Contracted')),
+            )
+        ),
+        ('Not Hired Statuses', (
+                ('NOT_A_FIT', _('Not a fit')),
+                ('NOT_QUALIFIED', _('Not Qualified')),
+                ('OVER_QUALIFIED', _('Over Qualified')),
+            )
+        ),
+    )
+    name = models.CharField(max_length = 15, choices = STATUS_CHOICES, default = STATUS_CHOICES[0][0])
+    #parent_status = models.ForeignKey(ParentStatus)
+    date = now()
+    user = models.ForeignKey(User)   
+
+    def __unicode__(self):
+        return '{0} > {1} by {2}'.format(self.name, self.date, self.user)
+
+
 class Application(Message):
     """Reprsents an application from an applier regarding a gig """
     #message = models.OneToOneField(Message)
@@ -44,6 +82,8 @@ class Application(Message):
     rejected_at = models.DateTimeField(null = True, blank = True)
     printed_at = models.DateTimeField(null = True, blank = True)
     resume = models.ForeignKey(Resume)
+    status = models.ManyToManyField(ChildStatus)
+    feedbacks = generic.GenericRelation(Feedback)
 
     def __unicode__(self):
         return "{0} {1} {2}".format(self.sender, self.recipient, self.resume)
@@ -72,6 +112,29 @@ class Application(Message):
     @property
     def get_resume_name(self):
         return self.resume.file.name.split('/')[1]
+
+    @property
+    def get_status(self):
+        """return the last status of the app if any"""
+        return self.status.select_related()[0].name
+
+    @property
+    def rated_feedbacks(self):
+        """
+        returns the rated feedbacks
+        """
+        feedbacks = self.feedbacks.all()
+        if feedbacks:
+            return [ f.rating for f in feedbacks if f.rating is not None]
+
+    @property
+    def average_rating(self):
+        """ 
+        returns the average of feedbacks_rating
+        """
+        feedbacks_ratings = self.rated_feedbacks
+        if feedbacks_ratings:
+            return round(sum(feedbacks_ratings) / len(feedbacks_ratings), 2)   
 
 
 
