@@ -320,6 +320,7 @@ INSTALLED_APPS = (
     'contact',
     'faqs',
     'marketing',
+    'feedb',
 )
 # Company Settings
 COMPANY_LOGO_DEFAULT = os.path.join(MEDIA_URL, 'company_logos/employer_default.png')
@@ -435,7 +436,9 @@ JOB_SEEKER_NOTIFICATION_SETTINGS = (
 # AKISMET settings
 AKISMET_API_KEY = 'c74b430a9ac6'
 
-# Company settings
+# RATING RAGE FOR FEEDBACK
+RATINGS_MIN = 1
+RATINGS_MAX = 5
 
 
 
