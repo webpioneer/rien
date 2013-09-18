@@ -61,6 +61,11 @@ input.error, select.error{
 .internship{
     color:#b8559a;
 }
+.number-indicator{
+  position: relative;
+  top:-10px;
+  left:-15px;
+}
 
 </style>
 
@@ -105,7 +110,7 @@ $(function() {
                     <ul class="nav pull-right">
                       <!-- shop cart -->
                       {% if request.cart.has_items %}
-                        <li><a href="{% url 'shop_cart' %}"><span class="badge badge-important"><i class="icon-shopping-cart"></i> Cart 
+                        <li><a href="{% url 'shop_cart' %}"><span class="badge badge-important number-indicator"><i class="icon-shopping-cart"></i> Cart 
                           {{ request.cart.items.count }}</span></a></li>
                         {% endif %}
                       <!-- end shop cart -->
@@ -115,7 +120,7 @@ $(function() {
                         {% if request.user.is_authenticated %}
                             <a href="{% url 'messages_inbox' %}" class="dropdown-toggle" data-toggle="dropdown">
                               <i class="icon-bell black"></i>&nbsp;&nbsp;
-                              {% if applications_inbox_count %}<span class="badge badge-important">{{ applications_inbox_count }}</span>{% endif %}
+                              {% if applications_inbox_count %}<span class="badge badge-important number-indicator">{{ applications_inbox_count }}</span>{% endif %}
                             </a>
                             {% if unread_applications %}
                             <ul class="dropdown-menu">
@@ -151,7 +156,7 @@ $(function() {
                       {% if request.user.is_authenticated %}
                         <a href="{% url 'messages_inbox' %}">
                           <i class="icon-envelope"></i>&nbsp;&nbsp;
-                          {% if messages_inbox_count %}<span class="badge badge-important">{{ messages_inbox_count }}</span>{% endif %}
+                          {% if messages_inbox_count %}<span id='inbox-number' class="badge badge-important number-indicator">{{ messages_inbox_count }}</span>{% endif %}
                         </a>
                       {% endif %}
                       <!-- end inbox -->
@@ -232,7 +237,11 @@ $(function() {
         <!-- .nav, .navbar-search, .navbar-form, etc -->
         <ul class="nav">
           {% if request.user.company %}
-          <li {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_listings' %}">{% trans 'My Listings' %}</a>
+          {% comment %}
+          <li {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_listings' %}">{% trans 'My Dashboard' %}</a>
+          </li>
+          {% endcomment %}
+          <li id="my-listings" {% if 'listings' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'company_listings' %}">{% trans 'My Listings' %}</a>
           </li>
           {% else %}
           <li {% if 'application' in  request.META.PATH_INFO %}class="active"{% endif %}><a href="{% url 'applier_applications' %}">{% trans ' my Applications' %}</a></li>
