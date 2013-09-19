@@ -210,7 +210,6 @@
     padding:2px;
 }
 #search-message{
-    display:none;
     background-color:#fefdb9;
     padding:8px;
 }
@@ -282,6 +281,7 @@ $(document).ready(function(){
         setTimeout(function() {
             $('#id_search').submit();
         }, 2000);
+
     });
     $("#id_filter input").click(function(){
         console.log($(this).val() + 'is clicked');
@@ -308,6 +308,12 @@ $(document).ready(function(){
                 $(this).attr('checked', false);
             }
         });
+        //find_jobs(method = 'GET', page = 1, search = true);
+        $('#id_search').submit();
+    });
+    $("#id_remote").live('click',function(e){
+        e.preventDefault();
+        console.log($(this).val() + 'is clicked');
         //find_jobs(method = 'GET', page = 1, search = true);
         $('#id_search').submit();
     });
@@ -474,30 +480,36 @@ function find_jobs(method, page, search){
             <input name="what" maxlength="100" placeholder="Job title, Keywords, Company name, ..." type="text" class="span5" id="id_what" value="{% if gig_search_form.what.value %}{{ gig_search_form.what.value }}{% else %}{% endif %}" />
             <input name="location" maxlength="50" placeholder="City, State or Zip code" type="text" class="span5" id="id_location" value="{% if gig_search_form.location.value %}{{ gig_search_form.location.value }}{% else %}{% endif %}"/>
             
-            <button id="id_find_jobs" type="submit" class="btn btn-primary span2">{% trans 'Find Jobs' %}</button>
+            <button id="id_find_jobs" type="submit" class="btn btn-primary span2" data-toggle="button">{% trans 'Find Jobs' %}</button>
         </div><!-- .controls .controls-row-->
         <div id="id_filter">
             {% for gig_type in gig_types %}
             <label class="checkbox inline {{ gig_type.type|lower }}">
-              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" {% comment %}{% if gig_type.id not  in gig_types_string %}checked{% else%}{% endif %}{% endcomment%}checked> {{ gig_type.type }}
+              <input type="checkbox" name="{{ gig_type.type }}" id="id_{{ gig_type.type }}" value="{{ gig_type.id }}" {% if not gig_types_string %}checked{% endif %}{% if gig_type.id not in gig_types_list %}checked{% endif %}> {{ gig_type.type }}
             </label>
             {% endfor %}
             <label class="checkbox pull-right">
-              <input type="checkbox" id="inlineCheckbox1" value="remote" class="" name="remote"> {% trans 'Remote' %}
+              <input type="checkbox" id="id_remote" value="remote" class="" name="remote"{% if remote %}checked{% endif%}> {% trans 'Remote' %}
             </label>
         </div>
+        {% if 'search' in request.META.PATH_INFO %}
         <div id='search-message' class='row' style="margin-left:0px">
             <div class="span8">
-                {% trans 'Showing all jobs' %}
-                <span id="gig_types"></span>
-                <span id="location"></span>
-                <span id="what"></span>
+                {% if not remote %}
+                    {%trans 'Showing all jobs' %}
+                {% else %}
+                    {% trans 'Showing all <strong>remote</strong> jobs' %}
+                {% endif %}
+                <span id="gig_types"><strong>{{ gig_types_to_display }}</strong></span>
+                {% if location %}<span id="location">{% trans 'near' %} <strong>{{ location }}</strong></span>{% endif %}
+                {% if what %}<span id="what">{% trans 'matching' %} <strong>{{ what }}</strong></span>{% endif %}
                 <a id="reset" class="btn btn-info btn-small" href="{% url home %}"><i class="icon-refresh"></i>&nbsp;&nbsp;Reset</a>   
             </div>
             <div class="span4">
                 <button class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
             </div>
         </div>
+        {% endif %}
 
     </form>
     
@@ -543,6 +555,7 @@ function find_jobs(method, page, search){
     </section>
 -->
     <div class="jobs-list">
+    {% if gigs%}
     {% for gig in gigs.object_list %}
     <div id="results"></div>
     <div class="row job-details" style="margin-left:5px;{% comment %}{% if forloop.first %}background-color:#fff6ef{% endif %}{% endcomment %}">
@@ -608,7 +621,11 @@ function find_jobs(method, page, search){
     {% endfor %}
 
     {% pagination_for gigs %}
-    </div>
+
+    {% else %}
+        {% blocktrans %}<strong>No listings match your search criteria</strong>. <a href="/">Reset the criteria</a> or <a href="#">subscribe</a> to be notified when a match is found.{% endblocktrans %}
+    {% endif %}
+    </div><!-- end jobs-list -->
 
     <div id='scrolling_date'></div>
     <div id='more'>{% trans 'Loading More Jobs ...' %}</div>
