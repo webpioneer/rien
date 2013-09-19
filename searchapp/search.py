@@ -44,7 +44,7 @@ def store(request, what, location, gig_types):
 	
 
 
-def get_results(what, location, page, gig_types_list):
+def get_results(what, location, page, gig_types_list, remote = False):
 	terms = _prepare_words(what)
 	#results = Gig.objects.all()
 	results = []
@@ -70,10 +70,10 @@ def get_results(what, location, page, gig_types_list):
 	#gig_types_list = gig_types.split()
 	print gig_types_list
 	# Any remote jobs
-	if '0' in gig_types_list:
+	if remote:
 		print 'remote'
 		gigs = gigs.filter(is_remote = True) # Remote gigs
-		gig_types_list.pop(gig_types_list.index('0'))
+		#gig_types_list.pop(gig_types_list.index('0'))
 
 	# Exclude all unchecked gig types
 	for gig_type in gig_types_list:
