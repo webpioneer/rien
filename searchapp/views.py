@@ -36,13 +36,20 @@ def search_objects(request, template_name = 'gigs/index.html'):
 			#gig_types = request.POST['gig_types']
 			#print 'gig types : %s ' % gig_types
 			#page = request.POST['page']
+			gig_types_string = '%s %s %s %s' % (request.POST.get('Full-time',''),
+				request.POST.get('Internship',''),
+				request.POST.get('Contract',''),
+				request.POST.get('Freelance',''),
+			)
 						
 	#elif request.method == 'GET' and request.is_ajax():
 	elif request.method == 'GET':
 		what = request.GET.get('what', '')
 		location = request.GET.get('location', '')
-		page = request.GET.get['page']
+		page = request.GET.get('page')
 		gig_types = request.GET.get('gig_types', '')
+		remote = True if request.GET.get('remote') else False
+		gig_types_string = request.GET.get('gig_types_string', '')
 
 	if 'searchapp' in settings.INSTALLED_APPS:
 		#store(request, what, location, gig_types)
@@ -54,25 +61,19 @@ def search_objects(request, template_name = 'gigs/index.html'):
 	#			})
 	#http_response = HttpResponse(response, content_type='application/javascript')
 
-	gig_types_string = '%s %s %s %s' % (request.POST.get('Full-time',''),
-		request.POST.get('Internship',''),
-		request.POST.get('Contract',''),
-		request.POST.get('Freelance',''),
-		)
-
 	gig_types = GigType.objects.all()
 
 	gig_types_list = [ gig_type.id for gig_type in gig_types if str(gig_type.id) not in gig_types_string]
  
 	
  	results = get_results(what, location, request.GET.get("page", 1), gig_types_list, remote)
-	results = paginate(results, request.GET.get("page", 1),
+ 	print 'search objects : %s jobs ' % len(results)
+	gigs = paginate(results, request.GET.get("page", 1),
                           settings.GIGS_PER_PAGE,
                           settings.MAX_PAGING_LINKS)
 	
-	
 	context = {
-		'gigs' : results,
+		'gigs' : gigs,
 		'what' : what.capitalize(),
 		'location' : location.capitalize(),
 		'gig_search_form' : gig_search_form,
