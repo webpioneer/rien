@@ -51,7 +51,7 @@
             {% endif %}
                     <p class="control-group">
                         <label class="span2" for="id_title">{% trans 'Job Title' %}</label>
-                        <input id="id_title" class="span6 {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
+                        <input id="id_title" class="span6 reqblue {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
                         {% if post_job_form.title.errors %}
                         <br /><label class="span2"></label>
                             <span class="help-block error">
