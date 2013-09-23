@@ -250,6 +250,18 @@ $(document).ready(function(){
         find_jobs(method = 'POST', page = 1, search = true);   
     });
     */
+    var gig_types_string = '';
+    $('#id_filter input[type=checkbox]').each(function() {
+                                        if(this.checked){
+                                            //gig_types_string + = $(this).val();
+                                            console.log($(this).val());
+                                            gig_types_string += $(this).val()+ ' ';
+                                        }
+    });
+    var gig_types_string = '&gig_types_string='+ gig_types_string;
+    var page_num = $('.next a').attr('href');
+    $('.next a').attr('href', page_num + gig_types_string);
+
     jQuery.ias({
                 container : '.jobs-list', // or .media-list
                 item: '.job-details',
@@ -259,9 +271,16 @@ $(document).ready(function(){
                 triggerPageThreshold: 300,
                 noneleft: 'No more Jobs',
                 onPageChange: function(pageNum, pageUrl, scrollOffset){
-                    $('.next a').attr('href','?page='+pageNum+1);
+                    if(pageNum >= 2){
+                        pageNum += 1;
+                        $('.next a').attr('href', '?page='+pageNum + gig_types_string);
+                        console.log($('.next a').attr('href'));
+                    }   
                 }
+               
             });// end jquery ias
+    //hide pagination
+    $('.pagination').css('display', 'none');
     /*
     $('#id_filter input[type=checkbox]').each(function () {
            if (this.checked) {
@@ -555,7 +574,7 @@ function find_jobs(method, page, search){
     </section>
 -->
     <div class="jobs-list">
-    {% if gigs%}
+    {% if gigs %}
     {% for gig in gigs.object_list %}
     <div id="results"></div>
     <div class="row job-details" style="margin-left:5px;{% comment %}{% if forloop.first %}background-color:#fff6ef{% endif %}{% endcomment %}">
