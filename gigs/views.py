@@ -14,8 +14,6 @@ from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 
-
-
 from cartridge.shop.forms import AddProductForm
 from cartridge.shop.models import (Cart, CartItem, Product,
  ProductImage, ProductVariation)
@@ -79,23 +77,25 @@ def all_gigs(request, template_name = 'gigs/index.html'):
         }
         return render(request, template_name, context)
 
-    else:
-        if gig_search_form.is_valid():
-            print 'form is valid'
-            what = gig_search_form.cleaned_data['what']
-            location = gig_search_form.cleaned_data['location']
-            results = get_results(what, location, page, gig_types)
-            gigs = paginate(results, request.GET.get("page", 1),
+    elif request.method == 'POST' and gig_search_form.is_valid():
+        print 'HELLO :form is valid'
+        what = gig_search_form.cleaned_data['what']
+        location = gig_search_form.cleaned_data['location']
+        gig_types_list = [ gig_type.id for gig_type in gig_types if str(gig_type.id) not in gig_types_string]
+        results = get_results(what, location, request.GET.get("page", 1), gig_types_list)
+        print 'all_gigs %s jobs ' % len(results)
+        #results = get_results(what, location, page, gig_types)
+        gigs = paginate(results, request.GET.get("page", 1),
                               settings.GIGS_PER_PAGE,
                               settings.MAX_PAGING_LINKS)
-            context = {
+    context = {
                 'gigs' : gigs,
                 'categories' : categories,
                 'gig_types' : gig_types,
                 'starting_price' : starting_price,
                 'gig_search_form' : gig_search_form,
             }
-        return render(request, template_name, context)
+    return render(request, template_name, context)
 
     
     
