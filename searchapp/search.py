@@ -98,7 +98,7 @@ def get_results(what, location, page, gig_types_list, remote = False):
 	#print len(results)
 	# the results are either resumes or gigs or a company
 	#return results
-	return gigs.order_by('-publish_date')[start:end]
+	return gigs.order_by('-publish_date')
 
 def _prepare_words(what):
 	"""
