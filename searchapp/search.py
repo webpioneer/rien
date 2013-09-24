@@ -16,31 +16,27 @@ from searchapp.models import GigSearch
 STRIP_WORDS = ['a', 'an', 'and', 'by', 'for', 'from', 'in', 'no', 'not',
 				'of', 'on', 'or', 'that', 'the', 'to', 'with']
 
-def store(request, what, location, gig_types):
-	gig_terms = GigSearch()
+def store(request, what, location, gig_types_string, remote):
+	
+	gig_search = GigSearch()
 	if len(what) > 2:
-		gig_terms.what = what
-	gig_terms.location = location
+		gig_search.what = what
+	gig_search.location = location
 	#gig_terms.longitude = longitude
 	#gig_terms.latitude = latitude
 	#gig_terms.area_level1 = area_level1
 	#gig_terms.area_level2 = area_level2
-	gig_terms.ip_address = request.META.get('REMOTE_ADDR','')
+	gig_search.ip_address = request.META.get('REMOTE_ADDR','')
 	if request.user.is_authenticated():
-		gig_terms.user = request.user
+		gig_search.user = request.user
 	#gig_terms.is_onsite = is_onsite
-	if 'remote' in gig_types:
-		gig_terms.is_onsite = True
-	if '1' not in gig_types:
-		gig_terms.full_time = False
-	if '2' not in gig_types:
-		gig_terms.contract = False
-	if '3' not in gig_types:
-		gig_terms.freelance = False
-	if '4' not in gig_types:
-		gig_terms.internship = False
-
-	gig_terms.save()
+	if remote == 'True':
+		gig_search.is_onsite = True
+	gig_search.save()
+	gig_types_list =  gig_types_string.split()
+	for gig_type_id in gig_types_list:
+		gig_type = GigType.objects.get(id = gig_type_id)
+		gig_search.gig_type.add(gig_type)
 	
 
 
@@ -61,19 +57,19 @@ def get_results(what, location, page, gig_types_list, remote = False):
 	except:
 		pass
 	#| Q(tags__icontains = what )
-	print 'page %s' % page
-	gigs = Gig.objects.filter(site_id=current_site_id())\
-			.filter(Q(title__icontains = what)|Q(description__icontains = what)| Q(company__company_name__icontains = what )
-				| Q(hidden_tags__icontains = what ))\
-			.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
+	gigs = Gig.objects.filter(site_id = current_site_id())
 
-	#gig_types_list = gig_types.split()
-	print gig_types_list
+	if terms:
+		for term in terms:
+			gigs = gigs.filter(Q(title__icontains = term)|Q(description__icontains = term)| Q(company__company_name__icontains = term )
+					| Q(hidden_tags__icontains = term ))
+			
+	gigs = gigs.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
+
 	# Any remote jobs
 	if remote:
-		print 'remote'
+		#print 'remote'
 		gigs = gigs.filter(is_remote = True) # Remote gigs
-		#gig_types_list.pop(gig_types_list.index('0'))
 
 	# Exclude all unchecked gig types
 	for gig_type in gig_types_list:
