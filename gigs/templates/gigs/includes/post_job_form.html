@@ -153,16 +153,24 @@
                     <p class="control-group">
                     <label class="span2" for="id_how_to_apply">{% trans 'How to apply' %}</label>
                     {{ post_job_form.how_to_apply }}
-                    <span id="via_url" class="input-prepend" style="display:{% if post_job_form.via_url.value %}block{% else %}none{% endif %}">
+                    <span id="via_url" class="input-prepend" style="display:{% if not post_job_form.via_url.value %}none{% endif %}">
                             <span class="add-on">http://</span>
                             <input type="text" name="via_url" value="{% if post_job_form.via_url.value %}{{ post_job_form.via_url.value }}{% endif %}" />
                         </span>
                         <span id="via_email" class="input-prepend" {% if post_job_form.via_url.value %}style="display:none"{% endif %}><span class="add-on"><i class="icon-envelope"></i></span>
                             <input type="text" name="via_email" placeholder="job@domain.com" value="{% if post_job_form.via_email.value %}{{ post_job_form.via_email.value }}{% endif %}" />
                         </span>
-                        {% if request.POST.via_email == "" and request.POST.via_url == "" %}
-                        <p class="error">error</p>
-                        {% endif %}
+                        <span class="help-inline error">
+                            {% for e in post_job_form.how_to_apply.errors %}
+                                {{e}}
+                            {% endfor %}
+                            {% for e in post_job_form.via_email.errors %}
+                                {{e}}
+                            {% endfor %}
+                            {% for e in post_job_form.via_url.errors %}
+                                {{e}}
+                            {% endfor %}
+                        </span>
                     </p>
                     <label class="span2"></label>
                     <a id="add_instructions" href="#">{% trans 'Add Instructions' %}</a> {% trans '(Optional)' %}
