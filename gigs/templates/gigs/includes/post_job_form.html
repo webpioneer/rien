@@ -4,7 +4,15 @@
                 <p class="control-group radioGroup">
                     <label class="span2" for="id_jobtype">{% trans 'Job Type' %}</label>
                         {% for gig_type in gig_types %}
-                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype" {% if post_job_form.job_type.value == gig_type.id %}checked="checked"{% endif %}
+                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype"
+                                {% if post_job_form.job_type.errors %}
+                                    {% if gig_type.id|lower = post_job_form.job_type.value %}checked="checked"{% endif %}
+                                {% endif %}
+                                {% if not post_job_form.job_type.errors %}
+                                    {% if gig_type.default %}
+                                        checked="checked"
+                                    {% endif %}
+                                {% endif %}
                                 /><label class="radioPill" for="{{gig_type.id}}_jobtype">
                                     {% if post_job_form.job_type.value = gig_type.id %}
                                     <i class="icon-ok-sign"></i>&nbsp;{% endif %}
@@ -91,7 +99,7 @@
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_content">{% trans 'Description' %}</label>
-                        <textarea id="id_content" rows="30" name="content" class="span10 myTextEditor">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
+                        <textarea id="id_content" rows="30" name="content" class="span10" style="margin-left:120px" placeholder="{% trans 'Enter the Job listing description here ...' %}">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
                         <br /><span class="help-block"></span>
                         {% if post_job_form.content.errors %}
                         <label class="span2"></label>
