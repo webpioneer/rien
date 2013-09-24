@@ -27,11 +27,11 @@ class ResumeSearch(BaseSearch):
 
 class GigSearch(BaseSearch):
 	is_onsite = models.NullBooleanField()
-	#gig_types = models.ManyToManyField(GigType)
-	full_time = models.NullBooleanField(default=True)
-	contract = models.NullBooleanField(default=True)
-	freelance = models.NullBooleanField(default=True)
-	internship = models.NullBooleanField(default=True)
+	gig_type = models.ManyToManyField(GigType)
+	#full_time = models.NullBooleanField(default=True)
+	#contract = models.NullBooleanField(default=True)
+	#freelance = models.NullBooleanField(default=True)
+	#internship = models.NullBooleanField(default=True)
 
 
 	def __unicode__(self):
