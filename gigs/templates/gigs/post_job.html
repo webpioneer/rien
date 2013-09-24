@@ -201,6 +201,13 @@ $(document).ready(function(){
                 hide_optional();
             });
         });
+        // if value show
+        if($('#id_perks').val()){
+            $('#id_perks').show();
+        }
+        if($('#id_apply_instructions').val()){
+            $('#id_apply_instructions').show();
+        }
     }// end show_optional
 
     /* Remove class 'error' from each corrected field 
