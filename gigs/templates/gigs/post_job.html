@@ -125,11 +125,13 @@ $(document).ready(function(){
             var how_to_apply = $(this).val();
             if(how_to_apply == 'VIA_EMAIL') {
                 $("#via_url").hide();
+                $("#via_url input").val('');
                 $("#via_email").show();
                 $("#via_email input").focus();
             }
             if(how_to_apply == 'VIA_URL') {
                 $("#via_email").hide();
+                $("#via_email input").val('');
                 $("#via_url").show();
                 $("#via_url input").focus();
             }
