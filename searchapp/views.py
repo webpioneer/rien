@@ -50,10 +50,9 @@ def search_objects(request, template_name = 'gigs/index.html'):
 		gig_types = request.GET.get('gig_types', '')
 		remote = True if request.GET.get('remote') else False
 		gig_types_string = request.GET.get('gig_types_string', '')
+	# STORE search terms
+	#store(request, what, location, gig_types_string, remote)
 
-	if 'searchapp' in settings.INSTALLED_APPS:
-		#store(request, what, location, gig_types)
-		pass
 	#response = simplejson.dumps({
 	#			'results' :  get_results(what, location, page, gig_types),
 	#			'what' : what.capitalize(),
