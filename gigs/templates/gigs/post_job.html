@@ -87,17 +87,19 @@ background-image: url(//cdn2.mxpnl.com/cache/4ae0a7a10db50f986cf501e1bbde8903/im
 */
 </style>
 <link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{STATIC_URL}}bootstrap-wysihtml5/src/bootstrap-wysihtml5.css">
+ 
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}tagmanager/bootstrap-tagmanager.css" />
 {% endblock %}
 {% block extra_js %}
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-<script type="text/javascript" src="/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
-
 <script type="text/javascript" src="{{STATIC_URL}}js/upload_file.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-select.min.js"></script>
 <script type="text/javascript"  
                 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDAymHDaiwZfygZ80R91qeJ5Yu04ME3dtM&language={{ LANGUAGE_CODE }}&sensor=false"></script>
 <script src="{{ STATIC_URL }}js/location.js"></script>
+<script src="{{ STATIC_URL }}bootstrap-wysihtml5/lib/js/wysihtml5-0.3.0.js"></script>
+<script src="{{ STATIC_URL }}bootstrap-wysihtml5/src/bootstrap-wysihtml5.js"></script>
 <script src="{{ STATIC_URL }}tagmanager/bootstrap-tagmanager.js"></script>
 
 <script type="text/javascript">
@@ -107,6 +109,15 @@ $(document).ready(function(){
     function init(){
         // for categories
         $('.selectpicker').selectpicker();
+        // style description
+        $('#id_content').wysihtml5({
+            "image": false,
+        });
+        /*
+        $('#id_content').live('focus', function(){
+            $(this).attr('rows', 30);
+        });
+        */
 
         show_optional();
 
@@ -201,7 +212,7 @@ $(document).ready(function(){
         });
     */
 }); // end document.ready
-
+/*
 tinyMCE.init({
     //mode : "textareas",
     mode : "specific_textareas",
@@ -216,6 +227,7 @@ tinyMCE.init({
     plugins : 'inlinepopups',
     content_css : '{{ STATIC_URL }}css/bootstrap.min.css,',
 });
+*/
 </script>
 
 
