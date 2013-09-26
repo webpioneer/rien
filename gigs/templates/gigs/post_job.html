@@ -31,11 +31,12 @@ form input, form textarea{
     line-height:1.23em;
     font-size:100%;
     }
+/*
 input.reqblue,select.reqblue, textarea.reqblue {
     background: top right no-repeat;
 background-image: url(//cdn2.mxpnl.com/cache/4ae0a7a10db50f986cf501e1bbde8903/images/forms/required_blue.png);
 }
-
+*/
 /* for radio */
 .radioGroup input[type=radio] {
   visibility: hidden;
@@ -78,6 +79,11 @@ background-image: url(//cdn2.mxpnl.com/cache/4ae0a7a10db50f986cf501e1bbde8903/im
   background-color: #0088cc;
 }
 /*
+.ui-autocomplete-loading {
+    background: white url('http://www.djangojobs.org/static/icons/ajax-loader.gif') right center no-repeat;
+    }
+*/
+/*
 .radioGroup input[type=radio]:checked + label> i[class*="icon-"],
 .radioGroup input[type=radio]:checked + label> i[class*=" icon-"]:hover,
 .radioGroup input[type=radio]:checked + label> i[class^=" icon-"],
@@ -101,6 +107,9 @@ background-image: url(//cdn2.mxpnl.com/cache/4ae0a7a10db50f986cf501e1bbde8903/im
 <script src="{{ STATIC_URL }}bootstrap-wysihtml5/lib/js/wysihtml5-0.3.0.js"></script>
 <script src="{{ STATIC_URL }}bootstrap-wysihtml5/src/bootstrap-wysihtml5.js"></script>
 <script src="{{ STATIC_URL }}tagmanager/bootstrap-tagmanager.js"></script>
+<script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-tooltip.js"></script>
+<script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-popover.js"></script>
+<script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-button.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -113,6 +122,17 @@ $(document).ready(function(){
         $('#id_content').wysihtml5({
             "image": false,
         });
+        // input popovers to provide more help
+        $('input, textarea').popover({
+            html : true,
+            trigger : 'focus',
+        });
+
+        // loading
+        $('#id_preview').click(function(){
+            $(this).button('loading');
+        });
+
         /*
         $('#id_content').live('focus', function(){
             $(this).attr('rows', 30);
@@ -261,7 +281,7 @@ tinyMCE.init({
                 {% include 'gigs/includes/company_form.html' %}
             {% endif %}
                 <div class="form-actions">
-                        <input class="btn btn-success btn-large pull-right" type="submit" name="submit" value="{% trans 'Preview your listing' %}">
+                        <input id="id_preview" class="btn btn-success btn-large pull-right" type="submit" name="submit" value="{% trans 'Preview your listing' %}" data-loading-text="Previewing ...">
                 </div>
             </fieldset>
         </form>
@@ -274,6 +294,8 @@ tinyMCE.init({
     {% if settings.SHOP_PAYMENT_STEP_ENABLED %}
             {% include 'gigs/includes/guarentee.html'%}
             {% include 'gigs/includes/payment_info.html' %}
+    {% else %}
+            {% include 'gigs/includes/post_job_info.html' %}
     {% endif %}
 
     {% ifinstalled 'testimonials' %}
