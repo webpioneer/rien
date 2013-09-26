@@ -1,4 +1,4 @@
-{% load mezzanine_tags %}
+{% load mezzanine_tags i18n %}
 <div id='company-information'>
             <h3 class="short_headline margin-top"><span>{{ company_information }}</span></h3>
             <div class="page-header">
@@ -49,7 +49,7 @@
                     <label class="span2" for="id_url">{{ company_form.url.label}}</label>
                     <div class="input-prepend">
                         <span class="add-on">http://</span>
-                        <input id="id_url" type="text" name="url" maxlength="200" value="{% if company_form.url.value %}{{ company_form.url.value }}{% else %}{% endif %}" />
+                        <input id="id_url" type="text" name="url" maxlength="200" value="{% if company_form.url.value %}{{ company_form.url.value }}{% else %}{% endif %}" placeholder="www.example.com" />
                     </div>
                     {% if company_form.url.errors %}
                     <label class="span2"></label>
@@ -98,14 +98,15 @@
             </div>
             <div class="page-header">
                 <p class="control-group">
-                    <label class="span2" for="id_profile_picture">{{ company_form.profile_picture.label }}</label>
+                    <label class="span2" for="id_profile_picture">{% trans 'Company Logo' %}</label>
                     <span class="span4">{{company_form.profile_picture_choice }}</span>
+                    <!-- <input type="hidden" name="profile_picture_choice" value="OWN_PICTURE"> -->
                     <span id="id_twitter_picture" class="input-prepend input-append" style="display:{% if company_form.profile_picture_choice.value != 'TWITTER_PICTURE' %}none{% else %}block{% endif %}">
                             <span class="add-on">@</span>
                             <input class="span2" id="id_twitter_username" type="text" name="twitter_username" maxlength="200" autofocus value="{% if company_form.twitter_username.value %}{{ company_form.twitter_username.value }}{% endif %}" />
                             <button id ="get_twitter_picture" class="btn btn-primary" type="button">Get <i class="icon-twitter"></i> picture</button>
                     </span>
-                    <span id="id_company_profile_picture" class="btn btn-warning fileinput-button" style="display:{% if company_form.profile_picture_choice.value != 'OWN_PICTURE' %}none{% else %}block{% endif %}"><span><i class="icon-plus icon-white"></i> Select Image...</span>
+                    <span id="id_company_profile_picture" class="btn btn-warning fileinput-button span3" style="display:{% if company_form.profile_picture_choice.value != 'OWN_PICTURE' %}none{% else %}block{% endif %}"><span><i class="icon-plus icon-white"></i> {% trans 'Select Image...' %}</span>
                         <input type="file" name="profile_picture" id="id_profile_picture"/>
                     </span>
 
