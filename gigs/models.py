@@ -165,6 +165,10 @@ class Category(Slugged):
     def get_absolute_url(self):
         return ('gigs_list_category',(),{'slug':self.slug})
 
+    @property 
+    def description_list(self):
+        return self.description.split(',')
+
 
 COMPANY_LOGO_DEFAULT = getattr(settings, 'COMPANY_LOGO_DEFAULT', 'static/media/company_logos/.thumbnails/employer_default.png')
 APPLIER_PICTURE_DEFAULT = getattr(settings, 'APPLIER_PICTURE_DEFAULT', 'static/media/company_logos/.thumbnails/employer_default.png')
