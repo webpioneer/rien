@@ -20,18 +20,12 @@
                                     {{ gig_type.price.currency }}
                                     {% endif %}
                                 </label>
-                                <!-- <br /><span class="help_text">{{gig_type.description}}</span>-->
-
                         {% endfor %}
-                     {% if post_job_form.job_type.errors %}
-                     <br /><label class="span2"></label>
-                     <span class="help-block error">
-                        {% for error in post_job_form.job_type.errors %}
-                            {{ error}}
-                        {% endfor %}
-                     </span>
-                     {% endif %}
+                     
                 </p>
+                {% if post_job_form.job_type.errors %}
+                     <span class="help-block error">{% for error in post_job_form.job_type.errors %}{{ error}}{% endfor %}</span>
+                {% endif %}
             </div>
 
             {% if gig_categories|length == 1 %}
@@ -59,7 +53,7 @@
             {% endif %}
                     <p class="control-group">
                         <label class="span2" for="id_title">{% trans 'Job Title' %}</label>
-                        <input id="id_title" class="span6 reqblue {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
+                        <input id="id_title" class="span6 {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
                         {% if post_job_form.title.errors %}
                         <br /><label class="span2"></label>
                             <span class="help-block error">
