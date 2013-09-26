@@ -4,7 +4,7 @@
                 <p class="control-group radioGroup">
                     <label class="span2" for="id_jobtype">{% trans 'Job Type' %}</label>
                         {% for gig_type in gig_types %}
-                                <input type="radio" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype"
+                                <input type="radio" data-toggle="tooltip" title="hello" name="job_type" group="gig_types" value="{{ gig_type.id }}" id="{{gig_type.id}}_jobtype"
                                 {% if post_job_form.job_type.errors %}
                                     {% if gig_type.id|lower = post_job_form.job_type.value %}checked="checked"{% endif %}
                                 {% endif %}
@@ -53,7 +53,7 @@
             {% endif %}
                     <p class="control-group">
                         <label class="span2" for="id_title">{% trans 'Job Title' %}</label>
-                        <input id="id_title" class="span6 {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
+                        <input id="id_title" class="span6 {% if post_job_form.title.errors %}error{% endif %}" type="text" name="title" data-toggle="popover" data-content="{% trans '<span class='small'>The title is your first, best chance to be noticed – or not. Make it <strong>concise but descriptive</strong> ; a generic “Software developer” position is easily ignored.<p>Think of it as the subject line of an important email.</p></span>' %}" maxlength="255" value="{% if post_job_form.title.value %} {{ post_job_form.title.value }}{% else%}{% endif %}"  />
                         {% if post_job_form.title.errors %}
                         <br /><label class="span2"></label>
                             <span class="help-block error">
@@ -66,7 +66,7 @@
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_location">{% trans 'Job Location' %}</label>
-                        <input class="span6 {% if post_job_form.location.errors %}error{% endif %}" id="id_location" type="text" name="location" maxlength="200" value="{% if post_job_form.location.value %}{{ post_job_form.location.value }}{% else %}{% endif %}" />
+                        <input data-provide="typeahead" class="span6 ui-autocomplete-input {% if post_job_form.location.errors %}error{% endif %}" id="id_location" type="text" name="location" maxlength="200" value="{% if post_job_form.location.value %}{{ post_job_form.location.value }}{% else %}{% endif %}" />
                          
                         <br /><label class="span2"></label>
                         {% if post_job_form.location.errors %}
@@ -93,7 +93,7 @@
             <div class="page-header">
                     <p class="control-group">
                         <label class="span2" for="id_content">{% trans 'Description' %}</label>
-                        <textarea id="id_content" rows="30" name="content" class="span10" style="margin-left:120px" placeholder="{% trans 'Enter the Job listing description here ...' %}">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
+                        <textarea id="id_content" rows="30" name="content" class="span10" style="margin-left:120px" placeholder="{% trans 'Enter the Job listing description here ...' %}" data-toggle="popover" data-content="{% trans 'hello' %}">{% if post_job_form.content.value %}{{ post_job_form.content.value }}{% else %}{% endif %}</textarea> 
                         <br /><span class="help-block"></span>
                         {% if post_job_form.content.errors %}
                         <label class="span2"></label>
@@ -107,8 +107,8 @@
             </div>
             <div class='page-header'>
                 <p class="control-group">
-                        <label class="span2" for="id_tags">{% trans 'Skills' %}</label>
-                        <input id="id_title" class="span6 tm-input{% if post_job_form.tags.errors %}error{% endif %}" type="text" name="tags" placeholder="{% trans '5 skills maximum' %}" maxlength="255" value="{% if post_job_form.tags.value %} {{ post_job_form.tags.value }}{% else%}{% endif %}"  />
+                        <label class="span2" for="id_tags">{% trans 'Key Technologies' %}</label>
+                        <input id="id_title" data-toggle="popover" class="span6 tm-input{% if post_job_form.tags.errors %}error{% endif %}" type="text" name="tags" placeholder="{% trans '5 skills maximum' %}" maxlength="255" value="{% if post_job_form.tags.value %} {{ post_job_form.tags.value }}{% else%}{% endif %}"  data-content="{% trans 'Key Technologies or Roles, seperate them with a comma' %}" />
                         <br /><label class="span2"></label>
                         {% if post_job_form.tags.errors %}
                             <span class="help-block error">
@@ -121,13 +121,21 @@
                             {% trans 'Examples' %}:
                             {% if gig_categories|length == 1 %}
                                 {% for category in gig_categories %}
-                                    {{ category.description|capfirst }}
-                                    {% if not forloop.last %}, {% endif %}
+                                    {% for skill in category.description_list %}
+                                    <span class="tm-tag tm-tag-success">
+                                        <span>{{ skill }}</span>
+                                        <a href='#' class='tm-tag-remove'>×</a>
+                                    </span>
+                                    {% endfor %}
                                 {% endfor %}
                             {% else %}
                                 {% for category in gig_categories %}
-                                    {{ category.description|capfirst }}
-                                    {% if not forloop.last %}, {% endif %}
+                                    {% for skill in category.description_list|slice:":1" %}
+                                    <span class="tm-tag tm-tag-success">
+                                        <span>{{ skill }}</span>
+                                        <a href='#' class='tm-tag-remove disabled'>×</a>
+                                    </span>
+                                    {% endfor %}
                                 {% endfor %}
                             {% endif %}
                         </span>
