@@ -198,7 +198,8 @@ $(document).ready(function(){
             e.preventDefault();
             var twitter_username = $("#id_twitter_username").val();
             //var URL = 'https://api.twitter.com/1/users/profile_image?screen_name='+ twitter_username +'&size=bigger';
-            var URL = 'http://api.twitter.com/1/users/profile_image/'+ twitter_username +'.png?size=bigger';
+            //var URL = 'http://api.twitter.com/1/users/profile_image/'+ twitter_username +'.png?size=bigger';
+            var URL = 'http://twitter.com/api/users/profile_image/'+ twitter_username +'?size=original';
             $("#employer_picture").attr("src", URL);
         });
     } // end get_twitter_picture
