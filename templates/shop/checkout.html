@@ -16,6 +16,36 @@ var _gaq = [['_trackPageview', '{{ request.path }}{{ step_url }}/']];
 $(function() {$('.middle :input:visible:enabled:first').focus();});
 </script>
 {% endblock %}
+
+{% block top_navigation %}
+<div class="navbar navbar-inverse">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                  {% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}
+                  <div class="nav-collapse collapse navbar-responsive-collapse">
+                    
+                    <ul class="nav pull-right">
+                        <!-- shop cart -->
+                      {% if request.cart.has_items %}
+                        <li><a href="{% url 'shop_cart' %}"><span class="badge badge-important number-indicator"><i class="icon-shopping-cart"></i> Cart 
+                          {{ request.cart.items.count }}</span></a></li>
+                        {% endif %}
+                      <!-- end shop cart -->
+                      
+                      <li class="divider-vertical"></li>
+                     
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div>
+              </div><!-- /navbar-inner -->
+            </div><!-- /navbar -->
+{% endblock %}
+
 {% block breadcrumb_menu %}{% endblock %}
 {% comment %}
 {% block breadcrumb_menu %}

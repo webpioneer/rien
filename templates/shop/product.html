@@ -53,6 +53,29 @@ $(document).ready(function(){
 <script src="{{ STATIC_URL }}cartridge/js/product_variations.js"></script>
 {% endblock %}
 
+{% block top_navigation %}
+<div class="navbar navbar-inverse">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                  {% if settings.SITE_TITLE %}<a class="brand" href="/">{{ settings.SITE_TITLE }}</a>{% endif %}
+                  <div class="nav-collapse collapse navbar-responsive-collapse">
+                    
+                    <ul class="nav pull-right">
+                      
+                      <li class="divider-vertical"></li>
+                     
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div>
+              </div><!-- /navbar-inner -->
+            </div><!-- /navbar -->
+{% endblock %}
+
 
 {% block breadcrumb_menu %}
 {{ block.super }}
