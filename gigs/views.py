@@ -272,8 +272,6 @@ def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
                 for category in gig_categories:
                     gig.gig_categories.add(category)
 
-
-                
                 return redirect("shop_product", slug = gig.slug)
                 #template = 'gigs/gig_product.html'
                 #product_view(slug = gig.slug, template = template)
