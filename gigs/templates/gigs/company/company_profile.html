@@ -323,7 +323,7 @@ function find_jobs(method, page, search){
         <div id=''>
             <a href="{% url company_profile slug=company.slug %}">
                         {% if company.twitter_username %}
-                        <img class="img-polaroid" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ company.twitter_username }}.png?size=bigger">
+                        <img class="img-polaroid" alt="{{ image.description }}" src="http://twitter.com/api/users/profile_image/{{ company.twitter_username }}?size=original">
                         {% else %}
                     <img class="img-polaroid" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail company.profile_picture 173 173 %}">
                         {% endif %}
