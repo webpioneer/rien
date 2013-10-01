@@ -584,8 +584,8 @@ function find_jobs(method, page, search){
                     <a class="pull-left" href="{% url company_profile slug=gig.company.slug %}">
                         {% if gig.company.title_is_confidential %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
-                        {% elif company.twitter_username %}
-                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ gig.company.twitter_username }}.png?size=bigger">
+                        {% elif gig.company.twitter_username %}
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://twitter.com/api/users/profile_image/{{ gig.company.twitter_username }}?size=bigger">
                         {% elif gig.company.profile_picture %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail gig.company.profile_picture 63 63 %}">
                         {% else %}
