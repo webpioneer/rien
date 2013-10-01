@@ -96,7 +96,7 @@ $(document).ready(function(){
                     {% if gig.company.title_is_confidential %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail 'company_logos/employer_default.png' 63 63 %}">
                         {% elif product.gig.company.twitter_username %}
-                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://api.twitter.com/1/users/profile_image/{{ product.gig.company.twitter_username }}.png?size=bigger">
+                        <img class="img-polaroid media-object" alt="{{ image.description }}" src="http://twitter.com/api/users/profile_image/{{ product.gig.company.twitter_username }}?size=bigger">
                         {% elif product.gig.company.profile_picture %}
                         <img class="img-polaroid media-object" alt="{{ image.description }}" src="{{ MEDIA_URL }}{% thumbnail product.gig.company.profile_picture 73 73 %}">
                         {% else %}
