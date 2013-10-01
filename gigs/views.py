@@ -248,7 +248,7 @@ def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
             # categories
             gig_categories = post_job_form.cleaned_data['gig_categories']
             #print request.FILES['profile_picture']
-            if 'Preview your listing' == request.POST['submit']:
+            if 'Previewing ...' == request.POST['submit']:
                 # call view preview listing
                 print 'preview'
                 request.session['company'] = company
