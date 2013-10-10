@@ -119,14 +119,23 @@ $(document).ready(function(){
                 <span class="span3 {{ product.gig.job_type.type|lower}}">
                     <i class="icon-folder-open"></i>&nbsp;&nbsp;{{ product.gig.job_type.type }}
                 </span>
-                <span class="span5">
+                <span class="span6">
                     <i class="icon-map-marker"></i>&nbsp;{{ product.gig.location }}
                     {% if product.gig.is_remote %}<span class="muted small">{% trans 'Telecommute Opportunity' %}</span>&nbsp;&nbsp;<i class="icon-signal" style="color:#2a7ca5"></i>{% endif %}
                 </span>
-                <span class="pull-right">
+                <span class="span3">
                     <i class="icon-time"></i>
                     <abbr class="published" title="{{ product.gig.publish_date|date:'M d' }}">{{ product.gig.publish_date|date:'M d, Y' }}</abbr>
                 </span>
+                {% if product.gig.hidden_tags %}
+                    <section>
+                        {% for tag in product.gig.get_tags %}
+                                        <a class="btn-small btn-info skill" href="#" data-tag-name="{{ tag }}" id="tag_{{ tag}}">
+                                            <i class="icon-tag"></i>&nbsp;{{ tag|capfirst }}
+                                        </a>&nbsp;
+                        {% endfor %}
+                    </section>
+                {% endif %}
             </div>
         </header>
         <div class="">
