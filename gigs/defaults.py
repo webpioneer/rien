@@ -103,11 +103,43 @@ register_setting(
     default= 'AR6gDcq86QpriE9SFyYUOIjn4mByANdDCi9Tmu.OemEkbdE6g-dDyWVO',
 )
 register_setting(
-    name="SITE_TWITTER_ACCOUNT",
+    name="TWITTER_ACCOUNT",
     label=_("Site twitter account *"),
     description=_("Twitter account link"),
     editable=True,
     default= 'http://twitter.com',
+)
+
+register_setting(
+    name="TWITTER_CONSUMER_KEY",
+    label=_("Site twitter consumer key *"),
+    description=_("Twitter consumer key"),
+    editable=True,
+    default= '',
+)
+
+register_setting(
+    name="TWITTER_CONSUMER_SECRET",
+    label=_("Site twitter consumer secret *"),
+    description=_("Twitter consumer secret"),
+    editable=True,
+    default= '',
+)
+
+register_setting(
+    name="TWITTER_ACCESS_TOKEN",
+    label=_("Site twitter access token *"),
+    description=_("Twitter access token"),
+    editable=True,
+    default= '',
+)
+
+register_setting(
+    name="TWITTER_ACCESS_TOKEN_SECRET",
+    label=_("Site twitter access token secret *"),
+    description=_("Twitter access token secret"),
+    editable=True,
+    default= '',
 )
 
 register_setting(
