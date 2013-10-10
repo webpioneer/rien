@@ -205,7 +205,8 @@ class Company(Displayable):
     profile_picture = models.ImageField(verbose_name= _('Profile Picture'),
         upload_to = 'company_logos', max_length=255,
         null = True, blank = True, default = COMPANY_LOGO_DEFAULT)
-    twitter_username = models.CharField(max_length = 50, null= True, blank = True)                      
+    twitter_username = models.CharField(max_length = 50, null= True, blank = True)
+    valid = models.BooleanField(default = False)                     
     ip_address = models.GenericIPAddressField()
     user = models.OneToOneField(User) 
 
@@ -302,6 +303,7 @@ class Gig(Product):
         ('VIA_URL', 'via URL'),
     )
     job_type = models.ForeignKey('GigType', verbose_name = _('Job Type'))
+    valid = models.BooleanField(default = False)
     location = models.CharField(max_length = 200, verbose_name = _('Job Location'),
         help_text=_("Examples: San Francisco, CA; Seattle; Anywhere"))
     latitude = models.CharField(max_length = 25)
@@ -334,6 +336,9 @@ class Gig(Product):
     class Meta:
         verbose_name = "Gig"
         verbose_name_plural = "Jobs"
+
+    def __unicode__(self):
+        return '%s %s' % (self.title, self.status)
 
     @models.permalink
     def get_absolute_url(self):
