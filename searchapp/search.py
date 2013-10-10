@@ -41,10 +41,8 @@ def store(request, what, location, gig_types_string, remote):
 
 
 def get_results(what, location, page, gig_types_list, remote = False):
-	terms = _prepare_words(what)
-	#results = Gig.objects.all()
-	results = []
-	
+
+	gigs = Gig.objects.filter(site_id = current_site_id()).filter(valid = True)
 	#GIGS_PER_PAGE = 2
 	try:
 		page = int(page)
@@ -56,15 +54,22 @@ def get_results(what, location, page, gig_types_list, remote = False):
 			start = end - settings.GIGS_PER_PAGE
 	except:
 		pass
+	print 'CALL TO get_results'
+	if what:
+		terms = _prepare_words(what)
+		#results = Gig.objects.all()
+		results = []
+	
+	
 	#| Q(tags__icontains = what )
-	gigs = Gig.objects.filter(site_id = current_site_id())
+	
 
-	if terms:
-		for term in terms:
-			gigs = gigs.filter(Q(title__icontains = term)|Q(description__icontains = term)| Q(company__company_name__icontains = term )
-					| Q(hidden_tags__icontains = term ))
-			
-	gigs = gigs.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
+		if terms:
+			for term in terms:
+				gigs = gigs.filter(Q(title__icontains = term)|Q(description__icontains = term)| Q(company__company_name__icontains = term )
+						| Q(hidden_tags__icontains = term ))
+	if location:
+		gigs = gigs.filter(site_id=current_site_id()).filter(Q(location__icontains = location) | Q(area_level2__icontains = location))
 
 	# Any remote jobs
 	if remote:
