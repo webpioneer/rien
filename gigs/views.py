@@ -715,23 +715,24 @@ def feed_twitter(sender, **kwargs):
     location(area_level1, area_level2) : gig link, gig categories as hash tags
     """
     settings.use_editable()
-    gig = kwargs['gig']
-    t = Twitter(
-            auth=OAuth(settings.TWITTER_ACCESS_TOKEN, settings.TWITTER_ACCESS_TOKEN_SECRET,
-                       settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET)
-           )
-    # building the tweet
-    #tweet_status = '[%s] %s at %s %s, %s : http://%s%s ' % (gig.job_type.type, gig.title.capitalize(),
-    # gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2, gig.site.domain, gig.get_absolute_url())
+    if settings.TWITTER_ACCOUNT:
+        gig = kwargs['gig']
+        t = Twitter(
+                auth=OAuth(settings.TWITTER_ACCESS_TOKEN, settings.TWITTER_ACCESS_TOKEN_SECRET,
+                           settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET)
+               )
+        # building the tweet
+        #tweet_status = '[%s] %s at %s %s, %s : http://%s%s ' % (gig.job_type.type, gig.title.capitalize(),
+        # gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2, gig.site.domain, gig.get_absolute_url())
 
-    tweet_status = '[%s] %s at %s %s, %s : https://remixjobs.com/emploi/Reseau/Administrateur-Systemes-et-Reseaux-H-F/20731 ' % (gig.job_type.type, gig.title.capitalize(),
-     gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2)
+        tweet_status = '[%s] %s at %s %s, %s : https://remixjobs.com/emploi/Reseau/Administrateur-Systemes-et-Reseaux-H-F/20731 ' % (gig.job_type.type, gig.title.capitalize(),
+         gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2)
 
 
-    hash_tags = ''.join([ '#%s ' % category.title for category in gig.gig_categories.all() if category ])
-    tweet_status += hash_tags
-    t.statuses.update(status = tweet_status, lat = gig.latitude,
-     long = gig.longitude, include_entities = True)
+        hash_tags = ''.join([ '#%s ' % category.title for category in gig.gig_categories.all() if category ])
+        tweet_status += hash_tags
+        t.statuses.update(status = tweet_status, lat = gig.latitude,
+         long = gig.longitude, include_entities = True)
 
 
 
