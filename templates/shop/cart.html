@@ -17,7 +17,7 @@ $(document).ready(function(){
 	    }).done(function( msg ) {
 	    	if(msg.gig_twitter_username){
 	    		console.log(msg.gig_picture);
-	    		element.html("<img src='http://api.twitter.com/1/users/profile_image/"+ msg.gig_picture +".png?size=bigger'>").show();
+	    		element.html("<img src='http://twitter.com/api/users/profile_image/"+ msg.gig_picture +"?size=bigger'>").show();
 	    	}else{
 	    		element.html("<img src='{{ MEDIA_URL }}{% thumbnail '"+msg.gig_picture +"' 73 73 %}'>").show();
 	    	}
@@ -66,9 +66,11 @@ $(document).ready(function(){
 
 {% block main %}
 <h1>{% trans "Your Cart" %}</h1>
-{% if request.cart.has_items %}
-{{ request.cart.total_quantity }}
-{% endif %}
+{% comment %}
+  {% if request.cart.has_items %}
+  {{ request.cart.total_quantity }}
+  {% endif %}
+{% endcomment %}
 {% if request.cart.has_items %}
 <form method="post" class="form-cart form-shop">
 {% csrf_token %}
