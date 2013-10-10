@@ -210,7 +210,7 @@ $(function() {
 
       </div>
       <ul class="social">
-    <li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>
+    <li><a class="socicon small rss" href="{% url 'jobs_feed' %}" target='_blank' data-placement="bottom" title="Subscribe to our RSS feed"></a></li>
     <li><a class="socicon small facebook" href="{{ settings.SITE_FACEBOOK_ACCOUNT }}" data-placement="bottom" title="Follow us on Facebook"></a></li>
     <li><a class="socicon small twitterbird" href="{{ settings.SITE_TWITTER_ACCOUNT }}" data-placement="bottom" title="Follow us on Twitter"></a></li>
     <li><a class="socicon small linkedin" href="{{ settings.SITE_LINKEDIN_ACCOUNT }}" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
@@ -371,9 +371,9 @@ $(function() {
               <p><strong>{{ settings.SITE_TITLE }}</strong><br>
                 {{ settings.SITE_ADDRESS|safe }}<br />
                 {% if settings.SITE_PHONE %}
-                  <strong>phone :</strong> <a href="tel:{{ settings.SITE_PHONE }}" class="tele">{{ settings.SITE_PHONE }}</a><br>
+                  <strong>{% trans 'phone :' %}</strong> <a href="tel:{{ settings.SITE_PHONE }}" class="tele">{{ settings.SITE_PHONE }}</a><br>
                 {% endif %}
-                <strong>email :</strong> <a href="mailto:{{ settings.SITE_EMAIL }}">{{ settings.SITE_EMAIL }}</a></p>
+                <strong>{% trans 'email :' %}</strong> <a href="mailto:{{ settings.SITE_EMAIL }}">{{ settings.SITE_EMAIL }}</a></p>
                 <a href="{% url 'contact' %}">{% trans 'Contact form' %}</a>
             </section>
             <!--close section-->
