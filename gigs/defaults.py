@@ -107,7 +107,7 @@ register_setting(
     label=_("Site twitter account *"),
     description=_("Twitter account link"),
     editable=True,
-    default= 'http://twitter.com',
+    default= '',
 )
 
 register_setting(
