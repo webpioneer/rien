@@ -1,7 +1,7 @@
 {% load i18n %}
 <h4 style="border-bottom: 1px solid #6d767e;">{% trans 'Stay Updated' %}</h4>
 <ul class="social">
-    <li><a class="socicon rss" href="#" title="RSS"></a></li>
+    <li><a class="socicon rss" href="{% url jobs_feed %}" target='_blank' title="RSS"></a></li>
     <li><a class="socicon facebook" href="{{ settings.SITE_FACEBOOK_ACCOUNT }}" title="Facebook"></a></li>
     <li><a class="socicon twitterbird" href="{{ settings.SITE_TWITTER_ACCOUNT }}" title="Twitter"></a></li>
     <li><a class="socicon linkedin" href="{{ settings.SITE_LINKEDIN_ACCOUNT }}" title="LinkedIn"></a></li>
