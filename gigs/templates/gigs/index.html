@@ -267,7 +267,7 @@ $(document).ready(function(){
                 item: '.job-details',
                 pagination: '.navigation',
                 next: '.next a',
-                loader: '<img src="{{ STATIC_URL }}webcreate/images/loader.gif"/>',
+                loader: '<span class=""><img class="offset4" src="{{ STATIC_URL }}webcreate/images/loader.gif"/><span class="">Loading Results ...</span></span>',
                 triggerPageThreshold: 300,
                 noneleft: 'No more Jobs',
                 onPageChange: function(pageNum, pageUrl, scrollOffset){
@@ -483,7 +483,8 @@ function find_jobs(method, page, search){
         </div>
         <!--close container--> 
     </div>
-    <!--close hero-unit--> 
+    <!--close hero-unit-->
+    {% comment %}<div id="ad" class="well">hello there</div>{% endcomment %}
 {% endblock %}
 
 {% block main %}
@@ -513,7 +514,7 @@ function find_jobs(method, page, search){
               <input type="checkbox" id="id_remote" value="remote" class="" name="remote"{% if remote %}checked{% endif%}> {% trans 'Remote' %}
             </label>
         </div>
-        {% if 'search' in request.META.PATH_INFO %}
+        {% if 'jobs' in request.META.PATH_INFO %}
         <div id='search-message' class='row' style="margin-left:0px">
             <div class="span8">
                 {% if not remote %}
@@ -527,7 +528,8 @@ function find_jobs(method, page, search){
                 <a id="reset" class="btn btn-info btn-small" href="{% url home %}"><i class="icon-refresh"></i>&nbsp;&nbsp;Reset</a>   
             </div>
             <div class="span4">
-                <button class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
+                <button data-target="#emailFeedModal" data-toggle="modal"class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
+                {% include 'gigs/includes/email_feed.html' %}
             </div>
         </div>
         {% endif %}
