@@ -8,3 +8,6 @@ from django.dispatch import Signal
 # Sent just after a user is added to a group
 user_added_to_group = Signal(providing_args=["user", "group"])
 
+# Sent after a gig is validated
+gig_is_validated = Signal(providing_args=['gig',])
+
