@@ -1,6 +1,33 @@
 {% extends "base.html" %}
 {% load shop_tags mezzanine_tags i18n future %}
 
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $( "table td span" ).each(function( index ) {
+        get_gig_info(sku = $(this).text(), element =$(this) );
+    });
+
+    function get_gig_info(sku, element){
+        console.log(sku);
+        $.ajax({
+            type: 'GET',
+            url : "http://{{ request.META.HTTP_HOST }}/get_gig_info/"+sku,
+            dataType : 'json',
+        }).done(function( msg ) {
+            if(msg.gig_twitter_username){
+                console.log(msg.gig_picture);
+                element.html("<img src='http://twitter.com/api/users/profile_image/"+ msg.gig_picture +"?size=bigger'>").show();
+            }else{
+                element.html("<img src='{{ MEDIA_URL }}{% thumbnail '"+msg.gig_picture +"' 73 73 %}'>").show();
+            }
+            $("#type_"+sku).html(msg.gig_type);
+        });
+    }//end get_gig_info
+});
+</script>
+{% endblock %}
+
 {% block meta_title %}{% trans "Checkout" %}{% comment %} - {{ step_title }}{% endcomment %}{% endblock %}
 {% block title %}
 {% trans "Checkout" %} 
@@ -8,7 +35,7 @@
 - {% trans "Step" %} {{ step }} {% trans "of" %} {{ steps|length }}
 {% endcomment %}
 {% endblock %}
-{% block body_id %}checkout{% endblock %}
+{% block body_id %}{% trans 'Checkout' %}{% endblock %}
 
 {% block extra_head %}
 <script>
@@ -138,11 +165,13 @@ $(function() {$('.middle :input:visible:enabled:first').focus();});
 <ul class="unstyled blogposts clearfix">
 {% for item in request.cart %}
 <li><span id="sku">{{ item.sku }}</span>
-    {% comment %}
+    
     {% if item.image %}
-    <img alt="{{ item.description }}" src="{{ MEDIA_URL }}{% thumbnail item.image 30 30 %}">
+            <a href="{{ item.get_absolute_url }}">
+                <img alt="{{ item.description }}" src="{{ MEDIA_URL }}{% thumbnail item.image 30 30 %}">
+            </a>
     {% endif %}
-    {{ item.quantity }} x {% endcomment %}{{ item.description|capfirst }}
+    {{ item.quantity }} x {{ item.description|capfirst }}
     <span class="price">{{ item.total_price|currency }}</span>
 </li>
 {% endfor %}
