@@ -63,7 +63,6 @@ def search_objects(request, template_name = 'gigs/index.html'):
 	gig_types = GigType.objects.all()
 
 	gig_types_list = [ gig_type.id for gig_type in gig_types if str(gig_type.id) not in gig_types_string]
- 
 	
  	results = get_results(what, location, request.GET.get("page", 1), gig_types_list, remote)
  	print 'search objects : %s jobs ' % len(results)
