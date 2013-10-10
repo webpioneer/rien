@@ -28,12 +28,12 @@ from mezzanine.utils.urls import slugify
 
 from django_messages.models import Message
 from notification.models import NoticeSetting
-
+from twitter import *
 
 from gigs.forms import ApplicationStatusForm, ApplyForm, ChildStatus,\
     CompanyForm, PostJobForm, ProfileForm2, ReplyForm
 from gigs.models import Category, Gig, GigType, Application, Resume
-from gigs.signals import user_added_to_group
+from gigs.signals import user_added_to_group, gig_is_validated
 from gigs.utils.views import application_messages
 from searchapp.forms import GigSearchForm
 from searchapp.search import store, get_results
@@ -64,7 +64,7 @@ def all_gigs(request, template_name = 'gigs/index.html'):
     starting_price = GigType.objects.all().aggregate(Min('price'))['price__min']
 
     if request.method == 'GET':
-        results = Gig.objects.all().filter(site_id = site_id).order_by('-publish_date')
+        results = Gig.objects.all().filter(site_id = site_id).filter(valid = True).order_by('-publish_date')
         gigs = paginate(results, request.GET.get("page", 1),
                               settings.GIGS_PER_PAGE,
                               settings.MAX_PAGING_LINKS)
@@ -247,6 +247,7 @@ def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
             gig.company = company
             # categories
             gig_categories = post_job_form.cleaned_data['gig_categories']
+            print gig_categories
             #print request.FILES['profile_picture']
             if 'Previewing ...' == request.POST['submit']:
                 # call view preview listing
@@ -254,14 +255,25 @@ def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
                 request.session['company'] = company
                 request.session['gig'] = gig
                 request.session['gig_categories'] = gig_categories
+                print request.session['gig_categories']
 
                 gig.available = True
                 gig.unit_price = 100
 
                 gig.image = company.profile_picture
                 # updating the status to draft (needs review)
-                # gig.status = 1
+                #gig.status = 1
+
+                if gig.company.valid:
+                    gig.valid = True
+                    
                 gig.save()
+                # adding categories
+                for category in gig_categories:
+                    gig.gig_categories.add(category)
+                #sending the gig is validated signal
+                if gig.valid:
+                    gig_is_validated.send(sender = 'post_job', gig = gig)
                 
                 gig_variation = ProductVariation(product = gig, default = True,
                  unit_price = gig.job_type.price.amount, sale_price = gig.job_type.price.amount)
@@ -269,8 +281,7 @@ def post_job(request, slug = None, template_name = 'gigs/post_job.html'):
                 print 'product variation sku %s'  % gig_variation.sku
                 product_image = ProductImage(file = company.profile_picture, product = gig)
                 product_image.save()
-                for category in gig_categories:
-                    gig.gig_categories.add(category)
+                
 
                 return redirect("shop_product", slug = gig.slug)
                 #template = 'gigs/gig_product.html'
@@ -681,6 +692,46 @@ def welcome_user(sender, **kwargs):
     message = Message(subject = subject, body = body.render(context),
         sender = sender, recipient = user)
     message.save()
+
+# when gig is validated
+# its company is validated, admins are notified,
+# twitter, linkedin, RSS, Google is pinged
+
+@receiver(gig_is_validated, sender = 'response_change')
+def validate_company(sender, **kwargs):
+    """ validate company if it is not when gig is validated """
+    gig = kwargs['gig']
+    if not gig.company.valid:
+        gig.company.valid = True
+        gig.company.save(force_update = True)
+        print 'company validated'
+
+
+@receiver(gig_is_validated, sender = 'post_job')
+@receiver(gig_is_validated, sender = 'response_change')
+def feed_twitter(sender, **kwargs):
+    """ When gig is validated, a tweet is sent
+    tweet_status include: [job_type] gig title capitalized at company_name 
+    location(area_level1, area_level2) : gig link, gig categories as hash tags
+    """
+    settings.use_editable()
+    gig = kwargs['gig']
+    t = Twitter(
+            auth=OAuth(settings.TWITTER_ACCESS_TOKEN, settings.TWITTER_ACCESS_TOKEN_SECRET,
+                       settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET)
+           )
+    # building the tweet
+    #tweet_status = '[%s] %s at %s %s, %s : http://%s%s ' % (gig.job_type.type, gig.title.capitalize(),
+    # gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2, gig.site.domain, gig.get_absolute_url())
+
+    tweet_status = '[%s] %s at %s %s, %s : https://remixjobs.com/emploi/Reseau/Administrateur-Systemes-et-Reseaux-H-F/20731 ' % (gig.job_type.type, gig.title.capitalize(),
+     gig.company.company_name.capitalize(), gig.area_level1, gig.area_level2)
+
+
+    hash_tags = ''.join([ '#%s ' % category.title for category in gig.gig_categories.all() if category ])
+    tweet_status += hash_tags
+    t.statuses.update(status = tweet_status, lat = gig.latitude,
+     long = gig.longitude, include_entities = True)
 
 
 
