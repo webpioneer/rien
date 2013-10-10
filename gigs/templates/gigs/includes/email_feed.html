@@ -1,0 +1,42 @@
+{% load i18n %}
+<!-- Modal -->
+	<div id="emailFeedModal" class="modal large hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">{% trans 'Subscribe to Personalized Notifications' %}</h3>
+	    Your criteria: {% if not remote %}
+                    {%trans 'all jobs' %}
+                {% else %}
+                    {% trans 'all <strong>remote</strong> jobs' %}
+                {% endif %}
+                <span id="gig_types"><strong>{{ gig_types_to_display }}</strong></span>
+                {% if location %}<span id="location">{% trans 'near' %} <strong>{{ location }}</strong></span>{% endif %}
+                {% if what %}<span id="what">{% trans 'matching' %} <strong>{{ what }}</strong></span>{% endif %}
+	  </div>
+	  <div class="modal-body row-fluid">
+	  	<div class="tabbable tabs-left">
+		  <ul class="nav nav-tabs">
+		    <li class="active"><a href="#tab1" data-toggle="tab"><i class="icon-envelope"></i> {% trans 'Email' %}</a></li>
+    		<li><a href="#tab2" data-toggle="tab"><i class="icon-rss"></i> {% trans 'RSS Feed' %}</a></li>
+		  </ul>
+		  <div class="tab-content">
+		    <div class="tab-pane active" id="tab1">
+		      <p>{% trans 'We’ll send you jobs that match your criteria' %}</p>
+		    </div>
+		    <div class="tab-pane" id="tab2">
+		      
+		      <p>{% trans 'Drag this link to your RSS reader:'%}</p>
+		      <p><i class="icon-rss"></i> <a target="_blank" href="/jobs/feed/?{% if what %}what={{ what }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if gig_types_string %}&gig_types_string={{ gig_types_string }}{% endif %}&remote={{ remote }}">{% trans 'Your personalized RSS feed' %}</a></p>
+		      <p>{% trans '… or copy & paste this URL to your RSS reader:' %}</p>
+		      <form>
+		      	<input class="input-block-level" type="text" value="http://{{ request.get_host}}/jobs/feed/?{% if what %}what={{ what }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if gig_types_string %}&gig_types_string={{ gig_types_string }}{% endif %}&remote={{ remote }}" /><span class="help_block">{% trans 'To change your personalized RSS feed later, simply delete the old one and come back here to create a new one.' %}</span>
+		  	  </form>
+		    </div>
+		  </div>
+		</div>  
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans 'Close' %}</button>
+	  </div>
+	  </form>
+	</div>
