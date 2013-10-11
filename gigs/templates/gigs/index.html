@@ -229,6 +229,10 @@
     text-decoration: none;
     border-bottom:1px solid #336699;
 }
+.modal.large {
+    width: 60%; /* respsonsive width */
+    margin-left:-30%; /* width/2) */
+}
 </style>
 
 {% endblock %}
@@ -528,7 +532,7 @@ function find_jobs(method, page, search){
                 <a id="reset" class="btn btn-info btn-small" href="{% url home %}"><i class="icon-refresh"></i>&nbsp;&nbsp;Reset</a>   
             </div>
             <div class="span4">
-                <button data-target="#emailFeedModal" data-toggle="modal"class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
+                <button data-target="#emailFeedModal" data-toggle="modal" class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
                 {% include 'gigs/includes/email_feed.html' %}
             </div>
         </div>
