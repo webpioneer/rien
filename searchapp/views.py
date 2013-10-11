@@ -50,8 +50,8 @@ def search_objects(request, template_name = 'gigs/index.html'):
 		gig_types = request.GET.get('gig_types', '')
 		remote = True if request.GET.get('remote') else False
 		gig_types_string = request.GET.get('gig_types_string', '')
-	# STORE search terms
-	#store(request, what, location, gig_types_string, remote)
+	
+	
 
 	#response = simplejson.dumps({
 	#			'results' :  get_results(what, location, page, gig_types),
@@ -63,7 +63,8 @@ def search_objects(request, template_name = 'gigs/index.html'):
 	gig_types = GigType.objects.all()
 
 	gig_types_list = [ gig_type.id for gig_type in gig_types if str(gig_type.id) not in gig_types_string]
-	
+	# STORE search terms
+	store(request, what, location, gig_types_string, remote)
  	results = get_results(what, location, request.GET.get("page", 1), gig_types_list, remote)
  	print 'search objects : %s jobs ' % len(results)
 	gigs = paginate(results, request.GET.get("page", 1),
