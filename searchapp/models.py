@@ -33,7 +33,6 @@ class GigSearch(BaseSearch):
 	#freelance = models.NullBooleanField(default=True)
 	#internship = models.NullBooleanField(default=True)
 
-
 	def __unicode__(self):
 		return ("{0} {1}").format(self.what, self.location)
 
