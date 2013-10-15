@@ -37,6 +37,7 @@ def store(request, what, location, gig_types_string, remote):
 	for gig_type_id in gig_types_list:
 		gig_type = GigType.objects.get(id = gig_type_id)
 		gig_search.gig_type.add(gig_type)
+	return gig_search
 	
 
 
@@ -112,3 +113,10 @@ def _prepare_words(what):
 		query_terms = what.split()
 		search_terms = [ term for term in query_terms if term not in STRIP_WORDS]
 		return search_terms[0:5]
+
+
+def gig_searches_similar_to_gig():
+	"""
+	return gig_searches similar to a gig
+	"""
+	pass
