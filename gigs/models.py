@@ -85,8 +85,8 @@ class Application(Message):
     status = models.ManyToManyField(ChildStatus)
     feedbacks = generic.GenericRelation(Feedback)
 
-    def __unicode__(self):
-        return "{0} {1} {2}".format(self.sender, self.recipient, self.resume)
+    #def __unicode__(self):
+    #    return "{0} {1} {2}".format(self.sender, self.recipient, self.resume)
 
     @models.permalink
     def get_absolute_url(self):
