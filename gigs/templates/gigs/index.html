@@ -348,6 +348,29 @@ $(document).ready(function(){
         //find_jobs(method = 'GET', page = 1, search = true);
         $('#id_search').submit();
     });
+    // subscribe-email
+    $("#email-subscribe").live('click', function(e){
+        e.preventDefault();
+        $.ajax({
+        type: 'POST',
+        url : '{% url subscribe_email %}',
+
+        data : {
+            csrfmiddlewaretoken : $("#id-email-subscribe > div > input[name=csrfmiddlewaretoken]").val(),
+            what : '{{ what }}',
+            location : '{{ location }}',
+            gig_types_string : '{{ gig_types_string }}',
+            email : $("#id-email-subscribe > div > input[name=email]").val(),
+            remote : '{{ remote }}',
+        },
+        //dataType : 'json',
+        }).done(function( msg ) {
+            alert(msg);
+            console.log('hello');
+        });//end done
+    }); //end email-subscribe
+
+
 
 });
 function find_jobs(method, page, search){
@@ -533,7 +556,7 @@ function find_jobs(method, page, search){
             </div>
             <div class="span4">
                 <button data-target="#emailFeedModal" data-toggle="modal" class="btn pull-right btn-small">{% trans 'Email / RSS Notifications' %}</button>
-                {% include 'gigs/includes/email_feed.html' %}
+                
             </div>
         </div>
         {% endif %}
@@ -581,6 +604,7 @@ function find_jobs(method, page, search){
         </form>
     </section>
 -->
+    {% include 'gigs/includes/email_feed.html' %}
     <div class="jobs-list">
     {% if gigs %}
     {% for gig in gigs.object_list %}
