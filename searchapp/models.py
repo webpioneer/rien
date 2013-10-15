@@ -18,6 +18,7 @@ class BaseSearch(Displayable):
 	area_level2 = models.CharField(max_length = 20, blank = True, null = True)
 	ip_address = models.GenericIPAddressField()
 	user = models.ForeignKey(User, null = True, blank = True)
+	subscribed_user = models.EmailField(blank = True, null = True)
 
 	class Meta:
 		abstract = True
