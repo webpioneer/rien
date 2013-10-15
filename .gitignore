@@ -5,7 +5,7 @@
 *.py.swo
 .DS_Store
 .coverage
-#local_settings.py
+local_settings.py
 #/static
 /static/media/company_logos/
 /static/media/resumes/
