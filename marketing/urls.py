@@ -13,3 +13,7 @@ urlpatterns = patterns('',
 	url("^jobs/feed/(?P<what>[-\w]+)/(?P<location>[-\w ]+)/(?P<gig_types>[-\w ]+)/(?P<remote>[-\w ]+)/$", GigFeed()),
 )
 
+urlpatterns += patterns('marketing.views',
+	# subscribe to email
+	url("^subscribe/email/$", 'subscribe_email', name = 'subscribe_email'),
+)
